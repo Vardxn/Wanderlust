@@ -1,0 +1,150 @@
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Check if user has already visited
+        const hasVisited = localStorage.getItem('wanderlust_visited');
+        const userName = localStorage.getItem('wanderlust_username');
+
+        if (!hasVisited) {
+            // Show modal after a short delay
+            setTimeout(() => {
+                const welcomeModal = new bootstrap.Modal(document.getElementById('welcomeModal'));
+                welcomeModal.show();
+            }, 1000);
+        } else if (userName) {
+            // Show personalized greeting
+            showWelcomeBack(userName);
+        }
+
+        // Handle form submission
+        document.getElementById('welcomeForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const name = document.getElementById('userName').value.trim();
+
+            if (name) {
+                localStorage.setItem('wanderlust_username', name);
+                showThankYou(name);
+            } else {
+                skipWelcome();
+            }
+        });
+
+        // Handle skip button
+        document.getElementById('skipButton').addEventListener('click', function () {
+            skipWelcome();
+        });
+
+        function showThankYou(name) {
+            localStorage.setItem('wanderlust_visited', 'true');
+
+            // Update modal content
+            document.querySelector('.welcome-modal-content').innerHTML = `
+            <div class="welcome-header text-center py-4" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
+                <i class="fas fa-check-circle text-white" style="font-size: 3rem;"></i>
+                <h2 class="text-white fw-bold mt-2 mb-0">Welcome, ${name}!</h2>
+                <p class="text-white opacity-75 mb-0">Get ready to explore amazing places</p>
+            </div>
+            <div class="p-4 text-center">
+                <h5 class="mb-3">You're all set!</h5>
+                <p class="text-muted mb-4">Start exploring unique stays and experiences around the world.</p>
+                <button type="button" class="btn btn-success btn-lg fw-semibold" data-bs-dismiss="modal">
+                    <i class="fas fa-rocket me-2"></i>Start Exploring
+                </button>
+            </div>
+        `;
+
+            // Close modal after 3 seconds
+            setTimeout(() => {
+                bootstrap.Modal.getInstance(document.getElementById('welcomeModal')).hide();
+                showFloatingGreeting(name);
+            }, 3000);
+        }
+
+        function skipWelcome() {
+            localStorage.setItem('wanderlust_visited', 'true');
+            bootstrap.Modal.getInstance(document.getElementById('welcomeModal')).hide();
+
+            // Show brief skip message
+            showToast('Welcome to Wanderlust! You can always update your name in settings.', 'info');
+        }
+
+        function showWelcomeBack(name) {
+            // Show welcome back message in navbar
+            setTimeout(() => {
+                showToast(`Welcome back, ${name}! 🎉`, 'success');
+            }, 500);
+        }
+
+        function showFloatingGreeting(name) {
+            // Create floating greeting
+            const greeting = document.createElement('div');
+            greeting.className = 'floating-greeting';
+            greeting.innerHTML = `
+            <div class="alert alert-success alert-dismissible fade show shadow-lg" role="alert">
+                <i class="fas fa-heart text-danger me-2"></i>
+                <strong>Welcome, ${name}!</strong> Ready to discover your next adventure?
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        `;
+            greeting.style.cssText = `
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            z-index: 1060;
+            max-width: 300px;
+            animation: slideInRight 0.5s ease-out;
+        `;
+
+            document.body.appendChild(greeting);
+
+            // Remove after 5 seconds
+            setTimeout(() => {
+                if (greeting.parentNode) {
+                    greeting.remove();
+                }
+            }, 5000);
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `alert alert-${type} alert-dismissible fade show`;
+            toast.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+            toast.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1060;
+            max-width: 300px;
+            animation: slideInRight 0.5s ease-out;
+        `;
+
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.remove();
+                }
+            }, 4000);
+        }
+    });
+</script>
+
+<style>
+    @keyframes slideInRight {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    .floating-greeting {
+        animation: slideInRight 0.5s ease-out;
+    }
+</style>

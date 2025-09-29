@@ -1,25 +1,31 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
+const Review = require('./review');
 
 const listingSchema = new Schema({
-    title: { type: String, required: true },
-    description: { type: String, required: true },
-    image: {
-        type: {
-            filename: String,
-            url: String
-        },
-        required: true,
-        default: {
-            filename: "listingimage",
-            url: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80"
-        }
+    title: {
+        type: String,
+        required: true
     },
-    location: { type: String, required: true },
-    price: { type: Number, required: true },
-    country: { type: String, required: true },
+    description: String,
+    image: {
+        url: String,
+        filename: String
+    },
+    price: Number,
+    location: String,
+    country: String,
+    reviews: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Review'
+    }]
 });
 
-const Listing = mongoose.model('Listing', listingSchema);
+// Middleware to delete associated reviews when listing is deleted
+listingSchema.post('findOneAndDelete', async function (listing) {
+    if (listing.reviews.length) {
+        await Review.deleteMany({ _id: { $in: listing.reviews } });
+    }
+});
 
-module.exports = Listing;
+module.exports = mongoose.model("Listing", listingSchema);

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Experiences - Wanderlust</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/CSS/styles.css">
+</head>
+<body>
+    <%- include('../includes/navbar') %>
+
+    <main class="container-fluid mt-4">
+        <!-- Hero Section -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="hero-section text-center py-5 bg-gradient rounded">
+                    <h1 class="display-4 text-white fw-bold">Unique Experiences</h1>
+                    <p class="lead text-white">Discover extraordinary places with exceptional ratings</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Filters Sidebar -->
+            <div class="col-lg-3 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="fas fa-filter me-2"></i>Filters & Sort</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="GET" action="/experiences">
+                            <!-- Sort Options -->
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">Sort by:</label>
+                                <select name="sort" class="form-select" onchange="this.form.submit()">
+                                    <option value="popular" <%= currentSort === 'popular' ? 'selected' : '' %>>Most Popular</option>
+                                    <option value="rating" <%= currentSort === 'rating' ? 'selected' : '' %>>Highest Rated</option>
+                                    <option value="price-low" <%= currentSort === 'price-low' ? 'selected' : '' %>>Price: Low to High</option>
+                                    <option value="price-high" <%= currentSort === 'price-high' ? 'selected' : '' %>>Price: High to Low</option>
+                                    <option value="newest" <%= currentSort === 'newest' ? 'selected' : '' %>>Newest First</option>
+                                </select>
+                            </div>
+
+                            <!-- Price Range -->
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">Price Range (₹):</label>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <input type="number" name="minPrice" class="form-control" placeholder="Min ₹" value="<%= filters.minPrice || '' %>">
+                                    </div>
+                                    <div class="col-6">
+                                        <input type="number" name="maxPrice" class="form-control" placeholder="Max ₹" value="<%= filters.maxPrice || '' %>">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Rating Filter -->
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">Minimum Rating:</label>
+                                <select name="minRating" class="form-select">
+                                    <option value="">Any Rating</option>
+                                    <option value="4" <%= filters.minRating === '4' ? 'selected' : '' %>>4+ Stars</option>
+                                    <option value="4.5" <%= filters.minRating === '4.5' ? 'selected' : '' %>>4.5+ Stars</option>
+                                </select>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-search me-2"></i>Apply Filters
+                            </button>
+                            <a href="/experiences" class="btn btn-outline-secondary w-100 mt-2">Clear All</a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Experiences Grid -->
+            <div class="col-lg-9">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2>
+                        <i class="fas fa-star text-warning me-2"></i>
+                        Featured Experiences 
+                        <span class="badge bg-secondary"><%= experiences.length %></span>
+                    </h2>
+                </div>
+
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                    <% experiences.forEach((experience, index) => { %>
+                        <div class="col">
+                            <div class="card experience-card h-100 shadow-sm">
+                                <!-- Popular Badge -->
+                                <% if (index < 3 && currentSort === 'popular') { %>
+                                    <div class="position-absolute top-0 start-0 m-2 z-index-1">
+                                        <span class="badge bg-warning text-dark">
+                                            <i class="fas fa-fire me-1"></i>Popular
+                                        </span>
+                                    </div>
+                                <% } %>
+
+                                <a href="/listings/<%= experience._id %>" class="text-decoration-none">
+                                    <img src="<%= experience.image.url || experience.image %>" 
+                                         class="card-img-top experience-img" 
+                                         alt="<%= experience.title %>"
+                                         onerror="this.src='https://images.unsplash.com/photo-1571896349842-33c89424de2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=60'">
+                                </a>
+                                
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h5 class="card-title text-truncate"><%= experience.title %></h5>
+                                        <div class="rating-display">
+                                            <% if (experience.averageRating > 0) { %>
+                                                <span class="text-warning fw-bold">
+                                                    <i class="fas fa-star"></i>
+                                                    <%= experience.averageRating.toFixed(1) %>
+                                                </span>
+                                                <small class="text-muted">(<%= experience.reviewCount %>)</small>
+                                            <% } else { %>
+                                                <span class="text-muted">No ratings yet</span>
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                    
+                                    <p class="text-muted mb-2">
+                                        <i class="fas fa-map-marker-alt me-1"></i>
+                                        <%= experience.location %>, <%= experience.country %>
+                                    </p>
+                                    
+                                    <p class="card-text text-muted small"><%= experience.description.substring(0, 100) %>...</p>
+                                    
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="price-display">
+                                            <strong class="h5 text-primary">₹<%= experience.price.toLocaleString('en-IN') %></strong>
+                                            <small class="text-muted">/night</small>
+                                        </div>
+                                        
+                                        <a href="/listings/<%= experience._id %>" class="btn btn-outline-primary btn-sm">
+                                            View Details
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+
+                <!-- No Results -->
+                <% if (experiences.length === 0) { %>
+                    <div class="text-center py-5">
+                        <div class="mb-4">
+                            <i class="fas fa-search text-muted" style="font-size: 4rem;"></i>
+                        </div>
+                        <h3 class="text-muted">No experiences found</h3>
+                        <p class="text-muted">Try adjusting your filters or search criteria</p>
+                        <a href="/experiences" class="btn btn-primary">View All Experiences</a>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </main>
+
+    <%- include('../includes/footer') %>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

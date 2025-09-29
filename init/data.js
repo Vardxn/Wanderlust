@@ -347,6 +347,234 @@ const sampleListings = [
     location: "Costa Rica",
     country: "Costa Rica",
   },
+  {
+    title: "Oceanfront Villa in Santorini",
+    description:
+      "Wake up to breathtaking sunsets in this stunning oceanfront villa perched on the cliffs of Santorini.",
+    image: {
+      filename: "listingimage",
+      url: "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8c2FudG9yaW5pfGVufDB8fDB8fHww&auto=format&fit=crop&w=800&q=60",
+    },
+    price: 3500,
+    location: "Santorini",
+    country: "Greece",
+  },
+  {
+    title: "Cozy Chalet in the French Alps",
+    description:
+      "Experience alpine luxury in this traditional chalet with stunning mountain views and world-class skiing.",
+    image: {
+      filename: "listingimage",
+      url: "https://images.unsplash.com/photo-1551524164-6cf2ac14d442?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGNoYWxldHxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60",
+    },
+    price: 2800,
+    location: "Chamonix",
+    country: "France",
+  },
+  {
+    title: "Urban Loft in Berlin",
+    description:
+      "Stay in the cultural heart of Berlin in this modern loft with industrial design and contemporary amenities.",
+    image: {
+      filename: "listingimage",
+      url: "https://images.unsplash.com/photo-1493809842364-78817add7ffb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGJlcmxpbnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60",
+    },
+    price: 1400,
+    location: "Berlin",
+    country: "Germany",
+  },
+  {
+    title: "Riverside Cabin in Norway",
+    description:
+      "Disconnect from the world in this peaceful riverside cabin surrounded by Norway's pristine wilderness.",
+    image: {
+      filename: "listingimage",
+      url: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8bm9yd2F5fGVufDB8fDB8fHww&auto=format&fit=crop&w=800&q=60",
+    },
+    price: 1300,
+    location: "Bergen",
+    country: "Norway",
+  },
+  {
+    title: "Luxury Penthouse in Singapore",
+    description:
+      "Enjoy panoramic city views from this ultra-modern penthouse in the heart of Singapore's financial district.",
+    image: {
+      filename: "listingimage",
+      url: "https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8c2luZ2Fwb3JlfGVufDB8fDB8fHww&auto=format&fit=crop&w=800&q=60",
+    },
+    price: 4200,
+    location: "Singapore",
+    country: "Singapore",
+  },
+  {
+    title: "Traditional Riad in Marrakech",
+    description:
+      "Immerse yourself in Moroccan culture in this beautifully restored traditional riad with courtyard garden.",
+    image: {
+      filename: "listingimage",
+      url: "https://images.unsplash.com/photo-1539650116574-75c0c6d73222?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fG1hcnJha2VjaHxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60",
+    },
+    price: 1100,
+    location: "Marrakech",
+    country: "Morocco",
+  },
+  {
+    title: "Floating House in Amsterdam",
+    description:
+      "Experience unique waterfront living in this charming floating house on Amsterdam's historic canals.",
+    image: {
+      filename: "listingimage",
+      url: "https://images.unsplash.com/photo-1534351590666-13e3e96b5017?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTR8fGFtc3RlcmRhbXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60",
+    },
+    price: 2200,
+    location: "Amsterdam",
+    country: "Netherlands",
+  },
+  {
+    title: "Desert Camp in Rajasthan",
+    description:
+      "Sleep under the stars in luxury tents in the heart of the Thar Desert with camel safari adventures.",
+    image: {
+      filename: "listingimage",
+      url: "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fHJhamFzdGhhbnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60",
+    },
+    price: 800,
+    location: "Jaisalmer",
+    country: "India",
+  },
+  {
+    title: "Vineyard Estate in Napa Valley",
+    description:
+      "Indulge in wine country luxury at this exclusive vineyard estate with private tastings and gourmet dining.",
+    image: {
+      filename: "listingimage",
+      url: "https://images.unsplash.com/photo-1510079160901-612399bb40c5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8dmluZXlhcmR8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=800&q=60",
+    },
+    price: 5500,
+    location: "Napa Valley",
+    country: "United States",
+  },
+  {
+    title: "Beachfront Bungalow in Mauritius",
+    description:
+      "Relax in paradise at this luxurious beachfront bungalow with crystal clear waters and white sandy beaches.",
+    image: {
+      filename: "listingimage",
+      url: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fG1hdXJpdGl1c3xlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60",
+    },
+    price: 2800,
+    location: "Mauritius",
+    country: "Mauritius",
+  },
+  {
+    title: "Mountain Lodge in Patagonia",
+    description:
+      "Adventure awaits at this remote mountain lodge with glacier views and world-class hiking trails.",
+    image: {
+      filename: "listingimage",
+      url: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fHBhdGFnb25pYXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60",
+    },
+    price: 1900,
+    location: "Torres del Paine",
+    country: "Chile",
+  },
+  {
+    title: "Luxury Apartment in Paris",
+    description:
+      "Experience Parisian elegance in this sophisticated apartment near the Champs-Élysées with Eiffel Tower views.",
+    image: {
+      filename: "listingimage",
+      url: "https://images.unsplash.com/photo-1502602898536-47ad22581b52?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fHBhcmlzfGVufDB8fDB8fHww&auto=format&fit=crop&w=800&q=60",
+    },
+    price: 3800,
+    location: "Paris",
+    country: "France",
+  },
+  {
+    title: "Safari Tent in Serengeti",
+    description:
+      "Witness the Great Migration from this luxury safari tent with panoramic views of the African savannah.",
+    image: {
+      filename: "listingimage",
+      url: "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fHNhZmFyaXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60",
+    },
+    price: 4500,
+    location: "Serengeti",
+    country: "Tanzania",
+  },
+  {
+    title: "Ice Hotel Suite in Lapland",
+    description:
+      "Experience the magic of the Arctic in this unique ice hotel with Northern Lights viewing opportunities.",
+    image: {
+      filename: "listingimage",
+      url: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTZ8fGljZSUyMGhvdGVsfGVufDB8fDB8fHww&auto=format&fit=crop&w=800&q=60",
+    },
+    price: 2200,
+    location: "Rovaniemi",
+    country: "Finland",
+  },
+  {
+    title: "Cliffside Villa in Big Sur",
+    description:
+      "Perched on dramatic cliffs overlooking the Pacific, this architectural marvel offers unparalleled ocean views.",
+    image: {
+      filename: "listingimage",
+      url: "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGJpZyUyMHN1cnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60",
+    },
+    price: 4800,
+    location: "Big Sur",
+    country: "United States",
+  },
+  {
+    title: "Traditional Ryokan in Kyoto",
+    description:
+      "Experience authentic Japanese hospitality in this traditional ryokan with tatami floors and zen gardens.",
+    image: {
+      filename: "listingimage",
+      url: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGt5b3RvfGVufDB8fDB8fHww&auto=format&fit=crop&w=800&q=60",
+    },
+    price: 2600,
+    location: "Kyoto",
+    country: "Japan",
+  },
+  {
+    title: "Overwater Bungalow in Tahiti",
+    description:
+      "Float above turquoise lagoons in this luxurious overwater bungalow with glass floor panels and private deck.",
+    image: {
+      filename: "listingimage",
+      url: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fHRhaGl0aXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60",
+    },
+    price: 7500,
+    location: "Bora Bora",
+    country: "French Polynesia",
+  },
+  {
+    title: "Countryside Manor in Tuscany",
+    description:
+      "Escape to this restored 16th-century manor house surrounded by rolling hills and olive groves in Tuscany.",
+    image: {
+      filename: "listingimage",
+      url: "https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fHR1c2NhbnklMjBob3VzZXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60",
+    },
+    price: 3200,
+    location: "Chianti",
+    country: "Italy",
+  },
+  {
+    title: "Lighthouse Keeper's House in Maine",
+    description:
+      "Stay in this converted lighthouse keeper's house perched on rugged coastal cliffs with panoramic ocean views.",
+    image: {
+      filename: "listingimage",
+      url: "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGxpZ2h0aG91c2V8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=800&q=60",
+    },
+    price: 1700,
+    location: "Acadia National Park",
+    country: "United States",
+  }
 ];
 
 module.exports = sampleListings;
