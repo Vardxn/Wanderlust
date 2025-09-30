@@ -16,10 +16,7 @@ const reviewSchema = new Schema({
     },
     author: {
         type: String,
-        required: false, // Made optional
-        minlength: 2,
-        maxlength: 50,
-        default: "Anonymous" // Default value
+        default: 'Anonymous'
     },
     createdAt: {
         type: Date,
@@ -27,4 +24,5 @@ const reviewSchema = new Schema({
     }
 });
 
-module.exports = mongoose.model("Review", reviewSchema);
+const Review = mongoose.model('Review', reviewSchema);
+module.exports = Review;

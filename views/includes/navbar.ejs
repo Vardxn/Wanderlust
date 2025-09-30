@@ -1,91 +1,119 @@
-<!-- Pixel-Perfect Airbnb 2025 Navbar --><!-- Pixel-Perfect Airbnb 2025 Navbar -->
+<!-- Pixel-Perfect Airbnb 2025 Navbar -->
 
 <header class="airbnb-header">
-    <!-- Main Navigation Bar -->
-    <nav class="airbnb-nav" role="navigation" aria-label="Main navigation">
-        <div class="nav-container">
-            <!-- Left: Wanderlust Logo -->
-            <div class="nav-left">
-                <a href="/listings" class="logo-link" aria-label="Wanderlust - Homepage">
-                    <svg width="30" height="32" fill="#FF385C" class="logo-icon" viewBox="0 0 32 32">
-                        <path
-                            d="M29.24 22.68c-.16-.39-.31-.8-.47-1.15l-.74-1.67-.03-.03c-2.2-4.8-4.55-9.68-7.04-14.48l-.1-.2c-.25-.47-.5-.99-.76-1.47-.32-.57-.63-1.18-1.14-1.76a5.3 5.3 0 00-8.2 0c-.51.58-.82 1.19-1.14 1.76-.25.48-.5 1-.76 1.47l-.1.2c-2.49 4.8-4.84 9.68-7.04 14.48l-.03.03c-.26.52-.49 1.06-.73 1.64-.16.35-.31.76-.47 1.15C.05 23.07 0 23.52 0 24.05c0 4.9 3.99 8.89 8.9 8.89 4.9 0 8.9-3.99 8.9-8.89 0-.53-.05-.98-.16-1.37zm-6.25.33c0 2.24-1.82 4.06-4.06 4.06-2.24 0-4.06-1.82-4.06-4.06s1.82-4.06 4.06-4.06 4.06 1.82 4.06 4.06z" />
-                    </svg>
-                    <span class="logo-text">wanderlust</span>
-                </a>
-            </div>
+    <div class="nav-container">
+        <!-- Left: Logo -->
+        <div class="nav-left">
+            <a href="/" class="logo-link">
+                <i class="fas fa-mountain logo-icon"></i>
+                <span class="logo-text">Wanderlust</span>
+            </a>
+        </div>
 
-            <!-- Center: Navigation Pills -->
-            <div class="nav-center" role="tablist">
-                <button type="button" role="tab" aria-selected="true" class="nav-pill active" data-tab="stays">
-                    Stays
+        <!-- Center: Navigation Pills -->
+        <div class="nav-center">
+            <button class="nav-pill active" data-tab="homes">
+                <span>Stays</span>
+            </button>
+            <button class="nav-pill" data-tab="experiences">
+                <span>Experiences</span>
+            </button>
+        </div>
+
+        <!-- Right: User Menu -->
+        <div class="nav-right">
+            <a href="/listings/new" class="host-link">Become a Host</a>
+            <button class="globe-btn">
+                <i class="fas fa-globe"></i>
+            </button>
+            <div class="user-menu-container">
+                <button class="user-menu-trigger" id="userMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-bars"></i>
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
                 </button>
-                <button type="button" role="tab" aria-selected="false" class="nav-pill" data-tab="experiences">
-                    Experiences
-                </button>
-            </div>
-
-            <!-- Right: User Menu -->
-            <div class="nav-right">
-                <a href="/listings/new" class="host-link">
-                    Wanderlust your home
-                </a>
-
-                <button type="button" class="globe-btn" aria-label="Choose language and region">
-                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                        <path
-                            d="M8 .25a7.77 7.77 0 0 0-7.75 7.75c0 2.537.91 4.902 2.427 6.75l.033.042A7.77 7.77 0 0 0 8 15.75a7.77 7.77 0 0 0 5.29-2.208l.033-.042A7.77 7.77 0 0 0 15.75 8 7.77 7.77 0 0 0 8 .25z" />
-                    </svg>
-                </button>
-
-                <div class="user-menu-container">
-                    <button type="button" class="user-menu-trigger" data-bs-toggle="dropdown" aria-expanded="false"
-                        aria-label="User menu">
-                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 32 32">
-                            <path d="M2 16h28M2 8h28M2 24h28" />
-                        </svg>
-                        <div class="user-avatar">
-                            <svg width="30" height="30" fill="#717171" viewBox="0 0 32 32">
-                                <path
-                                    d="M16 .25C7.453.25.25 7.453.25 16S7.453 31.75 16 31.75 31.75 24.547 31.75 16 24.547.25 16.25zm0 6a4.5 4.5 0 110 9 4.5 4.5 0 010-9zm8.25 18.5c0-5.5-5.5-8.25-8.25-8.25s-8.25 2.75-8.25 8.25" />
-                            </svg>
-                        </div>
-                    </button>
-
-                    <ul class="dropdown-menu dropdown-menu-end user-dropdown">
-                        <li><a class="dropdown-item font-semibold" href="#" role="menuitem">Sign up</a></li>
-                        <li><a class="dropdown-item" href="#" role="menuitem">Log in</a></li>
-                        <li>
-                            <hr class="dropdown-divider" role="separator">
-                        </li>
-                        <li><a class="dropdown-item" href="/listings/new" role="menuitem">Wanderlust your home</a></li>
-                        <li><a class="dropdown-item" href="#" role="menuitem">Host an experience</a></li>
-                        <li><a class="dropdown-item" href="#" role="menuitem">Help Center</a></li>
-                    </ul>
-                </div>
+                <ul class="dropdown-menu user-dropdown dropdown-menu-end" aria-labelledby="userMenuButton">
+                    <li><a class="dropdown-item fw-semibold" href="/login">Log in</a></li>
+                    <li><a class="dropdown-item" href="/register">Sign up</a></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><a class="dropdown-item" href="/listings/new">Host your home</a></li>
+                    <li><a class="dropdown-item" href="/experiences/host">Host an experience</a></li>
+                    <li><a class="dropdown-item" href="/help">Help</a></li>
+                </ul>
             </div>
         </div>
-    </nav>
+    </div>
 
-    <!-- Compact Search Bar -->
-    <div class="search-bar-compact">
-        <div class="search-container-compact">
-            <button class="compact-search-trigger" aria-label="Start your search">
-                <div class="search-content">
-                    <div class="search-text">
-                        <span class="search-title">Start your search</span>
-                    </div>
-                    <div class="search-icon">
-                        <svg width="12" height="12" viewBox="0 0 32 32" fill="none" stroke="currentColor"
-                            stroke-width="3">
-                            <path d="m21 21-6-6m2-5a7 7 0 1 1-14 0 7 7 0 0 1 14 0z" />
-                        </svg>
-                    </div>
+    <!-- Search Bar - Only include ONE search bar component -->
+    <div class="search-bar-expanded">
+        <div class="search-container-expanded">
+            <form class="enhanced-search-form">
+                <div class="search-field">
+                    <label class="search-label">Where</label>
+                    <input type="text" class="search-input" placeholder="Search destinations">
                 </div>
-            </button>
+                <div class="search-divider"></div>
+                <div class="search-field">
+                    <label class="search-label">Check in</label>
+                    <input type="text" class="search-input" placeholder="Add dates">
+                </div>
+                <div class="search-divider"></div>
+                <div class="search-field">
+                    <label class="search-label">Check out</label>
+                    <input type="text" class="search-input" placeholder="Add dates">
+                </div>
+                <div class="search-divider"></div>
+                <div class="search-field">
+                    <label class="search-label">Who</label>
+                    <input type="text" class="search-input" placeholder="Add guests">
+                </div>
+                <button type="submit" class="search-submit-btn">
+                    <i class="fas fa-search me-2"></i>
+                    <span>Search</span>
+                </button>
+            </form>
         </div>
     </div>
 </header>
+
+<!-- Mobile Filter Bar - Optional -->
+<div class="d-lg-none border-bottom py-3">
+    <div class="container">
+        <div class="scrolling-wrapper d-flex overflow-auto pb-2" style="scroll-snap-type: x mandatory;">
+            <div class="filter-item text-center me-3" style="scroll-snap-align: start;">
+                <div class="icon-wrapper mb-1">
+                    <img src="https://a0.muscache.com/pictures/c5a4f6fc-c92c-4ae8-87dd-57f1ff1b89a6.jpg" alt="OMG!"
+                        class="img-fluid" style="width: 24px; height: 24px;">
+                </div>
+                <span class="small">OMG!</span>
+            </div>
+            <div class="filter-item text-center me-3" style="scroll-snap-align: start;">
+                <div class="icon-wrapper mb-1">
+                    <img src="https://a0.muscache.com/pictures/3fb523a0-b622-4368-8142-b5e03df7549b.jpg" alt="Pools"
+                        class="img-fluid" style="width: 24px; height: 24px;">
+                </div>
+                <span class="small">Pools</span>
+            </div>
+            <div class="filter-item text-center me-3" style="scroll-snap-align: start;">
+                <div class="icon-wrapper mb-1">
+                    <img src="https://a0.muscache.com/pictures/8e507f16-4943-4be9-b707-59bd38d56309.jpg" alt="Islands"
+                        class="img-fluid" style="width: 24px; height: 24px;">
+                </div>
+                <span class="small">Islands</span>
+            </div>
+            <div class="filter-item text-center me-3" style="scroll-snap-align: start;">
+                <div class="icon-wrapper mb-1">
+                    <img src="https://a0.muscache.com/pictures/bcd1adc0-5cee-4d7a-85ec-f6730b0f8d0c.jpg" alt="Beach"
+                        class="img-fluid" style="width: 24px; height: 24px;">
+                </div>
+                <span class="small">Beach</span>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
