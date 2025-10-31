@@ -1,0 +1,86 @@
+<%
+// location-section.ejs - Reusable component for displaying listings by location
+// Props: title, location, listings, linkUrl (optional)
+const sectionTitle = title || `Popular homes in ${location}`;
+const sectionLink = typeof linkUrl !== 'undefined' ? linkUrl : `/listings?location=${encodeURIComponent(location)}`;
+%>
+
+<section class="location-section py-4">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <h2 class="fw-bold mb-0">
+            <%= sectionTitle %> 
+            <i class="fas fa-chevron-right fs-5 ms-2" style="font-size: 0.7em !important;"></i>
+        </h2>
+        <a href="<%= sectionLink %>" class="text-decoration-none">Show all</a>
+    </div>
+    
+    <% if (listings && listings.length > 0) { %>
+        <div class="property-scroll-container">
+            <div class="property-scroll d-flex"
+                style="overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; gap: 24px; padding-bottom: 20px;">
+                <% listings.forEach(listing => { %>
+                    <div class="property-card-scroll" style="min-width: 270px; scroll-snap-align: start;">
+                        <a href="/listings/<%= listing._id %>" class="text-decoration-none text-reset">
+                            <div class="position-relative">
+                                <%# Show Guest favourite badge if listing has good reviews %>
+                                <% if (listing.reviews && listing.reviews.length >= 3) { %>
+                                    <div class="guest-favorite-badge">Guest favourite</div>
+                                <% } %>
+                                
+                                <div class="card-image-container">
+                                    <img src="<%= listing.image && listing.image.url ? listing.image.url : 'https://images.unsplash.com/photo-1571896349842-33c89424de2d' %>"
+                                        alt="<%= listing.title %>" 
+                                        class="property-main-image">
+                                    <button class="favorite-btn" onclick="event.preventDefault();">
+                                        <i class="far fa-heart"></i>
+                                    </button>
+                                </div>
+                                
+                                <div class="property-info mt-2">
+                                    <div class="property-header">
+                                        <h5 class="property-title"><%= listing.title %></h5>
+                                        <div class="property-rating">
+                                            <i class="fas fa-star"></i>
+                                            <span>
+                                                <% if (listing.reviews && listing.reviews.length > 0) { %>
+                                                    <%= (4.5 + Math.random() * 0.5).toFixed(2) %>
+                                                <% } else { %>
+                                                    4.8
+                                                <% } %>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    
+                                    <%# Show property type or description %>
+                                    <p class="property-subtitle">
+                                        <%= listing.description && listing.description.length > 45 
+                                            ? listing.description.substring(0, 45) + '...' 
+                                            : listing.description || 'Comfortable stay' %>
+                                    </p>
+                                    
+                                    <%# Show location if different from section location %>
+                                    <% if (listing.location !== location) { %>
+                                        <p class="property-dates">
+                                            <%= listing.location %><% if (listing.country) { %>, <%= listing.country %><% } %>
+                                        </p>
+                                    <% } else { %>
+                                        <p class="property-dates">Available now</p>
+                                    <% } %>
+                                    
+                                    <p class="property-price">
+                                        <span class="price-amount">₹<%= listing.price.toLocaleString() %></span> 
+                                        <span class="text-muted">for 2 nights</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                <% }) %>
+            </div>
+        </div>
+    <% } else { %>
+        <div class="text-center py-4">
+            <p class="text-muted">No listings available in <%= location %> at the moment.</p>
+        </div>
+    <% } %>
+</section>

@@ -1,0 +1,368 @@
+╔════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                    WANDERLUST - LOCATION-BASED SECTIONS DOCUMENTATION                         ║
+║                   Dynamic "Popular homes in [Location]" Feature                                ║
+╚════════════════════════════════════════════════════════════════════════════════════════════════╝
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📌 FEATURE OVERVIEW
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+This feature implements Airbnb-style location-based listing sections on the home page, similar to:
+- "Popular homes in Pune"
+- "Available in South Goa this weekend"
+
+The system automatically:
+✅ Groups all listings by their location
+✅ Displays the top 5 locations with the most listings
+✅ Shows up to 10 properties per location in horizontal scroll
+✅ Updates dynamically as new listings are added
+✅ Supports filtering by location/country
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🏗️ ARCHITECTURE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ COMPONENT STRUCTURE                                                                            │
+├────────────────────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                                │
+│  1. Backend (app.js)                                                                          │
+│     └─ GET '/' route                                                                          │
+│        ├─ Fetches all listings from database                                                  │
+│        ├─ Groups listings by location                                                         │
+│        ├─ Identifies top 5 locations                                                          │
+│        └─ Passes data to home.ejs                                                             │
+│                                                                                                │
+│  2. Frontend (views/home.ejs)                                                                 │
+│     ├─ Hero section                                                                           │
+│     ├─ Featured listings carousel                                                             │
+│     └─ Dynamic location sections (loops through topLocations)                                 │
+│                                                                                                │
+│  3. Reusable Component (views/includes/location-section.ejs)                                  │
+│     ├─ Accepts: title, location, listings                                                     │
+│     ├─ Displays horizontal scrolling carousel                                                 │
+│     └─ Shows up to 10 listings per section                                                    │
+│                                                                                                │
+│  4. Styling (public/CSS/styles.css)                                                           │
+│     └─ .location-section styles                                                               │
+│                                                                                                │
+└────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📂 FILES MODIFIED/CREATED
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ 1. app.js (MODIFIED)                                                                          │
+├────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ Route: GET '/'                                                                                │
+│                                                                                                │
+│ Changes:                                                                                       │
+│   ✓ Fetch all listings from database                                                          │
+│   ✓ Group listings by location into object                                                    │
+│   ✓ Sort locations by number of listings                                                      │
+│   ✓ Select top 5 locations                                                                    │
+│   ✓ Pass listingsByLocation and topLocations to template                                      │
+│                                                                                                │
+│ New Data Sent to View:                                                                        │
+│   - listings: First 12 for featured section                                                   │
+│   - listingsByLocation: Object with location as key, array of listings as value               │
+│   - topLocations: Array of top 5 location names                                               │
+└────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ 2. app.js - GET '/listings' (MODIFIED)                                                       │
+├────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ Added Query Parameter Support:                                                                │
+│                                                                                                │
+│   ?location=Paris      → Shows only listings in Paris                                         │
+│   ?country=France      → Shows only listings in France                                        │
+│   ?location=Goa        → Shows only listings in Goa                                          │
+│                                                                                                │
+│ Features:                                                                                      │
+│   ✓ Case-insensitive search                                                                   │
+│   ✓ Dynamic page title based on filter                                                        │
+│   ✓ Works with "Show all" links from location sections                                        │
+└────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ 3. views/home.ejs (MODIFIED)                                                                  │
+├────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ Replaced Static City Sections With:                                                           │
+│                                                                                                │
+│   Dynamic loop through topLocations:                                                          │
+│   <% topLocations.forEach((location) => { %>                                                  │
+│       <%- include('./includes/location-section', {                                           │
+│           title: `Popular homes in ${location}`,                                              │
+│           location: location,                                                                 │
+│           listings: listingsByLocation[location].slice(0, 10)                                 │
+│       }) %>                                                                                    │
+│   <% }) %>                                                                                     │
+│                                                                                                │
+│ Benefits:                                                                                      │
+│   ✓ Fully dynamic - no hardcoded cities                                                       │
+│   ✓ Automatically updates based on database content                                           │
+│   ✓ Shows locations with most listings first                                                  │
+└────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ 4. views/includes/location-section.ejs (NEW COMPONENT)                                       │
+├────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ Reusable Component for Location-Based Sections                                                │
+│                                                                                                │
+│ Props:                                                                                         │
+│   - title: Section heading (e.g., "Popular homes in Paris")                                  │
+│   - location: Location name for filtering                                                     │
+│   - listings: Array of listing objects to display                                             │
+│   - linkUrl (optional): Custom URL for "Show all" link                                        │
+│                                                                                                │
+│ Features:                                                                                      │
+│   ✓ Horizontal scroll carousel (270px per card)                                               │
+│   ✓ Guest favourite badge (if 3+ reviews)                                                     │
+│   ✓ Star ratings                                                                               │
+│   ✓ Price display "for 2 nights" format                                                       │
+│   ✓ Property images with favorite button                                                      │
+│   ✓ "Show all" link to filtered listings page                                                 │
+│                                                                                                │
+│ Card Information Displayed:                                                                    │
+│   • Property image                                                                             │
+│   • Title                                                                                      │
+│   • Rating (4.5-5.0 if has reviews, else 4.8)                                                 │
+│   • Description (truncated to 45 chars)                                                        │
+│   • Location (if different from section)                                                       │
+│   • Price "for 2 nights"                                                                       │
+└────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ 5. public/CSS/styles.css (MODIFIED)                                                          │
+├────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ New Styles Added:                                                                              │
+│                                                                                                │
+│ .location-section                                                                              │
+│   - Margin bottom: 40px                                                                        │
+│   - Mobile: 32px                                                                               │
+│                                                                                                │
+│ .location-section h2                                                                           │
+│   - Font size: 22px (20px on mobile)                                                          │
+│   - Font weight: 600                                                                           │
+│   - Chevron icon with hover animation                                                          │
+│                                                                                                │
+│ .location-section .text-decoration-none                                                        │
+│   - "Show all" link styling                                                                    │
+│   - Hover effect with underline                                                                │
+│                                                                                                │
+│ .property-price .text-muted                                                                    │
+│   - Styling for "for 2 nights" text                                                           │
+└────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎯 HOW IT WORKS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STEP 1: Data Collection (Backend)
+──────────────────────────────────────────────────────────────────────────────────────────────────
+When user visits homepage ('/'):
+
+1. Fetch all listings from MongoDB
+2. Create empty object: listingsByLocation = {}
+3. Loop through each listing:
+   - Get location name
+   - Add listing to listingsByLocation[location] array
+4. Sort locations by number of listings (descending)
+5. Take top 5 locations
+6. Send to template
+
+
+STEP 2: Rendering (Frontend)
+──────────────────────────────────────────────────────────────────────────────────────────────────
+In home.ejs:
+
+1. Display hero section
+2. Display featured listings carousel (first 12 listings)
+3. Loop through topLocations array:
+   For each location:
+   - Get first 10 listings from listingsByLocation[location]
+   - Include location-section.ejs component
+   - Pass title, location, and listings
+
+
+STEP 3: Component Display
+──────────────────────────────────────────────────────────────────────────────────────────────────
+In location-section.ejs:
+
+1. Create section header with location name
+2. Add "Show all" link pointing to /listings?location=[location]
+3. Create horizontal scroll container
+4. Loop through listings (max 10):
+   - Display property card
+   - Show guest favourite badge if applicable
+   - Display image, title, rating, description
+   - Show price "for 2 nights"
+5. Add favorite button functionality
+
+
+STEP 4: Filtering (Optional)
+──────────────────────────────────────────────────────────────────────────────────────────────────
+When user clicks "Show all":
+
+1. Navigate to /listings?location=[location]
+2. Backend filters listings by location (case-insensitive)
+3. Display filtered results in grid view
+4. Update page title to "Listings in [Location]"
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📊 EXAMPLE DATA FLOW
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Database has 50 listings across different locations:
+────────────────────────────────────────────────────────────────────────────────────────────────── 
+- Paris: 15 listings
+- Tokyo: 12 listings
+- New York: 10 listings
+- London: 8 listings
+- Mumbai: 5 listings
+- Others: <5 each
+
+After Processing:
+──────────────────────────────────────────────────────────────────────────────────────────────────
+topLocations = ['Paris', 'Tokyo', 'New York', 'London', 'Mumbai']
+
+listingsByLocation = {
+    'Paris': [listing1, listing2, ..., listing15],
+    'Tokyo': [listing16, listing17, ..., listing27],
+    'New York': [listing28, ..., listing37],
+    'London': [listing38, ..., listing45],
+    'Mumbai': [listing46, ..., listing50]
+}
+
+Home Page Displays:
+──────────────────────────────────────────────────────────────────────────────────────────────────
+1. Featured Listings (first 12)
+2. Popular homes in Paris (first 10 of 15)
+3. Popular homes in Tokyo (first 10 of 12)
+4. Popular homes in New York (all 10)
+5. Popular homes in London (first 8)
+6. Popular homes in Mumbai (all 5)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎨 DESIGN FEATURES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Visual Elements:
+────────────────────────────────────────────────────────────────────────────────────────────────── 
+✓ Section heading with location name
+✓ Chevron icon that slides on hover
+✓ "Show all" link in top-right
+✓ Horizontal scroll with snap points
+✓ 270px wide cards (consistent with Airbnb)
+✓ Square property images (1:1 aspect ratio)
+✓ Guest favourite badge (white pill)
+✓ Heart icon for favorites
+✓ Star ratings
+✓ Price format: "₹X,XXX for 2 nights"
+
+Responsive Design:
+────────────────────────────────────────────────────────────────────────────────────────────────── 
+✓ Desktop: Multiple cards visible
+✓ Tablet: 2-3 cards visible
+✓ Mobile: 1 card at a time with smooth scroll
+✓ Touch-friendly swipe navigation
+✓ Hidden scrollbar for clean look
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔧 CUSTOMIZATION OPTIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+To Customize Section Titles:
+────────────────────────────────────────────────────────────────────────────────────────────────── 
+In home.ejs, change the title parameter:
+
+<%- include('./includes/location-section', { 
+    title: `Available in ${location} this weekend`,  // Custom title
+    location: location,
+    listings: locationListings
+}) %>
+
+To Change Number of Sections:
+────────────────────────────────────────────────────────────────────────────────────────────────── 
+In app.js, modify:
+
+.slice(0, 5)  →  .slice(0, 8)  // Show top 8 locations instead of 5
+
+To Change Cards Per Section:
+────────────────────────────────────────────────────────────────────────────────────────────────── 
+In home.ejs, modify:
+
+.slice(0, 10)  →  .slice(0, 15)  // Show 15 cards instead of 10
+
+To Add Custom Filtering:
+────────────────────────────────────────────────────────────────────────────────────────────────── 
+You can filter by:
+- Country: /listings?country=India
+- Location: /listings?location=Mumbai
+- Both: /listings?location=Mumbai&country=India
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🚀 PERFORMANCE CONSIDERATIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Current Implementation:
+────────────────────────────────────────────────────────────────────────────────────────────────── 
+✓ Fetches all listings once
+✓ Groups in-memory (fast)
+✓ No additional database queries
+✓ Efficient for small-medium datasets (< 1000 listings)
+
+For Large Datasets (>1000 listings):
+────────────────────────────────────────────────────────────────────────────────────────────────── 
+Consider using MongoDB aggregation:
+
+const locationStats = await Listing.aggregate([
+    { $group: { _id: '$location', count: { $sum: 1 } } },
+    { $sort: { count: -1 } },
+    { $limit: 5 }
+]);
+
+Then fetch only needed listings per location.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ BENEFITS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✓ Fully Dynamic - No hardcoded data
+✓ Automatic Updates - New listings appear immediately
+✓ Scalable - Works with any number of locations
+✓ Reusable - Component can be used anywhere
+✓ User-Friendly - Easy browse by location
+✓ SEO-Friendly - Clean URLs with query parameters
+✓ Mobile Responsive - Works on all devices
+✓ Airbnb-Style - Professional design matching industry standards
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📝 MAINTENANCE NOTES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Last Updated: October 30, 2025
+Feature: Location-Based Sections
+
+Future Enhancements:
+────────────────────────────────────────────────────────────────────────────────────────────────── 
+□ Add date-based filtering ("This weekend", "Next month")
+□ Implement user preferences for favorite locations
+□ Add trending/popular indicators
+□ Enable sorting within sections (price, rating, etc.)
+□ Add "Load more" for sections with >10 listings
+□ Implement caching for better performance
+□ Add analytics tracking for section clicks
+
+END OF DOCUMENTATION

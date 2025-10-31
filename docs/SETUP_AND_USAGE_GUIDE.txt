@@ -1,0 +1,310 @@
+╔═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                                 WANDERLUST SETUP AND USAGE GUIDE                                                ║
+╚═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+
+DATE: October 11, 2025
+PROJECT: Wanderlust - Travel Listing Platform
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+🚀 QUICK START GUIDE:
+
+This guide will help you set up and run the Wanderlust project on your local machine after a fresh PC reset.
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+📋 PREREQUISITES:
+
+Before starting, you need to install these essential tools:
+
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ 1. NODE.JS & NPM                                                                                                 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│   🔗 Download: https://nodejs.org/                                                                              │
+│   📝 Version: LTS (Long Term Support) - currently v18 or v20                                                    │
+│   ✅ Includes: npm (Node Package Manager) automatically                                                         │
+│   🔧 Verify: Open PowerShell and run:                                                                           │
+│      • node -v                                                                                                   │
+│      • npm -v                                                                                                    │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ 2. MONGODB (Choose ONE option)                                                                                   │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                                                   │
+│ OPTION A: Local MongoDB Installation                                                                             │
+│   🔗 Download: https://www.mongodb.com/try/download/community                                                    │
+│   📝 Choose: Windows x64, MSI installer                                                                          │
+│   ⚙️ Setup: Choose "Complete" installation, install as Windows Service                                           │
+│   🔧 Verify: MongoDB should auto-start as a service                                                             │
+│                                                                                                                   │
+│ OPTION B: MongoDB Atlas (Cloud - Recommended for beginners)                                                     │
+│   🔗 Sign up: https://www.mongodb.com/cloud/atlas                                                               │
+│   📝 Create: Free M0 cluster                                                                                     │
+│   🔑 Get: Connection string for your app                                                                         │
+│   📝 Update: MONGODB_URI in your app.js or create .env file                                                     │
+│                                                                                                                   │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ 3. VISUAL STUDIO CODE EXTENSIONS (Recommended)                                                                   │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│   • ES7+ React/Redux/React-Native snippets (for JavaScript shortcuts)                                          │
+│   • Prettier - Code formatter (for consistent code formatting)                                                  │
+│   • EJS language support (for .ejs template highlighting)                                                       │
+│   • MongoDB for VS Code (for database management)                                                               │
+│   • npm Intellisense (for package autocompletion)                                                               │
+│   • GitLens (for Git integration)                                                                                │
+│   • Thunder Client (for API testing - alternative to Postman)                                                   │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+⚙️ INSTALLATION STEPS:
+
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ STEP 1: Open Project in VS Code                                                                                  │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│   1. Open VS Code                                                                                                │
+│   2. File > Open Folder...                                                                                       │
+│   3. Navigate to: C:\Users\varda\OneDrive\Documents\CODE\Wanderlust                                             │
+│   4. Click "Select Folder"                                                                                       │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ STEP 2: Install Project Dependencies                                                                             │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│   1. Open Terminal in VS Code (Ctrl + ` or Terminal > New Terminal)                                             │
+│   2. Ensure you're in the Wanderlust directory:                                                                 │
+│      • cd C:\Users\varda\OneDrive\Documents\CODE\Wanderlust                                                     │
+│   3. Install all dependencies:                                                                                   │
+│      • npm install                                                                                               │
+│                                                                                                                   │
+│   This will install:                                                                                             │
+│   • express (web framework)                                                                                      │
+│   • mongoose (MongoDB ODM)                                                                                       │
+│   • ejs & ejs-mate (templating)                                                                                  │
+│   • passport & passport-local (authentication)                                                                   │
+│   • express-session (session management)                                                                         │
+│   • connect-flash (flash messages)                                                                               │
+│   • method-override (HTTP verb support)                                                                          │
+│   • nodemon (development server - auto-restart)                                                                  │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ STEP 3: Configure Database Connection                                                                            │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                                                   │
+│ IF USING LOCAL MONGODB:                                                                                          │
+│   • No changes needed - app.js defaults to localhost:27017                                                      │
+│   • Make sure MongoDB service is running in Windows Services                                                    │
+│                                                                                                                   │
+│ IF USING MONGODB ATLAS:                                                                                          │
+│   1. Create .env file in project root:                                                                          │
+│      • Right-click in Explorer > New File > ".env"                                                              │
+│   2. Add your connection string:                                                                                 │
+│      • MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/wanderlust                               │
+│   3. Install dotenv package:                                                                                     │
+│      • npm install dotenv                                                                                        │
+│   4. Add to top of app.js:                                                                                       │
+│      • require('dotenv').config();                                                                              │
+│                                                                                                                   │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ STEP 4: Seed Database (Optional but Recommended)                                                                 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│   1. Navigate to init folder:                                                                                    │
+│      • cd init                                                                                                   │
+│   2. Run the seeding script:                                                                                     │
+│      • node index.js                                                                                            │
+│   3. Return to main directory:                                                                                   │
+│      • cd ..                                                                                                     │
+│                                                                                                                   │
+│   This will populate your database with sample listings for testing.                                            │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ STEP 5: Start Development Server                                                                                 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│   1. In the main project directory, run:                                                                        │
+│      • npm run dev                                                                                               │
+│      • OR: npx nodemon app.js                                                                                    │
+│      • OR: node app.js (without auto-restart)                                                                   │
+│                                                                                                                   │
+│   2. Look for these success messages:                                                                            │
+│      • "Database connected"                                                                                      │
+│      • "🚀 Server running on port 8080"                                                                         │
+│      • "📱 Visit http://localhost:8080/listings"                                                                │
+│                                                                                                                   │
+│   3. Open your browser and visit:                                                                                │
+│      • http://localhost:8080 (homepage)                                                                         │
+│      • http://localhost:8080/listings (all listings)                                                            │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+🎯 USING THE APPLICATION:
+
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ MAIN FEATURES & HOW TO USE THEM:                                                                                 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                                                   │
+│ 🏠 HOMEPAGE (/)                                                                                                  │
+│   • View: Hero section with welcome message                                                                     │
+│   • Action: Click "Explore All Listings" to see all accommodations                                             │
+│   • Features: Featured listings grid (first 6 entries)                                                         │
+│                                                                                                                   │
+│ 📋 LISTINGS (/listings)                                                                                         │
+│   • View: Grid of all available listings                                                                        │
+│   • Actions:                                                                                                     │
+│     - Click any listing to view details                                                                         │
+│     - Click "Add New Listing" to create                                                                         │
+│     - Each card shows title, location, price, and image                                                         │
+│                                                                                                                   │
+│ ➕ CREATE LISTING (/listings/new)                                                                               │
+│   • Form fields: Title, Description, Price, Location, Country, Image URL                                       │
+│   • Auto-features: If no image provided, generates Unsplash image from location                                │
+│   • Validation: Title, description, price, location, and country are required                                  │
+│                                                                                                                   │
+│ 👁️ VIEW LISTING (/listings/:id)                                                                                │
+│   • Details: Full listing information with large image                                                          │
+│   • Reviews: See all reviews and ratings                                                                        │
+│   • Actions: Edit listing, Delete listing, Add review                                                           │
+│                                                                                                                   │
+│ ✏️ EDIT LISTING (/listings/:id/edit)                                                                            │
+│   • Pre-filled form with existing data                                                                          │
+│   • Update any field and save changes                                                                           │
+│   • Redirects to listing details after successful update                                                        │
+│                                                                                                                   │
+│ ⭐ REVIEWS (/listings/:id/reviews)                                                                               │
+│   • Add: Submit rating (1-5 stars) and written review                                                           │
+│   • View: See all reviews with ratings and timestamps                                                           │
+│   • Delete: Remove reviews (if implemented with authentication)                                                 │
+│                                                                                                                   │
+│ 🎢 EXPERIENCES (/experiences)                                                                                    │
+│   • Filter listings by price range and minimum rating                                                           │
+│   • Sort by: popularity, price (low to high), price (high to low), rating, newest                             │
+│   • Advanced MongoDB aggregation for complex queries                                                            │
+│                                                                                                                   │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+🛠️ DEVELOPMENT COMMANDS:
+
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ COMMAND                    │ DESCRIPTION                                                                        │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ npm install                │ Install all project dependencies                                                  │
+│ npm run dev                │ Start development server with auto-restart (nodemon)                             │
+│ npm start                  │ Start production server (no auto-restart)                                         │
+│ node app.js                │ Start server manually                                                             │
+│ node init/index.js         │ Seed database with sample data                                                    │
+│ npm install <package>      │ Add new dependency to project                                                     │
+│ npm install -g nodemon     │ Install nodemon globally (optional)                                               │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+🐛 TROUBLESHOOTING:
+
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ COMMON ISSUES & SOLUTIONS:                                                                                       │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                                                   │
+│ ❌ "npm is not recognized"                                                                                       │
+│   • Solution: Install Node.js from https://nodejs.org/                                                         │
+│   • Restart VS Code and terminal after installation                                                             │
+│                                                                                                                   │
+│ ❌ "nodemon is not recognized"                                                                                   │
+│   • Solution: Use 'npx nodemon app.js' instead of 'nodemon app.js'                                             │
+│   • OR: Install globally with 'npm install -g nodemon'                                                         │
+│                                                                                                                   │
+│ ❌ "MongooseError: Operation buffering timed out"                                                                │
+│   • Solution: MongoDB is not running or connection string is wrong                                              │
+│   • Check MongoDB service in Windows Services                                                                   │
+│   • Verify connection string in app.js or .env file                                                            │
+│                                                                                                                   │
+│ ❌ "Cannot find module './models/...' "                                                                          │
+│   • Solution: Check if model files exist in models/ folder                                                     │
+│   • Make sure file names match exactly (case-sensitive)                                                        │
+│                                                                                                                   │
+│ ❌ "SyntaxError: Unexpected token"                                                                               │
+│   • Solution: Check for typos in JavaScript files                                                              │
+│   • Look for missing commas, brackets, or quotes                                                               │
+│                                                                                                                   │
+│ ❌ "Port 8080 already in use"                                                                                    │
+│   • Solution: Stop other servers running on port 8080                                                          │
+│   • OR: Change port in app.js (const port = process.env.PORT || 3000;)                                        │
+│                                                                                                                   │
+│ ❌ "Failed to resolve view"                                                                                      │
+│   • Solution: Check if .ejs files exist in views/ folder                                                       │
+│   • Verify template paths in routes match actual file structure                                                │
+│                                                                                                                   │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+📱 TESTING YOUR APPLICATION:
+
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ BASIC TESTING CHECKLIST:                                                                                         │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│   ✅ Homepage loads correctly                                                                                    │
+│   ✅ Listings page shows grid of accommodations                                                                 │
+│   ✅ Individual listing pages display details                                                                    │
+│   ✅ Create new listing form works                                                                               │
+│   ✅ Edit listing form updates data                                                                              │
+│   ✅ Delete listing removes from database                                                                        │
+│   ✅ Review system allows adding reviews                                                                         │
+│   ✅ Error pages show for invalid URLs                                                                           │
+│   ✅ Images display correctly (Unsplash integration)                                                             │
+│   ✅ Responsive design works on mobile                                                                           │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+🚀 NEXT STEPS & IMPROVEMENTS:
+
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ POTENTIAL ENHANCEMENTS:                                                                                          │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│   🔐 User Authentication: Implement login/signup system                                                         │
+│   🖼️ Image Upload: Add file upload for custom images                                                           │
+│   🔍 Search: Add search functionality by title/location                                                         │
+│   📍 Maps: Integrate Google Maps for listing locations                                                          │
+│   💳 Payments: Add booking and payment processing                                                               │
+│   📧 Email: Send confirmation emails for bookings                                                               │
+│   🌟 Favorites: Allow users to save favorite listings                                                           │
+│   📊 Dashboard: Admin panel for managing listings                                                               │
+│   🎨 Themes: Add dark mode and custom themes                                                                    │
+│   📱 PWA: Convert to Progressive Web App                                                                        │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+📞 GETTING HELP:
+
+• Documentation: Check the other documentation files in this project
+• VS Code: Use F1 > "Help" for VS Code features
+• Node.js: https://nodejs.org/en/docs/
+• Express.js: https://expressjs.com/
+• MongoDB: https://docs.mongodb.com/
+• Mongoose: https://mongoosejs.com/docs/
+• EJS: https://ejs.co/
+• Bootstrap: https://getbootstrap.com/docs/
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+🎉 CONGRATULATIONS!
+
+You now have a fully functional travel listing platform running on your machine. The Wanderlust application 
+allows users to browse, create, edit, and review travel accommodations with a modern, responsive interface.
+
+Happy coding! 🚀
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+Created by: GitHub Copilot
+Last Updated: October 11, 2025

@@ -2,11 +2,9 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const reviewSchema = new Schema({
-    comment: {
+    body: {
         type: String,
-        required: true,
-        minlength: 10,
-        maxlength: 500
+        required: true
     },
     rating: {
         type: Number,
@@ -15,8 +13,8 @@ const reviewSchema = new Schema({
         max: 5
     },
     author: {
-        type: String,
-        default: 'Anonymous'
+        type: Schema.Types.ObjectId,
+        ref: 'User'
     },
     createdAt: {
         type: Date,
@@ -24,5 +22,4 @@ const reviewSchema = new Schema({
     }
 });
 
-const Review = mongoose.model('Review', reviewSchema);
-module.exports = Review;
+module.exports = mongoose.model('Review', reviewSchema);

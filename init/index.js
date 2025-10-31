@@ -2,9 +2,10 @@ const mongoose = require('mongoose');
 const data = require('./data');
 const Listing = require('../models/listing');
 
-// Connect to MongoDB - FIXED to match app.js
+// Connect to MongoDB - Use same connection string as app.js
 async function main() {
-    await mongoose.connect('mongodb://127.0.0.1:27017/wanderlust'); // Changed this line
+    const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/wanderlust';
+    await mongoose.connect(MONGODB_URI);
 
     // Seed the database
     await Listing.deleteMany({});

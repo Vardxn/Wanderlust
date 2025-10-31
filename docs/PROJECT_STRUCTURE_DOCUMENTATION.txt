@@ -1,0 +1,167 @@
+╔═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                                    WANDERLUST PROJECT STRUCTURE DOCUMENTATION                                    ║
+╚═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+
+DATE: October 11, 2025
+PROJECT: Wanderlust - Travel Listing Platform
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+📁 PROJECT DIRECTORY STRUCTURE:
+
+Wanderlust/
+├── 📄 app.js                          # Main application entry point (Express server)
+├── 📄 error.ejs                       # Error page template
+├── 📄 home.ejs                        # Home page template (should be in views/)
+├── 📄 generate_project_docs.ps1       # PowerShell script for documentation
+├── 📄 package.json                    # Node.js project configuration and dependencies
+├── 📄 schema.js                       # Database schema validation (JOI)
+│
+├── 📁 init/                           # Database initialization scripts
+│   ├── 📄 data.js                     # Sample data for seeding database
+│   └── 📄 index.js                    # Script to seed database with sample data
+│
+├── 📁 layouts/                        # EJS layout templates (should be in views/layouts/)
+│   └── 📄 boilerplate.ejs             # Main layout template with header, footer, scripts
+│
+├── 📁 models/                         # MongoDB/Mongoose data models
+│   ├── 📄 listing.js                  # Listing model (travel accommodations)
+│   ├── 📄 listings.js                 # Additional listing utilities
+│   ├── 📄 review.js                   # Review model (user reviews)
+│   └── 📄 user.js                     # User model (authentication)
+│
+├── 📁 public/                         # Static files (CSS, JS, images)
+│   ├── 📁 CSS/                        # Stylesheets
+│   └── 📁 js/                         # Client-side JavaScript
+│
+├── 📁 utils/                          # Utility functions
+│   ├── 📄 ExpressError.js             # Custom error handling class
+│   └── 📄 wrapAsync.js                # Async error wrapper function
+│
+└── 📁 views/                          # EJS view templates
+    ├── 📄 error.ejs                   # Error page template
+    ├── 📄 home.ejs                    # Homepage template
+    │
+    ├── 📁 experiences/                # Experience-related views
+    │   └── [Experience templates]
+    │
+    ├── 📁 includes/                   # Reusable template partials
+    │   └── [Partial templates]
+    │
+    ├── 📁 layouts/                    # Layout templates
+    │   └── 📄 boilerplate.ejs         # Main layout wrapper
+    │
+    ├── 📁 listings/                   # Listing-related views
+    │   ├── 📄 index.ejs               # All listings page
+    │   ├── 📄 new.ejs                 # Create new listing form
+    │   ├── 📄 show.ejs                # Individual listing details
+    │   └── 📄 edit.ejs                # Edit listing form
+    │
+    └── 📁 sections/                   # Page sections/components
+        └── [Section templates]
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+📄 KEY FILE DESCRIPTIONS:
+
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ BACKEND FILES                                                                                                     │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ 📄 app.js               │ Main Express server with routes, middleware, and configuration                        │
+│ 📄 package.json         │ Project metadata, dependencies, and npm scripts                                       │
+│ 📄 schema.js            │ JOI validation schemas for request data                                               │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ MODELS (Database Layer)                                                                                          │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ 📄 models/listing.js    │ Mongoose schema for travel listings (title, description, price, location)            │
+│ 📄 models/review.js     │ Mongoose schema for user reviews (rating, body, author)                              │
+│ 📄 models/user.js       │ Mongoose schema for user authentication (passport-local-mongoose)                    │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ UTILITIES                                                                                                        │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ 📄 utils/ExpressError.js│ Custom error class for handling HTTP errors with status codes                        │
+│ 📄 utils/wrapAsync.js   │ Wrapper function to catch async errors in route handlers                              │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ DATABASE INITIALIZATION                                                                                          │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ 📄 init/data.js         │ Sample listing data for database seeding                                             │
+│ 📄 init/index.js        │ Script to populate database with initial data                                        │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ FRONTEND FILES                                                                                                    │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ VIEW TEMPLATES (EJS)                                                                                             │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ 📄 views/home.ejs       │ Homepage with hero section and featured listings                                      │
+│ 📄 views/error.ejs      │ Error page template for handling 404 and 500 errors                                  │
+│ 📄 layouts/boilerplate.ejs │ Main layout template with Bootstrap, navigation, and footer                       │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LISTING VIEWS                                                                                                    │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ 📄 views/listings/index.ejs │ Display all listings in a grid layout                                            │
+│ 📄 views/listings/show.ejs  │ Individual listing details with reviews                                           │
+│ 📄 views/listings/new.ejs   │ Form to create a new listing                                                      │
+│ 📄 views/listings/edit.ejs  │ Form to edit existing listing                                                     │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ INCLUDES & PARTIALS                                                                                              │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ 📁 views/includes/      │ Reusable template components (navigation, cards, forms)                               │
+│ 📁 views/sections/      │ Page-specific sections and components                                                 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ STATIC ASSETS                                                                                                    │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ 📁 public/CSS/          │ Custom stylesheets for application styling                                           │
+│ 📁 public/js/           │ Client-side JavaScript for interactive features                                       │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+🗂️ FOLDER ORGANIZATION:
+
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ BACKEND STRUCTURE (MVC Pattern)                                                                                  │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ 📁 models/              │ Data models and database schemas (MongoDB/Mongoose)                                   │
+│ 📁 views/               │ Template files for rendering HTML (EJS templates)                                     │
+│ 📁 controllers/         │ Route handlers and business logic (integrated into app.js)                           │
+│ 📁 utils/               │ Helper functions and utilities                                                        │
+│ 📁 init/                │ Database seeding and initialization scripts                                           │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ FRONTEND STRUCTURE                                                                                               │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ 📁 views/layouts/       │ Base templates and page layouts                                                       │
+│ 📁 views/includes/      │ Reusable template components                                                          │
+│ 📁 views/listings/      │ Listing-specific pages (CRUD operations)                                             │
+│ 📁 views/experiences/   │ Experience/activity related pages                                                     │
+│ 📁 public/CSS/          │ Stylesheets and design assets                                                        │
+│ 📁 public/js/           │ Client-side JavaScript functionality                                                  │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+📋 CONFIGURATION FILES:
+
+• package.json           - Project dependencies, scripts, and metadata
+• app.js                 - Server configuration, middleware, and routes
+• schema.js              - Data validation schemas using JOI
+• generate_project_docs.ps1 - PowerShell script for documentation generation
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+🔍 NOTES:
+
+1. Some template files are misplaced (home.ejs and error.ejs in root instead of views/)
+2. The project follows a traditional Node.js/Express MVC architecture
+3. Uses MongoDB with Mongoose ODM for database operations
+4. EJS templating engine with Bootstrap for responsive design
+5. Passport.js for authentication with local strategy
+6. Express sessions for user state management
+7. Flash messages for user notifications
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+Created by: GitHub Copilot
+Last Updated: October 11, 2025

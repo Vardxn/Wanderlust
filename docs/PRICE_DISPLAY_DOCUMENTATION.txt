@@ -1,0 +1,284 @@
+╔════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                         WANDERLUST - PRICE DISPLAY DOCUMENTATION                               ║
+║                         Consistent Price Formatting Across Project                             ║
+╚════════════════════════════════════════════════════════════════════════════════════════════════╝
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📌 OVERVIEW
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+All listing prices throughout the Wanderlust project are now consistently formatted using the same
+pattern to ensure uniform display across all pages and components.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎯 PRICE FORMATTING STANDARD
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ CORRECT FORMAT:
+   ₹<%= listing.price.toLocaleString() %>
+
+   Examples:
+   - listing.price = 5000    → Display: ₹5,000
+   - listing.price = 50000   → Display: ₹50,000
+   - listing.price = 500000  → Display: ₹5,00,000
+
+❌ INCORRECT FORMAT (DO NOT USE):
+   ₹<%= listing.price %>
+   
+   This displays prices without thousands separators (e.g., ₹50000 instead of ₹50,000)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📂 FILES USING PRICE DISPLAY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ 1. LISTING CARD COMPONENT (Shared Component)                                                  │
+├────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ File: views/includes/listing-card.ejs                                                         │
+│ Usage: Used by multiple pages (All Listings, Search Results, etc.)                           │
+│                                                                                                │
+│ Price Display:                                                                                 │
+│   <p class="mb-0">                                                                            │
+│     <span class="fw-bold">₹<%= listing.price.toLocaleString() %></span> night                │
+│   </p>                                                                                        │
+│                                                                                                │
+│ Location: Bottom of card, below location info                                                 │
+└────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ 2. HOME PAGE (Featured Listings Carousel)                                                     │
+├────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ File: views/home.ejs                                                                          │
+│ Usage: Homepage featured section with horizontal scroll                                       │
+│                                                                                                │
+│ Price Display (2 locations):                                                                  │
+│                                                                                                │
+│ A) Price Tag Overlay (on image):                                                              │
+│    <div class="price-tag">₹<%= listing.price.toLocaleString() %></div>                       │
+│    Style: Semi-transparent black overlay, bottom-left corner of image                         │
+│                                                                                                │
+│ B) Price Below Card:                                                                           │
+│    <p class="property-price">                                                                 │
+│      <span class="price-amount">₹<%= listing.price.toLocaleString() %></span> night          │
+│    </p>                                                                                       │
+│    Style: Regular text below property info                                                    │
+└────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ 3. ALL LISTINGS PAGE                                                                          │
+├────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ File: views/listings/index.ejs                                                                │
+│ Usage: Grid view of all listings                                                              │
+│                                                                                                │
+│ Price Display:                                                                                 │
+│   Uses the shared listing-card.ejs component (see #1 above)                                  │
+│                                                                                                │
+│ Code:                                                                                          │
+│   <%- include('../includes/listing-card', { listing: listing }) %>                           │
+└────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ 4. INDIVIDUAL LISTING PAGE (Show Page)                                                        │
+├────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ File: views/listings/show.ejs                                                                 │
+│ Usage: Detailed view of a single listing                                                      │
+│                                                                                                │
+│ Price Display (Multiple locations):                                                           │
+│                                                                                                │
+│ A) Main Price (top section):                                                                  │
+│    <h3 class="fw-bold mb-0">₹<%= listing.price.toLocaleString() %></h3>                      │
+│                                                                                                │
+│ B) Booking Card Header:                                                                        │
+│    <h3 class="fw-bold mb-0">                                                                  │
+│      ₹<%= listing.price.toLocaleString() %>                                                   │
+│      <small class="text-muted fs-6">/ night</small>                                          │
+│    </h3>                                                                                      │
+│                                                                                                │
+│ C) Price Breakdown (in booking card):                                                         │
+│    - Per night: ₹<%= listing.price.toLocaleString() %> x 5 nights                           │
+│    - Total nights: ₹<%= (listing.price * 5).toLocaleString() %>                             │
+│    - Service fee: ₹<%= Math.round(listing.price * 0.1).toLocaleString() %>                  │
+│    - Grand total: ₹<%= (listing.price * 5 + Math.round(listing.price * 0.1))                │
+│                       .toLocaleString() %>                                                    │
+└────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ 5. CITY SECTION PAGES (Static Examples)                                                       │
+├────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ Files:                                                                                         │
+│   - views/sections/new-york.ejs                                                               │
+│   - views/sections/paris.ejs                                                                  │
+│   - views/sections/tokyo.ejs                                                                  │
+│   - views/sections/london.ejs                                                                 │
+│   - views/sections/venice.ejs                                                                 │
+│                                                                                                │
+│ Usage: Showcase sections for specific cities (static content)                                 │
+│                                                                                                │
+│ Price Display:                                                                                 │
+│   <div class="price-tag">₹XX,XXX</div>                                                       │
+│                                                                                                │
+│ Note: These use hardcoded prices since they're static examples, not database listings         │
+└────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔧 TECHNICAL IMPLEMENTATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+METHOD: .toLocaleString()
+────────────────────────────────────────────────────────────────────────────────────────────────
+
+The JavaScript .toLocaleString() method formats numbers with locale-specific separators.
+
+In Indian locale (default):
+  - 1000 → 1,000
+  - 10000 → 10,000
+  - 100000 → 1,00,000
+  - 1000000 → 10,00,000
+
+For calculations involving prices:
+  - Simple display: listing.price.toLocaleString()
+  - After calculation: (listing.price * 5).toLocaleString()
+  - With rounding: Math.round(listing.price * 0.1).toLocaleString()
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📋 PRICE DISPLAY PATTERNS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ PATTERN 1: Simple Price Display                                                               │
+├────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ Usage: Standard price display in cards and lists                                             │
+│                                                                                                │
+│ Code:                                                                                          │
+│   ₹<%= listing.price.toLocaleString() %>                                                      │
+│                                                                                                │
+│ Example Output:                                                                                │
+│   ₹50,000                                                                                      │
+└────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ PATTERN 2: Price with "night" Label                                                           │
+├────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ Usage: Indicates per-night pricing                                                            │
+│                                                                                                │
+│ Code:                                                                                          │
+│   <span class="fw-bold">₹<%= listing.price.toLocaleString() %></span> night                  │
+│                                                                                                │
+│ Example Output:                                                                                │
+│   ₹50,000 night                                                                                │
+└────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ PATTERN 3: Price with "/ night" Label                                                         │
+├────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ Usage: Alternative per-night format with slash                                                │
+│                                                                                                │
+│ Code:                                                                                          │
+│   ₹<%= listing.price.toLocaleString() %> <small>/ night</small>                              │
+│                                                                                                │
+│ Example Output:                                                                                │
+│   ₹50,000 / night                                                                              │
+└────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ PATTERN 4: Calculated Price Display                                                           │
+├────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ Usage: For totals, service fees, etc.                                                         │
+│                                                                                                │
+│ Code Examples:                                                                                 │
+│   ₹<%= (listing.price * 5).toLocaleString() %>                     // 5 nights total         │
+│   ₹<%= Math.round(listing.price * 0.1).toLocaleString() %>         // 10% service fee        │
+│   ₹<%= (listing.price * nights + serviceFee).toLocaleString() %>   // Grand total            │
+│                                                                                                │
+│ Example Output:                                                                                │
+│   ₹2,50,000 (for 5 nights at ₹50,000/night)                                                   │
+└────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ CONSISTENCY CHECKLIST
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+When adding or modifying price displays, ensure:
+
+☑ Always use .toLocaleString() for number formatting
+☑ Use ₹ (Indian Rupee symbol) as currency symbol
+☑ Place currency symbol before the amount
+☑ Add spacing appropriately (e.g., "₹50,000 night" not "₹50,000night")
+☑ Use consistent font-weight for price amounts
+☑ Maintain consistent "night" label format within the same component
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎨 CSS CLASSES FOR PRICE STYLING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+.price-tag
+  - Semi-transparent black overlay
+  - Positioned absolute on image (bottom-left)
+  - White text
+  - Used in home page carousel and city sections
+
+.price-amount
+  - Font-weight: 600 (semi-bold)
+  - Used for emphasizing the price number
+  - Typically black color
+
+.property-price
+  - Container for price display
+  - Standard text styling
+  - Margin-top: 6px
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📝 MAINTENANCE NOTES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Last Updated: October 30, 2025
+Updated By: System
+Changes Made:
+  - Fixed listing-card.ejs to use .toLocaleString() for price display
+  - Ensured consistency across all listing pages
+  - Standardized price formatting throughout the project
+
+Previous Issues:
+  - listing-card.ejs was displaying prices without thousand separators
+  - Inconsistency between home page and all listings page
+
+Current Status:
+  ✅ All dynamic listing prices now use .toLocaleString()
+  ✅ Consistent formatting across all pages
+  ✅ Proper Indian number formatting (lakhs system)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔍 TESTING CHECKLIST
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+To verify price consistency across the project:
+
+1. Home Page (/):
+   ☑ Check featured listings carousel - both price tag and text display
+   ☑ Verify thousands separators appear correctly
+
+2. All Listings Page (/listings):
+   ☑ Check grid of all listings
+   ☑ Verify price format matches home page
+
+3. Individual Listing Page (/listings/:id):
+   ☑ Check main price display
+   ☑ Check booking card price
+   ☑ Check price breakdown calculations
+   ☑ Verify all calculated prices (totals, service fees) format correctly
+
+4. City Sections:
+   ☑ Verify static prices display correctly (these are hardcoded)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+END OF DOCUMENTATION

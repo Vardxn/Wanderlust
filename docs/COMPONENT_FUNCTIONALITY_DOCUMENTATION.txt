@@ -1,0 +1,280 @@
+╔═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                             WANDERLUST COMPONENT FUNCTIONALITY DOCUMENTATION                                     ║
+╚═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+
+DATE: October 11, 2025
+PROJECT: Wanderlust - Travel Listing Platform
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+🏗️ APPLICATION ARCHITECTURE OVERVIEW:
+
+The Wanderlust project follows a traditional MVC (Model-View-Controller) architecture built with Node.js, Express.js,
+and MongoDB. Here's how all components work together:
+
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   CLIENT        │    │   EXPRESS       │    │   MONGOOSE      │    │   MONGODB       │
+│   (Browser)     │◄──►│   SERVER        │◄──►│   MODELS        │◄──►│   DATABASE      │
+│                 │    │   (Routes)      │    │                 │    │                 │
+└─────────────────┘    └─────────────────┘    └─────────────────┘    └─────────────────┘
+         ▲                        ▲                        ▲
+         │                        │                        │
+         ▼                        ▼                        ▼
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   EJS           │    │   MIDDLEWARE    │    │   VALIDATION    │
+│   TEMPLATES     │    │   & AUTH        │    │   SCHEMAS       │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+🧩 COMPONENT BREAKDOWN:
+
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ 1. SERVER LAYER (app.js)                                                                                         │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                                                   │
+│ 🔧 EXPRESS SERVER SETUP:                                                                                         │
+│   • Initializes Express application                                                                              │
+│   • Configures middleware (sessions, flash, passport, static files)                                             │
+│   • Sets up EJS templating engine with ejs-mate for layouts                                                     │
+│   • Connects to MongoDB database via Mongoose                                                                    │
+│                                                                                                                   │
+│ 🔐 AUTHENTICATION MIDDLEWARE:                                                                                     │
+│   • Passport.js with LocalStrategy for user login/signup                                                        │
+│   • Express sessions for maintaining user state                                                                  │
+│   • Flash messages for user feedback                                                                             │
+│                                                                                                                   │
+│ 🛣️ ROUTE HANDLERS:                                                                                               │
+│   • Home route (/) - displays featured listings                                                                  │
+│   • Listing CRUD routes (/listings/*)                                                                            │
+│   • Review CRUD routes (/listings/:id/reviews/*)                                                                 │
+│   • Experience filtering route (/experiences)                                                                    │
+│   • Error handling (404 and general errors)                                                                      │
+│                                                                                                                   │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ 2. DATA LAYER (models/)                                                                                          │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                                                   │
+│ 📄 LISTING MODEL (listing.js):                                                                                   │
+│   • Schema: title, description, image{url, filename}, price, location, country, reviews[], createdAt            │
+│   • Relationships: Has many reviews (references Review model)                                                    │
+│   • Pre-validate hook: Auto-generates Unsplash images if no custom image provided                               │
+│   • Post-delete hook: Cascades deletion to associated reviews                                                    │
+│                                                                                                                   │
+│ 📄 REVIEW MODEL (review.js):                                                                                     │
+│   • Schema: body, rating (1-5), author (User reference), createdAt                                              │
+│   • Relationships: Belongs to User and Listing                                                                   │
+│   • Validation: Required body and rating, rating constrained to 1-5                                             │
+│                                                                                                                   │
+│ 📄 USER MODEL (user.js):                                                                                         │
+│   • Schema: email (unique), plus passport-local-mongoose fields                                                  │
+│   • Authentication: Uses passport-local-mongoose plugin for username/password                                    │
+│   • Provides: authenticate(), serializeUser(), deserializeUser() methods                                        │
+│                                                                                                                   │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ 3. VIEW LAYER (views/)                                                                                           │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                                                   │
+│ 🎨 LAYOUT SYSTEM (EJS + ejs-mate):                                                                               │
+│   • boilerplate.ejs: Main layout with Bootstrap, navigation, flash messages                                     │
+│   • All pages extend this layout using <% layout('../layouts/boilerplate') %>                                  │
+│                                                                                                                   │
+│ 🏠 PAGE TEMPLATES:                                                                                               │
+│   • home.ejs: Hero section + featured listings grid                                                             │
+│   • error.ejs: Error page with status code and message                                                          │
+│                                                                                                                   │
+│ 📋 LISTING TEMPLATES:                                                                                            │
+│   • listings/index.ejs: Grid of all listings with search/filter                                                 │
+│   • listings/show.ejs: Individual listing details + reviews                                                     │
+│   • listings/new.ejs: Form to create new listing                                                                │
+│   • listings/edit.ejs: Form to edit existing listing                                                            │
+│                                                                                                                   │
+│ 🎢 EXPERIENCE TEMPLATES:                                                                                         │
+│   • experiences/index.ejs: Filtered listings with sorting options                                               │
+│                                                                                                                   │
+│ 🧩 REUSABLE COMPONENTS:                                                                                          │
+│   • includes/: Partial templates for navigation, cards, forms                                                    │
+│   • sections/: Page-specific sections and components                                                             │
+│                                                                                                                   │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+🔄 DATA FLOW WALKTHROUGH:
+
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ EXAMPLE: User Views All Listings                                                                                 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                                                   │
+│ 1. 🌐 USER REQUEST:                                                                                              │
+│    • User clicks "Explore All Listings" or navigates to "/listings"                                            │
+│                                                                                                                   │
+│ 2. 🛣️ ROUTE HANDLING:                                                                                            │
+│    • Express matches GET /listings route in app.js                                                              │
+│    • Route handler: app.get('/listings', wrapAsync(async (req, res) => {...}))                                 │
+│                                                                                                                   │
+│ 3. 🗄️ DATABASE QUERY:                                                                                            │
+│    • const listings = await Listing.find({});                                                                   │
+│    • Mongoose queries MongoDB for all listing documents                                                         │
+│    • Returns array of listing objects                                                                           │
+│                                                                                                                   │
+│ 4. 🎨 TEMPLATE RENDERING:                                                                                        │
+│    • res.render('listings/index', { listings, pageTitle: 'All Listings' });                                   │
+│    • EJS processes listings/index.ejs template                                                                  │
+│    • Template extends layouts/boilerplate.ejs                                                                   │
+│    • Loops through listings array to generate HTML cards                                                        │
+│                                                                                                                   │
+│ 5. 📤 RESPONSE:                                                                                                  │
+│    • Complete HTML page sent back to browser                                                                    │
+│    • Browser renders the listing grid with Bootstrap styling                                                    │
+│                                                                                                                   │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ EXAMPLE: User Creates New Listing                                                                                │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                                                   │
+│ 1. 🌐 FORM DISPLAY:                                                                                              │
+│    • GET /listings/new → renders listings/new.ejs with form                                                     │
+│                                                                                                                   │
+│ 2. 📝 FORM SUBMISSION:                                                                                           │
+│    • User fills form and submits via POST /listings                                                             │
+│    • Express body-parser middleware parses form data                                                            │
+│                                                                                                                   │
+│ 3. ✅ VALIDATION:                                                                                                │
+│    • validateListing middleware checks data (can use JOI schemas)                                               │
+│    • If invalid, returns error; if valid, proceeds                                                              │
+│                                                                                                                   │
+│ 4. 💾 DATABASE SAVE:                                                                                             │
+│    • const listing = new Listing(req.body);                                                                     │
+│    • await listing.save();                                                                                      │
+│    • Mongoose creates new document in MongoDB                                                                   │
+│    • Pre-validate hook generates Unsplash image if needed                                                       │
+│                                                                                                                   │
+│ 5. 🔄 REDIRECT:                                                                                                  │
+│    • res.redirect(`/listings/${listing._id}`);                                                                  │
+│    • User redirected to view their new listing                                                                  │
+│                                                                                                                   │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+🔧 MIDDLEWARE STACK:
+
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ ORDER OF MIDDLEWARE EXECUTION:                                                                                   │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                                                   │
+│ 1. 📦 BODY PARSING: express.urlencoded() - parses form data                                                     │
+│ 2. 🔄 METHOD OVERRIDE: methodOverride('_method') - enables PUT/DELETE in forms                                  │
+│ 3. 📁 STATIC FILES: express.static() - serves CSS, JS, images from public/                                      │
+│ 4. 🍪 SESSION: express-session - manages user sessions                                                          │
+│ 5. 💬 FLASH: connect-flash - enables success/error messages                                                     │
+│ 6. 🔐 PASSPORT: passport.initialize() & passport.session() - authentication                                     │
+│ 7. 🌐 LOCALS: Custom middleware - sets res.locals for templates                                                 │
+│ 8. 🛣️ ROUTES: Individual route handlers                                                                         │
+│ 9. ❌ ERROR: Error handling middleware (catch-all)                                                              │
+│                                                                                                                   │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+🔗 COMPONENT RELATIONSHIPS:
+
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ DATABASE RELATIONSHIPS:                                                                                          │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                                                   │
+│ User ──── 1:Many ──── Review ──── Many:1 ──── Listing                                                           │
+│  │                      │                       │                                                               │
+│  │                      │                       │                                                               │
+│  └─ email (unique)      ├─ body                 ├─ title                                                        │
+│     username            ├─ rating (1-5)         ├─ description                                                  │
+│     password (hashed)   ├─ author (User._id)    ├─ image {url, filename}                                       │
+│                         ├─ createdAt            ├─ price                                                        │
+│                         └─ listing (implied)    ├─ location                                                     │
+│                                                 ├─ country                                                      │
+│                                                 ├─ reviews[] (Review._id)                                       │
+│                                                 └─ createdAt                                                    │
+│                                                                                                                   │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ TEMPLATE RELATIONSHIPS:                                                                                          │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                                                   │
+│ layouts/boilerplate.ejs (Base Template)                                                                         │
+│         │                                                                                                        │
+│         ├── home.ejs (extends boilerplate)                                                                      │
+│         ├── error.ejs (extends boilerplate)                                                                     │
+│         ├── listings/index.ejs (extends boilerplate)                                                           │
+│         │    └── includes/listing-card.ejs (partial)                                                            │
+│         ├── listings/show.ejs (extends boilerplate)                                                             │
+│         │    └── includes/review-form.ejs (partial)                                                             │
+│         ├── listings/new.ejs (extends boilerplate)                                                              │
+│         ├── listings/edit.ejs (extends boilerplate)                                                             │
+│         └── experiences/index.ejs (extends boilerplate)                                                         │
+│                                                                                                                   │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+🚀 KEY FEATURES & FUNCTIONALITY:
+
+🏠 HOMEPAGE:
+   • Hero section with call-to-action
+   • Featured listings grid (first 6 listings)
+   • Responsive design with Bootstrap
+
+📋 LISTING MANAGEMENT:
+   • Create: Form validation, auto-image generation
+   • Read: Grid view, individual listing pages
+   • Update: Edit forms with pre-populated data
+   • Delete: Cascade delete reviews when listing deleted
+
+⭐ REVIEW SYSTEM:
+   • Star ratings (1-5)
+   • Text reviews
+   • Associate reviews with listings and users
+   • Display average ratings and review counts
+
+🔍 EXPERIENCES/FILTERING:
+   • Sort by: popularity, price (low/high), rating, newest
+   • Filter by: price range, minimum rating
+   • MongoDB aggregation pipeline for complex queries
+
+🔐 AUTHENTICATION:
+   • User registration and login
+   • Password hashing via passport-local-mongoose
+   • Session management
+   • Protected routes (can be extended)
+
+💬 USER FEEDBACK:
+   • Flash messages for success/error notifications
+   • Form validation feedback
+   • Error pages with helpful messages
+
+🎨 UI/UX:
+   • Responsive Bootstrap design
+   • Unsplash integration for beautiful images
+   • Clean, modern interface
+   • Consistent layout across pages
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+🛠️ UTILITY FUNCTIONS:
+
+• wrapAsync(): Catches async errors in route handlers
+• ExpressError: Custom error class with status codes
+• validateListing(): Middleware for listing data validation
+• validateReview(): Middleware for review data validation
+• unsplashForPlace(): Generates Unsplash URLs for location images
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+Created by: GitHub Copilot
+Last Updated: October 11, 2025

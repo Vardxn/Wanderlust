@@ -1,0 +1,208 @@
+<% layout('../layouts/boilerplate') %>
+
+<div class="container py-5">
+    <div class="row">
+        <!-- Left Column - Image and Details -->
+        <div class="col-lg-8">
+            <!-- Main Image -->
+            <div class="mb-4">
+                <img src="<%= listing.image.url %>" 
+                     alt="<%= listing.title %>" 
+                     class="img-fluid rounded-3 w-100"
+                     style="max-height: 500px; object-fit: cover;">
+            </div>
+
+            <!-- Listing Details -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h1 class="h2 fw-bold mb-3"><%= listing.title %></h1>
+                    <p class="text-muted mb-3">
+                        <i class="bi bi-geo-alt-fill"></i> <%= listing.location %>, <%= listing.country %>
+                    </p>
+                    
+                    <hr class="my-4">
+                    
+                    <h4 class="fw-semibold mb-3">About this place</h4>
+                    <p class="text-secondary"><%= listing.description %></p>
+                    
+                    <hr class="my-4">
+                    
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="text-muted">Price per night</span>
+                            <h3 class="fw-bold mb-0">₹<%= listing.price.toLocaleString() %></h3>
+                        </div>
+                        <div>
+                            <a href="/listings/<%= listing._id %>/edit" class="btn btn-outline-primary me-2">
+                                <i class="bi bi-pencil-fill"></i> Edit
+                            </a>
+                            <form action="/listings/<%= listing._id %>?_method=DELETE" method="POST" class="d-inline">
+                                <button class="btn btn-outline-danger" onclick="return confirm('Are you sure you want to delete this listing?')">
+                                    <i class="bi bi-trash-fill"></i> Delete
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reviews Section -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h4 class="fw-semibold mb-4">
+                        <i class="bi bi-star-fill text-warning"></i> Reviews
+                        <% if (listing.reviews && listing.reviews.length > 0) { %>
+                            <span class="badge bg-secondary ms-2"><%= listing.reviews.length %></span>
+                        <% } %>
+                    </h4>
+
+                    <!-- Add Review Form -->
+                    <div class="mb-4 p-4 bg-light rounded-3">
+                        <h5 class="fw-semibold mb-3">Leave a Review</h5>
+                        <form action="/listings/<%= listing._id %>/reviews" method="POST">
+                            <div class="mb-3">
+                                <label for="rating" class="form-label">Rating</label>
+                                <select class="form-select" id="rating" name="review[rating]" required>
+                                    <option value="">Select rating...</option>
+                                    <option value="5">⭐⭐⭐⭐⭐ Excellent</option>
+                                    <option value="4">⭐⭐⭐⭐ Very Good</option>
+                                    <option value="3">⭐⭐⭐ Good</option>
+                                    <option value="2">⭐⭐ Fair</option>
+                                    <option value="1">⭐ Poor</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="comment" class="form-label">Comment</label>
+                                <textarea class="form-control" 
+                                          id="comment" 
+                                          name="review[comment]" 
+                                          rows="3" 
+                                          placeholder="Share your experience..." 
+                                          required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-send-fill"></i> Submit Review
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Display Reviews -->
+                    <% if (listing.reviews && listing.reviews.length > 0) { %>
+                        <div class="reviews-list">
+                            <% listing.reviews.forEach(review => { %>
+                                <div class="review-item mb-4 pb-4 border-bottom">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div>
+                                            <div class="mb-1">
+                                                <% for(let i = 0; i < 5; i++) { %>
+                                                    <i class="bi bi-star-fill <%= i < review.rating ? 'text-warning' : 'text-muted' %>"></i>
+                                                <% } %>
+                                            </div>
+                                            <small class="text-muted">
+                                                <%= review.createdAt ? new Date(review.createdAt).toLocaleDateString('en-US', { 
+                                                    year: 'numeric', 
+                                                    month: 'long', 
+                                                    day: 'numeric' 
+                                                }) : 'Recently' %>
+                                            </small>
+                                        </div>
+                                        <form action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE" 
+                                              method="POST" 
+                                              class="d-inline">
+                                            <button class="btn btn-sm btn-outline-danger" 
+                                                    onclick="return confirm('Delete this review?')">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <p class="mb-0 text-secondary"><%= review.comment %></p>
+                                </div>
+                            <% }) %>
+                        </div>
+                    <% } else { %>
+                        <div class="text-center py-4">
+                            <i class="bi bi-chat-quote text-muted" style="font-size: 3rem;"></i>
+                            <p class="text-muted mt-3">No reviews yet. Be the first to review!</p>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column - Booking Card -->
+        <div class="col-lg-4">
+            <div class="card border shadow-sm sticky-top" style="top: 100px;">
+                <div class="card-body p-4">
+                    <div class="mb-3">
+                        <h3 class="fw-bold mb-0">₹<%= listing.price.toLocaleString() %> <small class="text-muted fs-6">/ night</small></h3>
+                    </div>
+                    
+                    <div class="border rounded-3 mb-3">
+                        <div class="row g-0">
+                            <div class="col-6 border-end">
+                                <div class="p-3">
+                                    <label class="form-label text-uppercase small fw-bold mb-1">Check-in</label>
+                                    <input type="date" class="form-control border-0 p-0">
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="p-3">
+                                    <label class="form-label text-uppercase small fw-bold mb-1">Check-out</label>
+                                    <input type="date" class="form-control border-0 p-0">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="border-top p-3">
+                            <label class="form-label text-uppercase small fw-bold mb-1">Guests</label>
+                            <select class="form-select border-0 p-0">
+                                <option>1 guest</option>
+                                <option>2 guests</option>
+                                <option>3 guests</option>
+                                <option>4 guests</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-primary w-100 py-2 fw-semibold mb-3">Reserve</button>
+                    
+                    <p class="text-center text-muted small mb-3">You won't be charged yet</p>
+                    
+                    <div class="border-top pt-3">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-decoration-underline">₹<%= listing.price.toLocaleString() %> x 5 nights</span>
+                            <span>₹<%= (listing.price * 5).toLocaleString() %></span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-decoration-underline">Service fee</span>
+                            <span>₹<%= Math.round(listing.price * 0.1).toLocaleString() %></span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between fw-bold">
+                            <span>Total</span>
+                            <span>₹<%= (listing.price * 5 + Math.round(listing.price * 0.1)).toLocaleString() %></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-3 text-center">
+                <a href="/listings" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to All Listings
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .sticky-top {
+        position: -webkit-sticky;
+        position: sticky;
+    }
+    
+    @media (max-width: 991px) {
+        .sticky-top {
+            position: relative !important;
+        }
+    }
+</style>

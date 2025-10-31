@@ -3,7 +3,7 @@
         <a href="/listings/<%= listing._id %>" class="text-decoration-none text-reset">
             <div class="card border-0 rounded overflow-hidden h-100 property-card">
                 <div class="card-img-top-wrapper position-relative" style="padding-bottom: 100%;">
-                    <img src="<%= unsplashForPlace(place, ['hotels','restaurants','cafes']) %>"
+                    <img src="<%= listing.image && listing.image.url ? listing.image.url : unsplashForPlace(place, ['hotels','restaurants','cafes']) %>"
                         class="card-img-top position-absolute top-0 start-0 w-100 h-100"
                         style="object-fit: cover; border-radius: 12px;" alt="<%= listing.title %>"
                         onerror="this.onerror=null; this.src='<%= unsplashForPlace(place, ['travel','city','landmark']) %>'">
@@ -21,7 +21,7 @@
                     <p class="text-muted mb-2">
                         <%= listing.location %>, <%= listing.country %>
                     </p>
-                    <p class="mb-0"><span class="fw-bold">₹<%= listing.price %></span> night</p>
+                    <p class="mb-0"><span class="fw-bold">₹<%= listing.price.toLocaleString() %></span> night</p>
                 </div>
             </div>
         </a>

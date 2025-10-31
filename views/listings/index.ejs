@@ -1,9 +1,22 @@
 <% layout('../layouts/boilerplate') %>
 
-    <section class="py-4">
-        <div class="container">
-            <h1 class="fw-bold">Listings</h1>
-            <p>Explore our curated selection of properties from around the world.</p>
-            <!-- Add dynamic content for listings here -->
-        </div>
-    </section>
+<section class="py-4">
+    <div class="container">
+        <h1 class="fw-bold">All Listings</h1>
+        <p>Explore our curated selection of properties from around the world.</p>
+        
+        <% if (listings && listings.length > 0) { %>
+            <div class="row">
+                <% listings.forEach(listing => { %>
+                    <%- include('../includes/listing-card', { listing: listing }) %>
+                <% }) %>
+            </div>
+        <% } else { %>
+            <div class="text-center py-5">
+                <h4 class="text-muted">No listings available</h4>
+                <p class="text-muted">Please check your database connection and seed the data.</p>
+                <a href="/listings/new" class="btn btn-primary">Add First Listing</a>
+            </div>
+        <% } %>
+    </div>
+</section>

@@ -530,10 +530,130 @@ class CategoryCarousel {
     }
 }
 
+// Featured Listings Carousel Manager
+class FeaturedCarouselManager {
+    constructor() {
+        this.carousel = document.getElementById('featuredCarousel');
+        if (!this.carousel) return;
+        
+        this.carouselInstance = null;
+        this.autoPlayInterval = null;
+        this.autoPlayDelay = 5000; // 5 seconds
+        this.init();
+    }
+
+    init() {
+        // Initialize Bootstrap carousel
+        if (typeof bootstrap !== 'undefined' && bootstrap.Carousel) {
+            this.carouselInstance = new bootstrap.Carousel(this.carousel, {
+                interval: false, // We'll handle auto-play manually for better control
+                wrap: true,
+                touch: true,
+                keyboard: true
+            });
+        }
+
+        this.setupAutoPlay();
+        this.setupPauseOnHover();
+        this.setupTouchSwipe();
+        console.log('Featured Carousel Manager initialized');
+    }
+
+    setupAutoPlay() {
+        // Start auto-play
+        this.startAutoPlay();
+
+        // Pause on interaction
+        const controls = this.carousel.querySelectorAll('[data-bs-slide], [data-bs-slide-to]');
+        controls.forEach(control => {
+            control.addEventListener('click', () => {
+                this.stopAutoPlay();
+                // Resume after 10 seconds
+                setTimeout(() => this.startAutoPlay(), 10000);
+            });
+        });
+    }
+
+    setupPauseOnHover() {
+        this.carousel.addEventListener('mouseenter', () => {
+            this.stopAutoPlay();
+        });
+
+        this.carousel.addEventListener('mouseleave', () => {
+            this.startAutoPlay();
+        });
+    }
+
+    setupTouchSwipe() {
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        this.carousel.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        this.carousel.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            this.handleSwipe(touchStartX, touchEndX);
+        });
+    }
+
+    handleSwipe(startX, endX) {
+        const swipeThreshold = 50;
+        const diff = startX - endX;
+
+        if (Math.abs(diff) > swipeThreshold) {
+            if (diff > 0) {
+                // Swipe left - next
+                this.next();
+            } else {
+                // Swipe right - previous
+                this.previous();
+            }
+            this.stopAutoPlay();
+            setTimeout(() => this.startAutoPlay(), 10000);
+        }
+    }
+
+    startAutoPlay() {
+        this.stopAutoPlay(); // Clear any existing interval
+        this.autoPlayInterval = setInterval(() => {
+            this.next();
+        }, this.autoPlayDelay);
+    }
+
+    stopAutoPlay() {
+        if (this.autoPlayInterval) {
+            clearInterval(this.autoPlayInterval);
+            this.autoPlayInterval = null;
+        }
+    }
+
+    next() {
+        if (this.carouselInstance) {
+            this.carouselInstance.next();
+        }
+    }
+
+    previous() {
+        if (this.carouselInstance) {
+            this.carouselInstance.prev();
+        }
+    }
+
+    destroy() {
+        this.stopAutoPlay();
+        if (this.carouselInstance) {
+            this.carouselInstance.dispose();
+        }
+    }
+}
+
 // Initialize everything when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     window.navbarManager = new NavbarManager();
     window.categoryCarousel = new CategoryCarousel();
+    window.featuredCarousel = new FeaturedCarouselManager();
     console.log('Airbnb components initialized');
 });
 
@@ -541,6 +661,7 @@ document.addEventListener('DOMContentLoaded', () => {
 if (typeof window !== 'undefined') {
     window.AirbnbComponents = {
         NavbarManager,
-        CategoryCarousel
+        CategoryCarousel,
+        FeaturedCarouselManager
     };
 }

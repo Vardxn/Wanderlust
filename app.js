@@ -8,9 +8,10 @@ const methodOverride = require('method-override');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
 
-// Models - you'll need to create these files
+// Models
 const Listing = require('./models/listing');
 const Review = require('./models/review');
+const User = require('./models/user');
 
 // Utility functions
 // Create ExpressError class for error handling
@@ -40,24 +41,27 @@ const validateReview = (req, res, next) => {
     next();
 };
 
-// A temporary User model placeholder - you'll replace this with your actual model
-const User = {
-    authenticate() {
-        return () => true;
-    },
-    serializeUser() {
-        return (user, done) => done(null, user);
-    },
-    deserializeUser() {
-        return (id, done) => done(null, id);
-    }
-};
+// No longer needed - using actual User model
+// const User = {
+//     authenticate() {
+//         return () => true;
+//     },
+//     serializeUser() {
+//         return (user, done) => done(null, user);
+//     },
+//     deserializeUser() {
+//         return (id, done) => done(null, id);
+//     }
+// };
 
 // Initialize Express app
 const app = express();
 
 // Connect to MongoDB
-mongoose.connect('mongodb://localhost:27017/wanderlust')
+// MongoDB connection - Replace with your Atlas connection string
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/wanderlust';
+
+mongoose.connect(MONGODB_URI)
     .then(() => {
         console.log("Database connected");
     })
@@ -123,14 +127,65 @@ app.use((req, res, next) => {
 });
 
 // Home route
-app.get('/', (req, res) => {
-    res.render("home", { pageTitle: "Wanderlust - Find Your Adventure" });
-});
+app.get('/', wrapAsync(async (req, res) => {
+    // Get all listings
+    const allListings = await Listing.find({});
+    
+    // Get featured listings (first 12 for carousel)
+    const featuredListings = allListings.slice(0, 12);
+    
+    // Group listings by location
+    const listingsByLocation = {};
+    allListings.forEach(listing => {
+        const location = listing.location;
+        if (!listingsByLocation[location]) {
+            listingsByLocation[location] = [];
+        }
+        listingsByLocation[location].push(listing);
+    });
+    
+    // Get top locations (locations with most listings)
+    const topLocations = Object.keys(listingsByLocation)
+        .sort((a, b) => listingsByLocation[b].length - listingsByLocation[a].length)
+        .slice(0, 5); // Get top 5 locations
+    
+    res.render("home", { 
+        pageTitle: "Wanderlust - Find Your Adventure",
+        listings: featuredListings,
+        listingsByLocation: listingsByLocation,
+        topLocations: topLocations
+    });
+}));
 
 // Listing Routes
-app.get('/listings', (req, res) => {
-    res.render('listings/index'); // Ensure this path matches the view file
-});
+app.get('/listings', wrapAsync(async (req, res) => {
+    const { location, country } = req.query;
+    let query = {};
+    
+    // Filter by location if provided
+    if (location) {
+        query.location = new RegExp(location, 'i'); // Case-insensitive search
+    }
+    
+    // Filter by country if provided
+    if (country) {
+        query.country = new RegExp(country, 'i');
+    }
+    
+    const listings = await Listing.find(query);
+    
+    let pageTitle = 'All Listings';
+    if (location) {
+        pageTitle = `Listings in ${location}`;
+    } else if (country) {
+        pageTitle = `Listings in ${country}`;
+    }
+    
+    res.render('listings/index', { 
+        pageTitle: pageTitle,
+        listings: listings
+    });
+}));
 
 app.get('/listings/new', (req, res) => {
     res.render('listings/new', { pageTitle: 'Add New Listing' });
@@ -306,10 +361,6 @@ app.use((err, req, res, next) => {
 
 // Server start - single instance
 const port = process.env.PORT || 8080;
-app.listen(port, () => {
-    console.log(`🚀 Server running on port ${port}`);
-    console.log(`📱 Visit http://localhost:${port}/listings`);
-});
 app.listen(port, () => {
     console.log(`🚀 Server running on port ${port}`);
     console.log(`📱 Visit http://localhost:${port}/listings`);
