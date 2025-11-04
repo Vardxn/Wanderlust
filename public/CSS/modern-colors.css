@@ -1,0 +1,556 @@
+/* =====================================================================
+   MODERN COLOR SYSTEM
+   Professional color palette with harmony and accessibility
+   ===================================================================== */
+
+:root {
+    /* Primary Brand Colors - Deep Teal & Coral */
+    --primary-main: #0A7EA4;
+    --primary-dark: #065A75;
+    --primary-light: #39B5DB;
+    --primary-lighter: #E0F4FA;
+    
+    /* Secondary Accent - Warm Coral */
+    --secondary-main: #FF6B6B;
+    --secondary-dark: #E85555;
+    --secondary-light: #FF9999;
+    --secondary-lighter: #FFE5E5;
+    
+    /* Tertiary - Sunset Orange */
+    --tertiary-main: #FFA726;
+    --tertiary-dark: #F57C00;
+    --tertiary-light: #FFB74D;
+    
+    /* Neutral Palette */
+    --neutral-900: #1A1A1A;
+    --neutral-800: #2D2D2D;
+    --neutral-700: #404040;
+    --neutral-600: #666666;
+    --neutral-500: #8C8C8C;
+    --neutral-400: #B3B3B3;
+    --neutral-300: #D9D9D9;
+    --neutral-200: #EBEBEB;
+    --neutral-100: #F5F5F5;
+    --neutral-50: #FAFAFA;
+    
+    /* Semantic Colors */
+    --success: #10B981;
+    --success-light: #D1FAE5;
+    --warning: #F59E0B;
+    --warning-light: #FEF3C7;
+    --error: #EF4444;
+    --error-light: #FEE2E2;
+    --info: #3B82F6;
+    --info-light: #DBEAFE;
+    
+    /* Glass Effects with New Colors */
+    --glass-primary: rgba(10, 126, 164, 0.15);
+    --glass-primary-strong: rgba(10, 126, 164, 0.25);
+    --glass-secondary: rgba(255, 107, 107, 0.15);
+    --glass-secondary-strong: rgba(255, 107, 107, 0.25);
+    --glass-neutral: rgba(255, 255, 255, 0.15);
+    --glass-neutral-strong: rgba(255, 255, 255, 0.25);
+    --glass-dark: rgba(26, 26, 26, 0.15);
+    --glass-dark-strong: rgba(26, 26, 26, 0.25);
+    
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, #0A7EA4 0%, #39B5DB 100%);
+    --gradient-secondary: linear-gradient(135deg, #FF6B6B 0%, #FFA726 100%);
+    --gradient-sunset: linear-gradient(135deg, #FFA726 0%, #FF6B6B 100%);
+    --gradient-ocean: linear-gradient(135deg, #065A75 0%, #0A7EA4 50%, #39B5DB 100%);
+    --gradient-vibrant: linear-gradient(135deg, #FF6B6B 0%, #FFA726 50%, #0A7EA4 100%);
+    
+    /* Shadows with new colors */
+    --shadow-primary: 0 4px 16px rgba(10, 126, 164, 0.2);
+    --shadow-primary-lg: 0 8px 32px rgba(10, 126, 164, 0.25);
+    --shadow-secondary: 0 4px 16px rgba(255, 107, 107, 0.2);
+    --shadow-secondary-lg: 0 8px 32px rgba(255, 107, 107, 0.25);
+    --shadow-neutral: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --shadow-neutral-md: 0 4px 16px rgba(0, 0, 0, 0.12);
+    --shadow-neutral-lg: 0 8px 32px rgba(0, 0, 0, 0.16);
+}
+
+/* =====================================================================
+   TYPOGRAPHY UPDATES
+   ===================================================================== */
+
+.logo-text {
+    font-family: 'Inter', 'Helvetica Neue', sans-serif;
+    font-weight: 900;
+    font-size: 24px;
+    letter-spacing: -0.5px;
+    color: var(--neutral-900);
+    text-transform: uppercase;
+}
+
+/* =====================================================================
+   NAVIGATION BAR REDESIGN
+   ===================================================================== */
+
+.airbnb-header,
+.liquid-glass-nav {
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid var(--neutral-200) !important;
+    box-shadow: var(--shadow-neutral) !important;
+}
+
+.airbnb-header.scrolled,
+.liquid-glass-nav.scrolled {
+    background: rgba(255, 255, 255, 0.98) !important;
+    box-shadow: var(--shadow-neutral-md) !important;
+}
+
+.logo-link:hover .logo-text {
+    color: var(--primary-main);
+}
+
+.nav-pill.active {
+    color: var(--primary-main) !important;
+    font-weight: 600;
+}
+
+.nav-pill.active::after {
+    background-color: var(--primary-main) !important;
+}
+
+.nav-pill:hover:not(.active) {
+    background: var(--primary-lighter);
+    color: var(--primary-dark) !important;
+}
+
+.host-link {
+    color: var(--neutral-900) !important;
+    font-weight: 600;
+}
+
+.host-link:hover {
+    background: var(--primary-lighter) !important;
+    color: var(--primary-dark) !important;
+}
+
+/* =====================================================================
+   BUTTONS REDESIGN
+   ===================================================================== */
+
+.btn-primary,
+.liquid-glass-btn-primary {
+    background: var(--gradient-primary) !important;
+    border: none !important;
+    color: white !important;
+    box-shadow: var(--shadow-primary) !important;
+}
+
+.btn-primary:hover,
+.liquid-glass-btn-primary:hover {
+    background: linear-gradient(135deg, #065A75 0%, #0A7EA4 100%) !important;
+    box-shadow: var(--shadow-primary-lg) !important;
+}
+
+.brutalist-button {
+    background: var(--neutral-900) !important;
+    box-shadow: 4px 4px 0 var(--secondary-main) !important;
+}
+
+.brutalist-button:hover {
+    box-shadow: 2px 2px 0 var(--secondary-main) !important;
+}
+
+.liquid-glass-btn {
+    background: var(--glass-neutral);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid var(--neutral-300) !important;
+    color: var(--neutral-900) !important;
+}
+
+.liquid-glass-btn:hover {
+    background: var(--glass-neutral-strong);
+    border-color: var(--primary-main) !important;
+    color: var(--primary-dark) !important;
+}
+
+/* =====================================================================
+   CARDS REDESIGN
+   ===================================================================== */
+
+.card,
+.liquid-glass-card {
+    background: white !important;
+    border: 1px solid var(--neutral-200) !important;
+    box-shadow: var(--shadow-neutral) !important;
+}
+
+.card:hover,
+.liquid-glass-card:hover {
+    border-color: var(--primary-light) !important;
+    box-shadow: var(--shadow-neutral-lg) !important;
+}
+
+.liquid-glass-card-overlay {
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(25px) saturate(180%);
+    -webkit-backdrop-filter: blur(25px) saturate(180%);
+    border: 1px solid var(--neutral-200) !important;
+}
+
+.listing-rating i {
+    color: var(--tertiary-main) !important;
+}
+
+.listing-rating span {
+    color: var(--neutral-800);
+}
+
+/* =====================================================================
+   SEARCH & INPUTS
+   ===================================================================== */
+
+.liquid-glass-search {
+    background: var(--gradient-ocean) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    box-shadow: var(--shadow-primary-lg) !important;
+}
+
+.liquid-glass-input,
+.form-control {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border: 1px solid var(--neutral-300) !important;
+    color: var(--neutral-900) !important;
+}
+
+.liquid-glass-input:focus,
+.form-control:focus {
+    border-color: var(--primary-main) !important;
+    box-shadow: 0 0 0 3px var(--primary-lighter) !important;
+    outline: none;
+}
+
+/* =====================================================================
+   BENTO GRID COLORS
+   ===================================================================== */
+
+.bento-search {
+    background: var(--gradient-ocean) !important;
+}
+
+.bento-stats {
+    background: var(--gradient-secondary) !important;
+}
+
+.brutalist-accent {
+    background: var(--secondary-main) !important;
+}
+
+.bento-category {
+    background: var(--glass-neutral) !important;
+    border: 1px solid var(--neutral-300) !important;
+}
+
+/* =====================================================================
+   HERO SECTIONS
+   ===================================================================== */
+
+.hero-section {
+    background: var(--gradient-ocean) !important;
+}
+
+.gradient-text,
+.gradient-text-vibrant {
+    background: var(--gradient-vibrant) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+}
+
+/* =====================================================================
+   FEATURE SECTIONS
+   ===================================================================== */
+
+.feature-icon {
+    color: var(--primary-main) !important;
+}
+
+/* =====================================================================
+   PRICE TAGS & BADGES
+   ===================================================================== */
+
+.price-tag,
+.price-amount {
+    color: var(--neutral-900) !important;
+    font-weight: 700;
+}
+
+.guest-favorite-badge {
+    background: white !important;
+    color: var(--neutral-900) !important;
+    border: 1px solid var(--neutral-300);
+}
+
+/* =====================================================================
+   HOVER STATES
+   ===================================================================== */
+
+.favorite-btn:hover,
+.micro-heart:hover {
+    color: var(--secondary-main) !important;
+    transform: scale(1.1);
+}
+
+.favorite-btn i.fas,
+.micro-heart i.fas {
+    color: var(--secondary-main) !important;
+}
+
+/* =====================================================================
+   LINKS
+   ===================================================================== */
+
+a {
+    color: var(--primary-main);
+}
+
+a:hover {
+    color: var(--primary-dark);
+}
+
+/* =====================================================================
+   MODAL & DROPDOWN
+   ===================================================================== */
+
+.modal-content,
+.liquid-glass-modal,
+.dropdown-menu {
+    background: white !important;
+    border: 1px solid var(--neutral-200) !important;
+    box-shadow: var(--shadow-neutral-lg) !important;
+}
+
+.dropdown-item:hover {
+    background: var(--primary-lighter) !important;
+    color: var(--primary-dark) !important;
+}
+
+/* =====================================================================
+   FOOTER
+   ===================================================================== */
+
+.footer {
+    background: var(--neutral-900) !important;
+    color: var(--neutral-300);
+}
+
+.footer a {
+    color: var(--neutral-300);
+}
+
+.footer a:hover {
+    color: white;
+}
+
+/* =====================================================================
+   FORM ELEMENTS
+   ===================================================================== */
+
+.form-label {
+    color: var(--neutral-700);
+    font-weight: 600;
+}
+
+.form-select:focus,
+select:focus {
+    border-color: var(--primary-main) !important;
+    box-shadow: 0 0 0 3px var(--primary-lighter) !important;
+}
+
+/* =====================================================================
+   BADGES & TAGS
+   ===================================================================== */
+
+.badge-primary {
+    background: var(--primary-main) !important;
+}
+
+.badge-secondary {
+    background: var(--secondary-main) !important;
+}
+
+.badge-success {
+    background: var(--success) !important;
+}
+
+/* =====================================================================
+   MICRO-INTERACTIONS COLORS
+   ===================================================================== */
+
+.micro-checkmark.active {
+    color: var(--success) !important;
+}
+
+.micro-glow {
+    box-shadow: 0 0 20px var(--primary-light) !important;
+}
+
+/* =====================================================================
+   BRUTALIST ELEMENTS
+   ===================================================================== */
+
+.brutalist-container,
+.brutalist-card {
+    border-color: var(--neutral-900) !important;
+}
+
+.brutalist-card::before {
+    background: var(--secondary-main) !important;
+}
+
+.brutalist-heading {
+    color: var(--neutral-900) !important;
+}
+
+/* =====================================================================
+   SCROLL PROGRESS
+   ===================================================================== */
+
+.scroll-progress {
+    background: var(--gradient-vibrant) !important;
+}
+
+/* =====================================================================
+   TOAST NOTIFICATIONS
+   ===================================================================== */
+
+.micro-toast.success {
+    background: var(--success-light) !important;
+    border: 1px solid var(--success) !important;
+}
+
+.micro-toast.error {
+    background: var(--error-light) !important;
+    border: 1px solid var(--error) !important;
+}
+
+/* =====================================================================
+   HEADINGS
+   ===================================================================== */
+
+h1, h2, h3, h4, h5, h6 {
+    color: var(--neutral-900);
+}
+
+.section-title {
+    color: var(--neutral-900);
+}
+
+/* =====================================================================
+   TEXT COLORS
+   ===================================================================== */
+
+.text-muted {
+    color: var(--neutral-500) !important;
+}
+
+body {
+    color: var(--neutral-800);
+    background: var(--neutral-50);
+}
+
+/* =====================================================================
+   FILTER SIDEBAR
+   ===================================================================== */
+
+.card-header.bg-primary {
+    background: var(--gradient-primary) !important;
+    border: none !important;
+}
+
+/* =====================================================================
+   LISTING GRID
+   ===================================================================== */
+
+.listing-title {
+    color: var(--neutral-900) !important;
+}
+
+.listing-location {
+    color: var(--neutral-600) !important;
+}
+
+/* =====================================================================
+   CTA SECTIONS
+   ===================================================================== */
+
+.cta-section {
+    background: var(--gradient-ocean) !important;
+}
+
+.cta-title {
+    color: white !important;
+}
+
+.cta-subtitle {
+    color: rgba(255, 255, 255, 0.95) !important;
+}
+
+/* =====================================================================
+   SEARCH BAR
+   ===================================================================== */
+
+.search-label {
+    color: rgba(255, 255, 255, 0.95) !important;
+}
+
+.nav-center {
+    background: var(--glass-neutral) !important;
+    border: 1px solid var(--neutral-300) !important;
+}
+
+.nav-center:hover {
+    border-color: var(--primary-light) !important;
+}
+
+/* =====================================================================
+   ACCESSIBILITY
+   ===================================================================== */
+
+*:focus-visible {
+    outline: 2px solid var(--primary-main) !important;
+    outline-offset: 3px;
+}
+
+/* =====================================================================
+   DARK MODE (Optional)
+   ===================================================================== */
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --glass-neutral: rgba(26, 26, 26, 0.15);
+        --glass-neutral-strong: rgba(26, 26, 26, 0.25);
+    }
+    
+    .airbnb-header,
+    .liquid-glass-nav {
+        background: rgba(26, 26, 26, 0.95) !important;
+        border-bottom-color: var(--neutral-700) !important;
+    }
+    
+    .logo-text {
+        color: white !important;
+    }
+    
+    body {
+        background: var(--neutral-900);
+        color: var(--neutral-200);
+    }
+    
+    .card,
+    .liquid-glass-card {
+        background: var(--neutral-800) !important;
+        border-color: var(--neutral-700) !important;
+    }
+    
+    h1, h2, h3, h4, h5, h6 {
+        color: white;
+    }
+}

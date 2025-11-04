@@ -27,6 +27,228 @@
                     
                     <hr class="my-4">
                     
+                    <!-- Property Details -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-expand-arrows-alt text-primary me-3 fs-5"></i>
+                                <div>
+                                    <h6 class="mb-0 fw-semibold">Property Size</h6>
+                                    <% if (listing.propertySize && listing.propertySize.sqft) { %>
+                                        <p class="text-muted mb-0"><%= listing.propertySize.sqft %> sq ft (<%= listing.propertySize.sqm %> m²)</p>
+                                    <% } else { %>
+                                        <p class="text-muted mb-0">Not specified</p>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-home text-primary me-3 fs-5"></i>
+                                <div>
+                                    <h6 class="mb-0 fw-semibold">Property Type</h6>
+                                    <p class="text-muted mb-0"><%= listing.propertyType %></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-bed text-primary me-3 fs-5"></i>
+                                <div>
+                                    <h6 class="mb-0 fw-semibold">Bedrooms</h6>
+                                    <p class="text-muted mb-0"><%= listing.bedrooms %> bedroom<%= listing.bedrooms > 1 ? 's' : '' %></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-bath text-primary me-3 fs-5"></i>
+                                <div>
+                                    <h6 class="mb-0 fw-semibold">Bathrooms</h6>
+                                    <p class="text-muted mb-0"><%= listing.bathrooms %> bathroom<%= listing.bathrooms > 1 ? 's' : '' %></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-users text-primary me-3 fs-5"></i>
+                                <div>
+                                    <h6 class="mb-0 fw-semibold">Max Guests</h6>
+                                    <p class="text-muted mb-0"><%= listing.maxGuests %> guest<%= listing.maxGuests > 1 ? 's' : '' %></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <hr class="my-4">
+                    
+                    <!-- Bed Configuration -->
+                    <% if (listing.bedConfiguration && listing.bedConfiguration.length > 0) { %>
+                    <h4 class="fw-semibold mb-3"><i class="fas fa-bed me-2"></i>Sleeping Arrangements</h4>
+                    <div class="row g-3 mb-4">
+                        <% listing.bedConfiguration.forEach(room => { %>
+                            <div class="col-md-6">
+                                <div class="p-3 bg-light rounded">
+                                    <h6 class="fw-semibold mb-1"><%= room.roomName %></h6>
+                                    <p class="text-muted mb-0">
+                                        <%= room.quantity %> <%= room.bedType %><%= room.quantity > 1 ? 's' : '' %>
+                                    </p>
+                                </div>
+                            </div>
+                        <% }) %>
+                    </div>
+                    <hr class="my-4">
+                    <% } %>
+                    
+                    <!-- Amenities -->
+                    <h4 class="fw-semibold mb-3"><i class="fas fa-check-circle me-2"></i>What this place offers</h4>
+                    <div class="row g-3 mb-4">
+                        <% if (listing.amenities && listing.amenities.length > 0) { %>
+                            <% listing.amenities.forEach(amenity => { %>
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center">
+                                        <% 
+                                        let icon = 'fa-check';
+                                        if (amenity.toLowerCase().includes('wifi')) icon = 'fa-wifi';
+                                        else if (amenity.toLowerCase().includes('kitchen')) icon = 'fa-utensils';
+                                        else if (amenity.toLowerCase().includes('parking')) icon = 'fa-car';
+                                        else if (amenity.toLowerCase().includes('pool')) icon = 'fa-swimming-pool';
+                                        else if (amenity.toLowerCase().includes('gym')) icon = 'fa-dumbbell';
+                                        else if (amenity.toLowerCase().includes('tv')) icon = 'fa-tv';
+                                        else if (amenity.toLowerCase().includes('washer') || amenity.toLowerCase().includes('dryer')) icon = 'fa-tshirt';
+                                        else if (amenity.toLowerCase().includes('air') || amenity.toLowerCase().includes('ac')) icon = 'fa-snowflake';
+                                        else if (amenity.toLowerCase().includes('heat')) icon = 'fa-temperature-high';
+                                        else if (amenity.toLowerCase().includes('pet')) icon = 'fa-paw';
+                                        %>
+                                        <i class="fas <%= icon %> text-success me-3"></i>
+                                        <span><%= amenity %></span>
+                                    </div>
+                                </div>
+                            <% }) %>
+                        <% } else { %>
+                            <p class="text-muted">No amenities listed</p>
+                        <% } %>
+                    </div>
+                    
+                    <hr class="my-4">
+                    
+                    <!-- House Rules -->
+                    <% if (listing.houseRules) { %>
+                    <h4 class="fw-semibold mb-3"><i class="fas fa-clipboard-list me-2"></i>House Rules</h4>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <div class="p-3 bg-light rounded">
+                                <h6 class="fw-semibold mb-2"><i class="fas fa-clock me-2"></i>Check-in / Check-out</h6>
+                                <p class="mb-1"><strong>Check-in:</strong> <%= listing.houseRules.checkInTime || 'After 2:00 PM' %></p>
+                                <p class="mb-0"><strong>Check-out:</strong> <%= listing.houseRules.checkOutTime || 'Before 11:00 AM' %></p>
+                            </div>
+                        </div>
+                        <% if (listing.houseRules.quietHours) { %>
+                        <div class="col-md-6">
+                            <div class="p-3 bg-light rounded">
+                                <h6 class="fw-semibold mb-2"><i class="fas fa-volume-mute me-2"></i>Quiet Hours</h6>
+                                <p class="mb-0"><%= listing.houseRules.quietHours.start %> - <%= listing.houseRules.quietHours.end %></p>
+                            </div>
+                        </div>
+                        <% } %>
+                        <div class="col-md-4">
+                            <div class="p-3 bg-light rounded text-center">
+                                <i class="fas fa-smoking-ban fs-4 <%= listing.houseRules.smokingAllowed ? 'text-success' : 'text-danger' %> mb-2"></i>
+                                <p class="mb-0 small"><%= listing.houseRules.smokingAllowed ? 'Smoking allowed' : 'No smoking' %></p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 bg-light rounded text-center">
+                                <i class="fas fa-glass-cheers fs-4 <%= listing.houseRules.partiesAllowed ? 'text-success' : 'text-danger' %> mb-2"></i>
+                                <p class="mb-0 small"><%= listing.houseRules.partiesAllowed ? 'Parties allowed' : 'No parties/events' %></p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 bg-light rounded text-center">
+                                <i class="fas fa-paw fs-4 <%= listing.houseRules.petsAllowed ? 'text-success' : 'text-danger' %> mb-2"></i>
+                                <p class="mb-0 small"><%= listing.houseRules.petsAllowed ? 'Pets allowed' : 'No pets' %></p>
+                            </div>
+                        </div>
+                        <% if (listing.houseRules.additionalRules && listing.houseRules.additionalRules.length > 0) { %>
+                        <div class="col-12">
+                            <div class="p-3 bg-light rounded">
+                                <h6 class="fw-semibold mb-2"><i class="fas fa-exclamation-circle me-2"></i>Additional Rules</h6>
+                                <ul class="mb-0">
+                                    <% listing.houseRules.additionalRules.forEach(rule => { %>
+                                        <li class="text-muted"><%= rule %></li>
+                                    <% }) %>
+                                </ul>
+                            </div>
+                        </div>
+                        <% } %>
+                    </div>
+                    <hr class="my-4">
+                    <% } %>
+                    
+                    <!-- Safety Features -->
+                    <% if (listing.safetyFeatures) { %>
+                    <h4 class="fw-semibold mb-3"><i class="fas fa-shield-alt me-2"></i>Safety & Security</h4>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-bell <%= listing.safetyFeatures.smokeAlarm ? 'text-success' : 'text-muted' %> me-3"></i>
+                                <span class="<%= listing.safetyFeatures.smokeAlarm ? '' : 'text-muted' %>">
+                                    Smoke alarm <%= listing.safetyFeatures.smokeAlarm ? '✓' : '✗' %>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-wind <%= listing.safetyFeatures.carbonMonoxideAlarm ? 'text-success' : 'text-muted' %> me-3"></i>
+                                <span class="<%= listing.safetyFeatures.carbonMonoxideAlarm ? '' : 'text-muted' %>">
+                                    Carbon monoxide alarm <%= listing.safetyFeatures.carbonMonoxideAlarm ? '✓' : '✗' %>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-fire-extinguisher <%= listing.safetyFeatures.fireExtinguisher ? 'text-success' : 'text-muted' %> me-3"></i>
+                                <span class="<%= listing.safetyFeatures.fireExtinguisher ? '' : 'text-muted' %>">
+                                    Fire extinguisher <%= listing.safetyFeatures.fireExtinguisher ? '✓' : '✗' %>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-briefcase-medical <%= listing.safetyFeatures.firstAidKit ? 'text-success' : 'text-muted' %> me-3"></i>
+                                <span class="<%= listing.safetyFeatures.firstAidKit ? '' : 'text-muted' %>">
+                                    First aid kit <%= listing.safetyFeatures.firstAidKit ? '✓' : '✗' %>
+                                </span>
+                            </div>
+                        </div>
+                        <% if (listing.safetyFeatures.securityCameras && listing.safetyFeatures.securityCameras.present) { %>
+                        <div class="col-12">
+                            <div class="alert alert-info mb-0" role="alert">
+                                <i class="fas fa-video me-2"></i>
+                                <strong>Security cameras/recording devices:</strong> 
+                                <%= listing.safetyFeatures.securityCameras.locations.join(', ') %>
+                            </div>
+                        </div>
+                        <% } %>
+                    </div>
+                    <hr class="my-4">
+                    <% } %>
+                    
+                    <!-- Cancellation Policy -->
+                    <% if (listing.cancellationPolicy) { %>
+                    <h4 class="fw-semibold mb-3"><i class="fas fa-undo-alt me-2"></i>Cancellation Policy</h4>
+                    <div class="alert alert-warning" role="alert">
+                        <h6 class="alert-heading fw-bold">
+                            <%= listing.cancellationPolicy.type || 'Moderate' %>
+                        </h6>
+                        <p class="mb-0">
+                            <%= listing.cancellationPolicy.description || 'Standard cancellation policy applies.' %>
+                        </p>
+                    </div>
+                    <hr class="my-4">
+                    <% } %>
+
+                    
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <span class="text-muted">Price per night</span>
@@ -135,64 +357,325 @@
                 <div class="card-body p-4">
                     <div class="mb-3">
                         <h3 class="fw-bold mb-0">₹<%= listing.price.toLocaleString() %> <small class="text-muted fs-6">/ night</small></h3>
+                        <% if (listing.instantBook) { %>
+                            <span class="badge bg-success mt-2"><i class="fas fa-bolt"></i> Instant Book</span>
+                        <% } %>
                     </div>
                     
-                    <div class="border rounded-3 mb-3">
-                        <div class="row g-0">
-                            <div class="col-6 border-end">
-                                <div class="p-3">
-                                    <label class="form-label text-uppercase small fw-bold mb-1">Check-in</label>
-                                    <input type="date" class="form-control border-0 p-0">
+                    <form action="/listings/<%= listing._id %>/book" method="POST" id="bookingForm">
+                        <div class="border rounded-3 mb-3">
+                            <div class="row g-0">
+                                <div class="col-6 border-end">
+                                    <div class="p-3">
+                                        <label class="form-label text-uppercase small fw-bold mb-1">Check-in</label>
+                                        <input type="date" 
+                                               class="form-control border-0 p-0" 
+                                               id="checkIn" 
+                                               name="checkIn" 
+                                               required
+                                               min="<%= new Date().toISOString().split('T')[0] %>">
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="p-3">
+                                        <label class="form-label text-uppercase small fw-bold mb-1">Checkout</label>
+                                        <input type="date" 
+                                               class="form-control border-0 p-0" 
+                                               id="checkOut" 
+                                               name="checkOut" 
+                                               required
+                                               min="<%= new Date().toISOString().split('T')[0] %>">
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-6">
-                                <div class="p-3">
-                                    <label class="form-label text-uppercase small fw-bold mb-1">Check-out</label>
-                                    <input type="date" class="form-control border-0 p-0">
+                            <div class="border-top p-3">
+                                <label class="form-label text-uppercase small fw-bold mb-2">Guests</label>
+                                
+                                <!-- Adults -->
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <div>
+                                        <div class="fw-semibold">Adults</div>
+                                        <small class="text-muted">Age 13+</small>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-circle" onclick="decrementGuest('adults')" style="width: 32px; height: 32px;">-</button>
+                                        <input type="number" id="adults" name="adults" value="1" min="1" max="<%= listing.maxGuests || 16 %>" readonly class="form-control text-center mx-2" style="width: 50px;">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-circle" onclick="incrementGuest('adults')" style="width: 32px; height: 32px;">+</button>
+                                    </div>
                                 </div>
+                                
+                                <!-- Children -->
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <div>
+                                        <div class="fw-semibold">Children</div>
+                                        <small class="text-muted">Age 2-12</small>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-circle" onclick="decrementGuest('children')" style="width: 32px; height: 32px;">-</button>
+                                        <input type="number" id="children" name="children" value="0" min="0" max="<%= listing.maxGuests || 16 %>" readonly class="form-control text-center mx-2" style="width: 50px;">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-circle" onclick="incrementGuest('children')" style="width: 32px; height: 32px;">+</button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Infants -->
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <div>
+                                        <div class="fw-semibold">Infants</div>
+                                        <small class="text-muted">Under 2</small>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-circle" onclick="decrementGuest('infants')" style="width: 32px; height: 32px;">-</button>
+                                        <input type="number" id="infants" name="infants" value="0" min="0" max="5" readonly class="form-control text-center mx-2" style="width: 50px;">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-circle" onclick="incrementGuest('infants')" style="width: 32px; height: 32px;">+</button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Pets -->
+                                <% if (listing.amenities && listing.amenities.includes('Pet-friendly')) { %>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <div class="fw-semibold">Pets</div>
+                                        <small class="text-muted">Service animals allowed</small>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-circle" onclick="decrementGuest('pets')" style="width: 32px; height: 32px;">-</button>
+                                        <input type="number" id="pets" name="pets" value="0" min="0" max="2" readonly class="form-control text-center mx-2" style="width: 50px;">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-circle" onclick="incrementGuest('pets')" style="width: 32px; height: 32px;">+</button>
+                                    </div>
+                                </div>
+                                <% } %>
+                                
+                                <div id="guestError" class="text-danger small mt-2" style="display: none;"></div>
                             </div>
                         </div>
-                        <div class="border-top p-3">
-                            <label class="form-label text-uppercase small fw-bold mb-1">Guests</label>
-                            <select class="form-select border-0 p-0">
-                                <option>1 guest</option>
-                                <option>2 guests</option>
-                                <option>3 guests</option>
-                                <option>4 guests</option>
-                            </select>
+                        
+                        <!-- Special Requests -->
+                        <div class="mb-3">
+                            <label class="form-label small">Special Requests (Optional)</label>
+                            <textarea class="form-control" name="specialRequests" rows="2" placeholder="Early check-in, specific room preferences, etc."></textarea>
                         </div>
-                    </div>
-                    
-                    <button class="btn btn-primary w-100 py-2 fw-semibold mb-3">Reserve</button>
-                    
-                    <p class="text-center text-muted small mb-3">You won't be charged yet</p>
-                    
-                    <div class="border-top pt-3">
-                        <div class="d-flex justify-content-between mb-2">
-                            <span class="text-decoration-underline">₹<%= listing.price.toLocaleString() %> x 5 nights</span>
-                            <span>₹<%= (listing.price * 5).toLocaleString() %></span>
+                        
+                        <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold mb-3" id="reserveBtn">
+                            <%= listing.instantBook ? 'Book Now' : 'Request to Book' %>
+                        </button>
+                        
+                        <p class="text-center text-muted small mb-3">You won't be charged yet</p>
+                        
+                        <!-- Price Breakdown -->
+                        <div class="border-top pt-3" id="priceBreakdown">
+                            <div id="priceDetails">
+                                <p class="text-muted text-center small">Select dates to see pricing</p>
+                            </div>
                         </div>
-                        <div class="d-flex justify-content-between mb-2">
-                            <span class="text-decoration-underline">Service fee</span>
-                            <span>₹<%= Math.round(listing.price * 0.1).toLocaleString() %></span>
+                        
+                        <!-- Stay Requirements -->
+                        <% if (listing.minimumStay && listing.minimumStay > 1) { %>
+                        <div class="alert alert-info small mt-3 mb-0">
+                            <i class="fas fa-info-circle"></i> Minimum stay: <%= listing.minimumStay %> nights
                         </div>
-                        <hr>
-                        <div class="d-flex justify-content-between fw-bold">
-                            <span>Total</span>
-                            <span>₹<%= (listing.price * 5 + Math.round(listing.price * 0.1)).toLocaleString() %></span>
-                        </div>
-                    </div>
+                        <% } %>
+                    </form>
                 </div>
             </div>
             
             <div class="mt-3 text-center">
-                <a href="/listings" class="btn btn-outline-secondary">
+                <a href="/stays" class="btn btn-outline-secondary">
                     <i class="bi bi-arrow-left"></i> Back to All Listings
                 </a>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+// Booking form functionality
+const listingId = '<%= listing._id %>';
+const maxGuests = <%= listing.maxGuests || 16 %>;
+const nightlyRate = <%= listing.price %>;
+const minimumStay = <%= listing.minimumStay || 1 %>;
+const maximumStay = <%= listing.maximumStay || 365 %>;
+
+// Guest counter functions
+function incrementGuest(type) {
+    const input = document.getElementById(type);
+    const max = type === 'pets' ? 2 : (type === 'infants' ? 5 : maxGuests);
+    if (parseInt(input.value) < max) {
+        input.value = parseInt(input.value) + 1;
+        validateGuests();
+        calculatePrice();
+    }
+}
+
+function decrementGuest(type) {
+    const input = document.getElementById(type);
+    const min = type === 'adults' ? 1 : 0;
+    if (parseInt(input.value) > min) {
+        input.value = parseInt(input.value) - 1;
+        validateGuests();
+        calculatePrice();
+    }
+}
+
+function validateGuests() {
+    const adults = parseInt(document.getElementById('adults').value) || 0;
+    const children = parseInt(document.getElementById('children').value) || 0;
+    const total = adults + children;
+    
+    const errorDiv = document.getElementById('guestError');
+    if (total > maxGuests) {
+        errorDiv.textContent = `Maximum ${maxGuests} guests allowed`;
+        errorDiv.style.display = 'block';
+        document.getElementById('reserveBtn').disabled = true;
+        return false;
+    } else {
+        errorDiv.style.display = 'none';
+        document.getElementById('reserveBtn').disabled = false;
+        return true;
+    }
+}
+
+// Calculate price when dates change
+document.getElementById('checkIn').addEventListener('change', function() {
+    const checkOutInput = document.getElementById('checkOut');
+    const checkInDate = new Date(this.value);
+    checkInDate.setDate(checkInDate.getDate() + minimumStay);
+    checkOutInput.min = checkInDate.toISOString().split('T')[0];
+    
+    if (checkOutInput.value && new Date(checkOutInput.value) < checkInDate) {
+        checkOutInput.value = '';
+    }
+    
+    calculatePrice();
+});
+
+document.getElementById('checkOut').addEventListener('change', calculatePrice);
+
+async function calculatePrice() {
+    const checkIn = document.getElementById('checkIn').value;
+    const checkOut = document.getElementById('checkOut').value;
+    const adults = document.getElementById('adults').value;
+    const children = document.getElementById('children').value;
+    const infants = document.getElementById('infants').value;
+    const pets = document.getElementById('pets')?.value || 0;
+    
+    if (!checkIn || !checkOut) {
+        document.getElementById('priceDetails').innerHTML = '<p class="text-muted text-center small">Select dates to see pricing</p>';
+        return;
+    }
+    
+    if (!validateGuests()) {
+        return;
+    }
+    
+    try {
+        const response = await fetch('/api/calculate-price', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                listingId,
+                checkIn,
+                checkOut,
+                adults,
+                children,
+                infants,
+                pets
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+            document.getElementById('priceDetails').innerHTML = `<p class="text-danger small text-center">${data.error}</p>`;
+            document.getElementById('reserveBtn').disabled = true;
+            return;
+        }
+        
+        document.getElementById('reserveBtn').disabled = false;
+        
+        let html = `
+            <div class="d-flex justify-content-between mb-2">
+                <span class="text-decoration-underline">₹${nightlyRate.toLocaleString()} x ${data.nights} night${data.nights > 1 ? 's' : ''}</span>
+                <span>₹${data.basePrice.toLocaleString()}</span>
+            </div>
+        `;
+        
+        if (data.cleaningFee > 0) {
+            html += `
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-decoration-underline">Cleaning fee</span>
+                    <span>₹${data.cleaningFee.toLocaleString()}</span>
+                </div>
+            `;
+        }
+        
+        html += `
+            <div class="d-flex justify-content-between mb-2">
+                <span class="text-decoration-underline">Service fee</span>
+                <span>₹${data.serviceFee.toLocaleString()}</span>
+            </div>
+        `;
+        
+        if (data.taxes > 0) {
+            html += `
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-decoration-underline">Taxes</span>
+                    <span>₹${data.taxes.toLocaleString()}</span>
+                </div>
+            `;
+        }
+        
+        if (data.discount > 0) {
+            html += `
+                <div class="d-flex justify-content-between mb-2 text-success">
+                    <span class="text-decoration-underline">${data.discountType.charAt(0).toUpperCase() + data.discountType.slice(1)} discount (${data.discountPercentage}%)</span>
+                    <span>-₹${data.discount.toLocaleString()}</span>
+                </div>
+            `;
+        }
+        
+        html += `
+            <hr>
+            <div class="d-flex justify-content-between fw-bold">
+                <span>Total</span>
+                <span>₹${data.total.toLocaleString()}</span>
+            </div>
+        `;
+        
+        if (data.discount > 0) {
+            html += `
+                <div class="alert alert-success small mt-2 mb-0">
+                    <i class="fas fa-tag"></i> You're saving ₹${data.discount.toLocaleString()} with the ${data.discountType} discount!
+                </div>
+            `;
+        }
+        
+        document.getElementById('priceDetails').innerHTML = html;
+        
+    } catch (error) {
+        console.error('Error calculating price:', error);
+        document.getElementById('priceDetails').innerHTML = '<p class="text-danger small text-center">Error calculating price</p>';
+    }
+}
+
+// Form validation
+document.getElementById('bookingForm').addEventListener('submit', function(e) {
+    const checkIn = document.getElementById('checkIn').value;
+    const checkOut = document.getElementById('checkOut').value;
+    
+    if (!checkIn || !checkOut) {
+        e.preventDefault();
+        alert('Please select check-in and check-out dates');
+        return false;
+    }
+    
+    if (!validateGuests()) {
+        e.preventDefault();
+        return false;
+    }
+});
+</script>
 
 <style>
     .sticky-top {

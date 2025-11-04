@@ -1,0 +1,330 @@
+<% layout('../layouts/boilerplate') %>
+
+<section class="py-4">
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Filter Sidebar -->
+            <div class="col-lg-3 col-md-4 mb-4">
+                <div class="card shadow-sm sticky-top" style="top: 80px;">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="fas fa-filter"></i> Filters</h5>
+                    </div>
+                    <div class="card-body" style="max-height: calc(100vh - 160px); overflow-y: auto;">
+                        <form action="/listings" method="GET" id="filterForm">
+                            
+                            <!-- Search -->
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">Search</label>
+                                <div class="position-relative">
+                                    <input 
+                                        type="text" 
+                                        class="form-control" 
+                                        id="searchInput" 
+                                        name="search" 
+                                        placeholder="Location, property name..."
+                                        autocomplete="off"
+                                        value="<%= typeof search !== 'undefined' ? search : '' %>"
+                                    >
+                                    <div id="autocompleteResults" class="list-group position-absolute w-100" style="z-index: 1000; display: none;"></div>
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            <!-- Price Range -->
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">Price Range (₹/night)</label>
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <input type="number" class="form-control form-control-sm" name="minPrice" placeholder="Min" value="<%= typeof minPrice !== 'undefined' ? minPrice : '' %>" min="0">
+                                    </div>
+                                    <div class="col-6">
+                                        <input type="number" class="form-control form-control-sm" name="maxPrice" placeholder="Max" value="<%= typeof maxPrice !== 'undefined' ? maxPrice : '' %>" min="0">
+                                    </div>
+                                </div>
+                                <div class="mt-2">
+                                    <input type="range" class="form-range" id="priceRange" min="25000" max="100000" step="5000" value="50000">
+                                    <small class="text-muted">₹25,000 - ₹1,00,000+</small>
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            <!-- Property Type -->
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">Property Type</label>
+                                <select class="form-select form-select-sm" name="propertyType">
+                                    <option value="">All Types</option>
+                                    <option value="Villa" <%= typeof propertyType !== 'undefined' && propertyType === 'Villa' ? 'selected' : '' %>>🏰 Villa</option>
+                                    <option value="Apartment" <%= typeof propertyType !== 'undefined' && propertyType === 'Apartment' ? 'selected' : '' %>>🏢 Apartment</option>
+                                    <option value="Cabin" <%= typeof propertyType !== 'undefined' && propertyType === 'Cabin' ? 'selected' : '' %>>🏕️ Cabin</option>
+                                    <option value="Penthouse" <%= typeof propertyType !== 'undefined' && propertyType === 'Penthouse' ? 'selected' : '' %>>🏙️ Penthouse</option>
+                                    <option value="Cottage" <%= typeof propertyType !== 'undefined' && propertyType === 'Cottage' ? 'selected' : '' %>>🏡 Cottage</option>
+                                    <option value="Mansion" <%= typeof propertyType !== 'undefined' && propertyType === 'Mansion' ? 'selected' : '' %>>🏛️ Mansion</option>
+                                    <option value="Treehouse" <%= typeof propertyType !== 'undefined' && propertyType === 'Treehouse' ? 'selected' : '' %>>🌳 Treehouse</option>
+                                    <option value="Houseboat" <%= typeof propertyType !== 'undefined' && propertyType === 'Houseboat' ? 'selected' : '' %>>⛵ Houseboat</option>
+                                    <option value="Castle" <%= typeof propertyType !== 'undefined' && propertyType === 'Castle' ? 'selected' : '' %>>🏰 Castle</option>
+                                </select>
+                            </div>
+
+                            <hr>
+
+                            <!-- Number of Guests -->
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">Guests</label>
+                                <select class="form-select form-select-sm" name="guests">
+                                    <option value="">Any</option>
+                                    <% for(let i = 1; i <= 16; i++) { %>
+                                        <option value="<%= i %>" <%= typeof guests !== 'undefined' && guests == i ? 'selected' : '' %>><%= i %><%= i >= 16 ? '+' : '' %></option>
+                                    <% } %>
+                                </select>
+                            </div>
+
+                            <hr>
+
+                            <!-- Number of Bedrooms -->
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">Bedrooms</label>
+                                <select class="form-select form-select-sm" name="bedrooms">
+                                    <option value="">Any</option>
+                                    <% for(let i = 1; i <= 10; i++) { %>
+                                        <option value="<%= i %>" <%= typeof bedrooms !== 'undefined' && bedrooms == i ? 'selected' : '' %>><%= i %><%= i >= 10 ? '+' : '' %></option>
+                                    <% } %>
+                                </select>
+                            </div>
+
+                            <hr>
+
+                            <!-- Number of Bathrooms -->
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">Bathrooms</label>
+                                <select class="form-select form-select-sm" name="bathrooms">
+                                    <option value="">Any</option>
+                                    <% for(let i = 1; i <= 8; i++) { %>
+                                        <option value="<%= i %>" <%= typeof bathrooms !== 'undefined' && bathrooms == i ? 'selected' : '' %>><%= i %><%= i >= 8 ? '+' : '' %></option>
+                                    <% } %>
+                                </select>
+                            </div>
+
+                            <hr>
+
+                            <!-- Amenities -->
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">Amenities</label>
+                                <% 
+                                const amenitiesList = ['WiFi', 'Kitchen', 'Air Conditioning', 'Heating', 'Swimming Pool', 'Hot Tub', 'Parking', 'Gym', 'Washer/Dryer', 'TV', 'Workspace', 'Pet-friendly'];
+                                const selectedAmenities = typeof amenities !== 'undefined' ? (Array.isArray(amenities) ? amenities : [amenities]) : [];
+                                %>
+                                <% amenitiesList.forEach(amenity => { %>
+                                    <div class="form-check form-check-sm">
+                                        <input class="form-check-input" type="checkbox" name="amenities" value="<%= amenity %>" id="amenity<%= amenity.replace(/\s+/g, '') %>" <%= selectedAmenities.includes(amenity) ? 'checked' : '' %>>
+                                        <label class="form-check-label small" for="amenity<%= amenity.replace(/\s+/g, '') %>">
+                                            <%= amenity %>
+                                        </label>
+                                    </div>
+                                <% }); %>
+                            </div>
+
+                            <hr>
+
+                            <!-- Instant Book -->
+                            <div class="mb-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="instantBook" value="true" id="instantBook" <%= typeof instantBook !== 'undefined' && instantBook === 'true' ? 'checked' : '' %>>
+                                    <label class="form-check-label fw-bold" for="instantBook">
+                                        ⚡ Instant Book
+                                    </label>
+                                </div>
+                                <small class="text-muted">Book without waiting for host approval</small>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-search"></i> Apply Filters
+                                </button>
+                                <a href="/listings" class="btn btn-outline-secondary btn-sm">
+                                    <i class="fas fa-redo"></i> Clear All
+                                </a>
+                            </div>
+                        </form>
+
+                        <!-- Recent Searches -->
+                        <div id="recentSearches" class="mt-3"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Listings Grid -->
+            <div class="col-lg-9 col-md-8">
+                <div class="mb-3 d-flex justify-content-between align-items-center">
+                    <h1 class="fw-bold mb-0"><%= pageTitle %></h1>
+                    <% if (listings && listings.length > 0) { %>
+                        <span class="badge bg-secondary"><%= listings.length %> propert<%= listings.length === 1 ? 'y' : 'ies' %></span>
+                    <% } %>
+                </div>
+                
+                <p class="text-muted">Explore our curated selection of properties from around the world.</p>
+                
+                <!-- Results -->
+                <% if (listings && listings.length > 0) { %>
+                    <div class="row">
+                        <% listings.forEach(listing => { %>
+                            <%- include('../includes/listing-card', { listing: listing }) %>
+                        <% }) %>
+                    </div>
+                <% } else { %>
+                    <div class="text-center py-5">
+                        <i class="fas fa-search fa-4x text-muted mb-3"></i>
+                        <h4 class="text-muted">No properties found</h4>
+                        <p class="text-muted">Try adjusting your filters or search criteria</p>
+                        <a href="/listings" class="btn btn-primary">View All Listings</a>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Filter JavaScript -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const autocompleteResults = document.getElementById('autocompleteResults');
+    const recentSearchesDiv = document.getElementById('recentSearches');
+    let debounceTimer;
+    
+    // Load recent searches
+    loadRecentSearches();
+    
+    // Autocomplete functionality
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            clearTimeout(debounceTimer);
+            const query = this.value.trim();
+            
+            if (query.length < 2) {
+                autocompleteResults.style.display = 'none';
+                return;
+            }
+            
+            debounceTimer = setTimeout(() => {
+                fetch(`/api/autocomplete?q=${encodeURIComponent(query)}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        displayAutocomplete(data.suggestions);
+                    })
+                    .catch(err => console.error('Autocomplete error:', err));
+            }, 300);
+        });
+    }
+    
+    // Hide autocomplete when clicking outside
+    document.addEventListener('click', function(e) {
+        if (searchInput && !searchInput.contains(e.target) && !autocompleteResults.contains(e.target)) {
+            autocompleteResults.style.display = 'none';
+        }
+    });
+    
+    function displayAutocomplete(suggestions) {
+        if (!suggestions || suggestions.length === 0) {
+            autocompleteResults.style.display = 'none';
+            return;
+        }
+        
+        autocompleteResults.innerHTML = '';
+        suggestions.forEach(item => {
+            const a = document.createElement('a');
+            a.href = '#';
+            a.className = 'list-group-item list-group-item-action';
+            
+            let icon = '<i class="fas fa-map-marker-alt me-2"></i>';
+            if (item.type === 'country') icon = '<i class="fas fa-globe me-2"></i>';
+            if (item.type === 'property') icon = '<i class="fas fa-home me-2"></i>';
+            
+            a.innerHTML = icon + item.value;
+            if (item.location) {
+                a.innerHTML += ` <small class="text-muted">in ${item.location}</small>`;
+            }
+            
+            a.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (item.type === 'property' && item.id) {
+                    window.location.href = `/listings/${item.id}`;
+                } else {
+                    searchInput.value = item.value;
+                    autocompleteResults.style.display = 'none';
+                }
+            });
+            
+            autocompleteResults.appendChild(a);
+        });
+        
+        autocompleteResults.style.display = 'block';
+    }
+    
+    function loadRecentSearches() {
+        fetch('/api/recent-searches')
+            .then(res => res.json())
+            .then(data => {
+                if (data.recentSearches && data.recentSearches.length > 0) {
+                    displayRecentSearches(data.recentSearches);
+                }
+            })
+            .catch(err => console.error('Recent searches error:', err));
+    }
+    
+    function displayRecentSearches(searches) {
+        if (recentSearchesDiv) {
+            recentSearchesDiv.innerHTML = `
+                <div class="border-top pt-3">
+                    <small class="text-muted fw-bold">Recent:</small>
+                    <div class="d-flex flex-column gap-1 mt-2">
+                        ${searches.map(search => `
+                            <a href="/listings?search=${encodeURIComponent(search)}" class="text-decoration-none small">
+                                <i class="fas fa-history text-muted me-1"></i>${search}
+                            </a>
+                        `).join('')}
+                    </div>
+                    <button class="btn btn-sm btn-link text-danger p-0 mt-2" onclick="clearRecentSearches()">
+                        <i class="fas fa-times"></i> Clear history
+                    </button>
+                </div>
+            `;
+        }
+    }
+    
+    window.clearRecentSearches = function() {
+        fetch('/api/recent-searches', { method: 'DELETE' })
+            .then(() => {
+                if (recentSearchesDiv) {
+                    recentSearchesDiv.innerHTML = '';
+                }
+            })
+            .catch(err => console.error('Clear searches error:', err));
+    };
+});
+</script>
+
+<style>
+#autocompleteResults {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-top: 2px;
+    background: white;
+}
+
+#autocompleteResults .list-group-item:hover {
+    background-color: #f8f9fa;
+    cursor: pointer;
+}
+
+/* Sticky sidebar */
+@media (min-width: 992px) {
+    .sticky-top {
+        position: sticky;
+    }
+}
+</style>

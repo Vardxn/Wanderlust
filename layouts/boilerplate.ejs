@@ -14,6 +14,24 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="/CSS/styles.css">
+    <!-- Modern Color System -->
+    <link rel="stylesheet" href="/CSS/modern-colors.css">
+    <!-- Dark Theme - Applied First for Base Styles -->
+    <link rel="stylesheet" href="/CSS/dark-theme.css">
+    <!-- Dark Theme Enhancements -->
+    <link rel="stylesheet" href="/CSS/dark-theme-enhancements.css">
+    <!-- Clean Navbar -->
+    <link rel="stylesheet" href="/CSS/navbar-clean.css">
+    <!-- Liquid Glass Homepage -->
+    <link rel="stylesheet" href="/CSS/liquid-glass-homepage.css">
+    <!-- Liquid Glass Listings -->
+    <link rel="stylesheet" href="/CSS/listings-liquid-glass.css">
+    <!-- Premium Enhancements CSS -->
+    <link rel="stylesheet" href="/CSS/premium-enhancements.css">
+    <!-- Liquid Glass System CSS -->
+    <link rel="stylesheet" href="/CSS/liquid-glass-system.css">
+    <!-- Trending Features CSS -->
+    <link rel="stylesheet" href="/CSS/trending-features.css">
 </head>
 
 <body>
@@ -30,6 +48,30 @@
 
             <!-- Bootstrap JS -->
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+            <!-- GSAP & ScrollTrigger -->
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+            <!-- Premium Animations JS -->
+            <script src="/js/premium-animations.js"></script>
+            <!-- Scrollytelling JS -->
+            <script src="/js/scrollytelling.js"></script>
+            <!-- Trending Features JS -->
+            <script src="/js/trending-features.js"></script>
+            
+            <!-- Navbar Scroll Effect -->
+            <script>
+                // Navbar scroll effect
+                window.addEventListener('scroll', function() {
+                    const navbar = document.querySelector('.liquid-glass-nav-clean');
+                    if (navbar) {
+                        if (window.scrollY > 50) {
+                            navbar.classList.add('scrolled');
+                        } else {
+                            navbar.classList.remove('scrolled');
+                        }
+                    }
+                });
+            </script>
 </body>
 
 </html>

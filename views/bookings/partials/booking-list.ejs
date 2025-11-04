@@ -1,0 +1,129 @@
+<% if (bookingList && bookingList.length > 0) { %>
+    <div class="row">
+        <% bookingList.forEach(booking => { %>
+            <div class="col-12 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="row g-0">
+                        <!-- Property Image -->
+                        <div class="col-md-3">
+                            <% if (booking.listing.images && booking.listing.images.length > 0) { %>
+                                <img src="<%= booking.listing.images[0].url %>" 
+                                     alt="<%= booking.listing.title %>" 
+                                     class="img-fluid rounded-start h-100" 
+                                     style="object-fit: cover; min-height: 200px;">
+                            <% } else { %>
+                                <img src="https://via.placeholder.com/300x200?text=No+Image" 
+                                     alt="No image" 
+                                     class="img-fluid rounded-start h-100" 
+                                     style="object-fit: cover; min-height: 200px;">
+                            <% } %>
+                        </div>
+
+                        <!-- Booking Details -->
+                        <div class="col-md-6">
+                            <div class="card-body">
+                                <!-- Status Badge -->
+                                <div class="mb-2">
+                                    <% if (booking.status === 'confirmed') { %>
+                                        <span class="badge bg-success"><i class="fas fa-check-circle"></i> Confirmed</span>
+                                    <% } else if (booking.status === 'pending') { %>
+                                        <span class="badge bg-warning text-dark"><i class="fas fa-clock"></i> Pending</span>
+                                    <% } else if (booking.status === 'cancelled') { %>
+                                        <span class="badge bg-danger"><i class="fas fa-times-circle"></i> Cancelled</span>
+                                    <% } else if (booking.status === 'completed') { %>
+                                        <span class="badge bg-info"><i class="fas fa-flag-checkered"></i> Completed</span>
+                                    <% } else if (booking.status === 'rejected') { %>
+                                        <span class="badge bg-dark"><i class="fas fa-ban"></i> Rejected</span>
+                                    <% } %>
+                                </div>
+
+                                <h5 class="card-title fw-bold mb-2"><%= booking.listing.title %></h5>
+                                <p class="text-muted mb-3">
+                                    <i class="fas fa-map-marker-alt"></i> <%= booking.listing.location %>
+                                </p>
+
+                                <div class="row mb-2">
+                                    <div class="col-6">
+                                        <small class="text-muted d-block"><i class="fas fa-calendar-check"></i> Check-in</small>
+                                        <strong><%= new Date(booking.checkIn).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) %></strong>
+                                    </div>
+                                    <div class="col-6">
+                                        <small class="text-muted d-block"><i class="fas fa-calendar-times"></i> Checkout</small>
+                                        <strong><%= new Date(booking.checkOut).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) %></strong>
+                                    </div>
+                                </div>
+
+                                <div class="mb-2">
+                                    <small class="text-muted"><i class="fas fa-users"></i> Guests:</small>
+                                    <strong>
+                                        <%= booking.guests.adults %> Adult<%= booking.guests.adults > 1 ? 's' : '' %>
+                                        <% if (booking.guests.children > 0) { %>
+                                            , <%= booking.guests.children %> Child<%= booking.guests.children > 1 ? 'ren' : '' %>
+                                        <% } %>
+                                        <% if (booking.guests.infants > 0) { %>
+                                            , <%= booking.guests.infants %> Infant<%= booking.guests.infants > 1 ? 's' : '' %>
+                                        <% } %>
+                                    </strong>
+                                </div>
+
+                                <div class="mb-2">
+                                    <small class="text-muted"><i class="fas fa-moon"></i> Duration:</small>
+                                    <strong><%= Math.ceil((new Date(booking.checkOut) - new Date(booking.checkIn)) / (1000 * 60 * 60 * 24)) %> night<%= Math.ceil((new Date(booking.checkOut) - new Date(booking.checkIn)) / (1000 * 60 * 60 * 24)) > 1 ? 's' : '' %></strong>
+                                </div>
+
+                                <small class="text-muted">
+                                    <i class="fas fa-clock"></i> Booked on <%= new Date(booking.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) %>
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Actions & Price -->
+                        <div class="col-md-3">
+                            <div class="card-body d-flex flex-column justify-content-between h-100">
+                                <div class="text-end">
+                                    <h4 class="fw-bold text-primary mb-1">₹<%= booking.pricing.total.toLocaleString() %></h4>
+                                    <small class="text-muted">Total amount</small>
+                                    
+                                    <div class="mt-2">
+                                        <% if (booking.payment.status === 'paid') { %>
+                                            <span class="badge bg-success"><i class="fas fa-check"></i> Paid</span>
+                                        <% } else if (booking.payment.status === 'pending') { %>
+                                            <span class="badge bg-warning text-dark"><i class="fas fa-clock"></i> Payment Pending</span>
+                                        <% } else if (booking.payment.status === 'refunded') { %>
+                                            <span class="badge bg-info"><i class="fas fa-undo"></i> Refunded</span>
+                                        <% } else { %>
+                                            <span class="badge bg-danger"><i class="fas fa-times"></i> Payment Failed</span>
+                                        <% } %>
+                                    </div>
+                                </div>
+
+                                <div class="mt-3">
+                                    <a href="/bookings/<%= booking._id %>" class="btn btn-primary w-100 mb-2">
+                                        <i class="fas fa-eye"></i> View Details
+                                    </a>
+                                    
+                                    <% if (booking.status === 'confirmed' || booking.status === 'pending') { %>
+                                        <form action="/bookings/<%= booking._id %>/cancel" method="POST" onsubmit="return confirm('Are you sure you want to cancel this booking?')">
+                                            <button type="submit" class="btn btn-outline-danger w-100">
+                                                <i class="fas fa-times"></i> Cancel
+                                            </button>
+                                        </form>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <% }) %>
+    </div>
+<% } else { %>
+    <div class="text-center py-5">
+        <i class="fas fa-inbox fa-4x text-muted mb-3"></i>
+        <h3 class="text-muted">No bookings found</h3>
+        <p class="text-muted">Start exploring amazing places to stay!</p>
+        <a href="/listings" class="btn btn-primary">
+            <i class="fas fa-search"></i> Browse Listings
+        </a>
+    </div>
+<% } %>

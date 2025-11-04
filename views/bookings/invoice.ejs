@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Invoice - <%= booking._id %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            body {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .invoice-container {
+            background: white;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 40px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        
+        .invoice-header {
+            border-bottom: 3px solid #0d6efd;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .invoice-logo {
+            font-size: 32px;
+            font-weight: bold;
+            color: #0d6efd;
+        }
+        
+        .invoice-details {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        
+        .table-invoice {
+            margin-top: 20px;
+        }
+        
+        .table-invoice th {
+            background-color: #f8f9fa;
+            border-top: 2px solid #dee2e6;
+            border-bottom: 2px solid #dee2e6;
+        }
+        
+        .total-section {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 12px;
+        }
+        
+        .status-confirmed {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-cancelled {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .footer-text {
+            text-align: center;
+            color: #6c757d;
+            font-size: 14px;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #dee2e6;
+        }
+    </style>
+</head>
+<body>
+    <div class="invoice-container">
+        <!-- Print/Download Buttons -->
+        <div class="no-print mb-4">
+            <button onclick="window.print()" class="btn btn-primary">
+                <i class="fas fa-print"></i> Print Invoice
+            </button>
+            <button onclick="window.close()" class="btn btn-outline-secondary">
+                <i class="fas fa-times"></i> Close
+            </button>
+        </div>
+
+        <!-- Invoice Header -->
+        <div class="invoice-header">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="invoice-logo">
+                        <i class="fas fa-suitcase-rolling"></i> Wanderlust
+                    </div>
+                    <p class="mb-0 mt-2">Premium Travel Experiences</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <h3 class="mb-2">INVOICE</h3>
+                    <p class="mb-1"><strong>Invoice #:</strong> <%= booking._id %></p>
+                    <p class="mb-1"><strong>Date:</strong> <%= new Date(booking.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) %></p>
+                    <span class="status-badge status-<%= booking.status %>"><%= booking.status.toUpperCase() %></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Guest Information -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <h5 class="fw-bold mb-3">Guest Information</h5>
+                <p class="mb-1"><strong>Name:</strong> <%= booking.user.username %></p>
+                <p class="mb-1"><strong>Email:</strong> <%= booking.user.email %></p>
+                <% if (booking.user.phone) { %>
+                <p class="mb-1"><strong>Phone:</strong> <%= booking.user.phone %></p>
+                <% } %>
+            </div>
+            <div class="col-md-6">
+                <h5 class="fw-bold mb-3">Property Details</h5>
+                <p class="mb-1"><strong><%= booking.listing.title %></strong></p>
+                <p class="mb-1"><i class="fas fa-map-marker-alt"></i> <%= booking.listing.location %></p>
+                <% if (booking.listing.propertyType) { %>
+                <p class="mb-1"><i class="fas fa-home"></i> <%= booking.listing.propertyType %></p>
+                <% } %>
+            </div>
+        </div>
+
+        <!-- Booking Details -->
+        <div class="invoice-details">
+            <h5 class="fw-bold mb-3">Booking Details</h5>
+            <div class="row">
+                <div class="col-md-4">
+                    <p class="mb-2"><strong>Check-in:</strong></p>
+                    <p class="mb-0"><i class="fas fa-calendar-check"></i> <%= new Date(booking.checkIn).toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) %></p>
+                    <small class="text-muted">After 2:00 PM</small>
+                </div>
+                <div class="col-md-4">
+                    <p class="mb-2"><strong>Checkout:</strong></p>
+                    <p class="mb-0"><i class="fas fa-calendar-times"></i> <%= new Date(booking.checkOut).toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) %></p>
+                    <small class="text-muted">Before 11:00 AM</small>
+                </div>
+                <div class="col-md-4">
+                    <p class="mb-2"><strong>Duration:</strong></p>
+                    <p class="mb-0"><i class="fas fa-moon"></i> <%= Math.ceil((new Date(booking.checkOut) - new Date(booking.checkIn)) / (1000 * 60 * 60 * 24)) %> night(s)</p>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="mb-2"><strong>Guests:</strong></p>
+                    <p class="mb-0">
+                        <i class="fas fa-users"></i>
+                        <%= booking.guests.adults %> Adult<%= booking.guests.adults > 1 ? 's' : '' %>
+                        <% if (booking.guests.children > 0) { %>, <%= booking.guests.children %> Child<%= booking.guests.children > 1 ? 'ren' : '' %><% } %>
+                        <% if (booking.guests.infants > 0) { %>, <%= booking.guests.infants %> Infant<%= booking.guests.infants > 1 ? 's' : '' %><% } %>
+                        <% if (booking.guests.pets > 0) { %>, <%= booking.guests.pets %> Pet<%= booking.guests.pets > 1 ? 's' : '' %><% } %>
+                    </p>
+                </div>
+                <% if (booking.specialRequests) { %>
+                <div class="col-md-6">
+                    <p class="mb-2"><strong>Special Requests:</strong></p>
+                    <p class="mb-0 text-muted"><%= booking.specialRequests %></p>
+                </div>
+                <% } %>
+            </div>
+        </div>
+
+        <!-- Price Breakdown Table -->
+        <h5 class="fw-bold mb-3">Price Breakdown</h5>
+        <table class="table table-invoice">
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th class="text-end">Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        ₹<%= booking.pricing.nightlyRate.toLocaleString() %> × <%= Math.ceil((new Date(booking.checkOut) - new Date(booking.checkIn)) / (1000 * 60 * 60 * 24)) %> night(s)
+                    </td>
+                    <td class="text-end">₹<%= booking.pricing.basePrice.toLocaleString() %></td>
+                </tr>
+                <% if (booking.pricing.cleaningFee > 0) { %>
+                <tr>
+                    <td>Cleaning Fee</td>
+                    <td class="text-end">₹<%= booking.pricing.cleaningFee.toLocaleString() %></td>
+                </tr>
+                <% } %>
+                <tr>
+                    <td>Service Fee</td>
+                    <td class="text-end">₹<%= booking.pricing.serviceFee.toLocaleString() %></td>
+                </tr>
+                <% if (booking.pricing.taxes > 0) { %>
+                <tr>
+                    <td>Taxes (12% GST)</td>
+                    <td class="text-end">₹<%= booking.pricing.taxes.toLocaleString() %></td>
+                </tr>
+                <% } %>
+                <% if (booking.pricing.discount > 0) { %>
+                <tr class="table-success">
+                    <td>
+                        <i class="fas fa-tag"></i>
+                        <%= booking.pricing.discountType.charAt(0).toUpperCase() + booking.pricing.discountType.slice(1) %> Discount
+                    </td>
+                    <td class="text-end text-success fw-bold">-₹<%= booking.pricing.discount.toLocaleString() %></td>
+                </tr>
+                <% } %>
+            </tbody>
+        </table>
+
+        <!-- Total Section -->
+        <div class="total-section">
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="mb-2"><strong>Payment Method:</strong></p>
+                    <p class="mb-0">
+                        <% if (booking.payment.method) { %>
+                            <%= booking.payment.method %>
+                        <% } else { %>
+                            Pending
+                        <% } %>
+                    </p>
+                    <% if (booking.payment.transactionId) { %>
+                    <p class="mb-0 mt-2"><small>Transaction ID: <%= booking.payment.transactionId %></small></p>
+                    <% } %>
+                </div>
+                <div class="col-md-6">
+                    <h3 class="text-end mb-3">
+                        <span class="text-muted">Total Amount:</span><br>
+                        <span class="text-primary">₹<%= booking.pricing.total.toLocaleString() %></span>
+                    </h3>
+                    <p class="text-end mb-0">
+                        <strong>Payment Status:</strong>
+                        <% if (booking.payment.status === 'paid') { %>
+                            <span class="badge bg-success"><i class="fas fa-check-circle"></i> Paid</span>
+                        <% } else if (booking.payment.status === 'pending') { %>
+                            <span class="badge bg-warning text-dark"><i class="fas fa-clock"></i> Pending</span>
+                        <% } else if (booking.payment.status === 'refunded') { %>
+                            <span class="badge bg-info"><i class="fas fa-undo"></i> Refunded</span>
+                        <% } else { %>
+                            <span class="badge bg-danger"><i class="fas fa-times-circle"></i> Failed</span>
+                        <% } %>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Terms and Conditions -->
+        <div class="mt-4">
+            <h6 class="fw-bold mb-2">Terms & Conditions</h6>
+            <ul class="small text-muted">
+                <li>Check-in time is after 2:00 PM and checkout time is before 11:00 AM</li>
+                <li>Valid government-issued photo ID required at check-in</li>
+                <li>Please review the property's house rules and cancellation policy</li>
+                <li>Damage to the property may result in additional charges</li>
+                <li>This invoice serves as your booking confirmation</li>
+            </ul>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer-text">
+            <p class="mb-1"><strong>Wanderlust Travel Platform</strong></p>
+            <p class="mb-1">support@wanderlust.com | +91-1234567890</p>
+            <p class="mb-0">Thank you for choosing Wanderlust!</p>
+        </div>
+    </div>
+
+    <script>
+        // Auto-print dialog (optional)
+        // window.onload = function() { window.print(); }
+    </script>
+</body>
+</html>

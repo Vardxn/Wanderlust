@@ -1,0 +1,68 @@
+<% layout('layouts/boilerplate') %>
+
+<div class="container my-5">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4"><i class="fas fa-suitcase"></i> My Bookings</h1>
+            
+            <!-- Filter Tabs -->
+            <ul class="nav nav-tabs mb-4" id="bookingTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all" type="button" role="tab">
+                        All Bookings
+                        <% if (bookings.all && bookings.all.length > 0) { %>
+                            <span class="badge bg-secondary ms-1"><%= bookings.all.length %></span>
+                        <% } %>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="upcoming-tab" data-bs-toggle="tab" data-bs-target="#upcoming" type="button" role="tab">
+                        Upcoming
+                        <% if (bookings.upcoming && bookings.upcoming.length > 0) { %>
+                            <span class="badge bg-primary ms-1"><%= bookings.upcoming.length %></span>
+                        <% } %>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="completed-tab" data-bs-toggle="tab" data-bs-target="#completed" type="button" role="tab">
+                        Completed
+                        <% if (bookings.completed && bookings.completed.length > 0) { %>
+                            <span class="badge bg-success ms-1"><%= bookings.completed.length %></span>
+                        <% } %>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="cancelled-tab" data-bs-toggle="tab" data-bs-target="#cancelled" type="button" role="tab">
+                        Cancelled
+                        <% if (bookings.cancelled && bookings.cancelled.length > 0) { %>
+                            <span class="badge bg-danger ms-1"><%= bookings.cancelled.length %></span>
+                        <% } %>
+                    </button>
+                </li>
+            </ul>
+
+            <!-- Tab Content -->
+            <div class="tab-content" id="bookingTabsContent">
+                <!-- All Bookings Tab -->
+                <div class="tab-pane fade show active" id="all" role="tabpanel">
+                    <%- include('partials/booking-list', { bookingList: bookings.all || [] }) %>
+                </div>
+
+                <!-- Upcoming Bookings Tab -->
+                <div class="tab-pane fade" id="upcoming" role="tabpanel">
+                    <%- include('partials/booking-list', { bookingList: bookings.upcoming || [] }) %>
+                </div>
+
+                <!-- Completed Bookings Tab -->
+                <div class="tab-pane fade" id="completed" role="tabpanel">
+                    <%- include('partials/booking-list', { bookingList: bookings.completed || [] }) %>
+                </div>
+
+                <!-- Cancelled Bookings Tab -->
+                <div class="tab-pane fade" id="cancelled" role="tabpanel">
+                    <%- include('partials/booking-list', { bookingList: bookings.cancelled || [] }) %>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -22,26 +22,26 @@ Wanderlust is an Airbnb-like property rental platform. This document outlines pl
 **Priority: HIGH**
 
 #### Search Features:
-- [ ] Location-based search (city, country, region)
-- [ ] Autocomplete for locations
-- [ ] Search by property name
-- [ ] Nearby properties (geolocation)
-- [ ] Recent searches history
+- [x] Location-based search (city, country, region) ✅ **COMPLETED**
+- [x] Autocomplete for locations ✅ **COMPLETED**
+- [x] Search by property name ✅ **COMPLETED**
+- [x] Nearby properties (geolocation) ✅ **COMPLETED** (basic implementation)
+- [x] Recent searches history ✅ **COMPLETED**
 
 #### Filter Options:
-- [ ] Price range slider (₹25,000 - ₹1,00,000+)
-- [ ] Property type filter:
+- [x] Price range slider (₹25,000 - ₹1,00,000+) ✅ **COMPLETED**
+- [x] Property type filter: ✅ **COMPLETED**
   - Villa
   - Apartment
   - Cabin
   - Penthouse
   - Cottage
   - Mansion
-  - Unique stays (Treehouse, Houseboat, etc.)
-- [ ] Number of guests (1-16+)
-- [ ] Number of bedrooms (1-10+)
-- [ ] Number of bathrooms
-- [ ] Amenities checklist:
+  - Unique stays (Treehouse, Houseboat, Castle, etc.)
+- [x] Number of guests (1-16+) ✅ **COMPLETED**
+- [x] Number of bedrooms (1-10+) ✅ **COMPLETED**
+- [x] Number of bathrooms ✅ **COMPLETED**
+- [x] Amenities checklist: ✅ **COMPLETED**
   - WiFi
   - Kitchen
   - Air Conditioning
@@ -54,10 +54,10 @@ Wanderlust is an Airbnb-like property rental platform. This document outlines pl
   - TV
   - Workspace
   - Pet-friendly
-- [ ] Instant Book option
-- [ ] Superhost filter
-- [ ] Free cancellation
-- [ ] Language of host
+- [x] Instant Book option ✅ **COMPLETED**
+- [ ] Superhost filter (requires host rating system)
+- [ ] Free cancellation (requires booking system)
+- [ ] Language of host (requires user profile updates)
 
 #### Sort Options:
 - [ ] Price: Low to High
@@ -69,33 +69,33 @@ Wanderlust is an Airbnb-like property rental platform. This document outlines pl
 ---
 
 ### B. 📅 Booking System
-**Priority: HIGH**
+**Priority: HIGH** ✅ **PARTIALLY COMPLETED**
 
 #### Booking Flow:
-- [ ] Interactive date picker for check-in/check-out
-- [ ] Calendar showing unavailable dates
-- [ ] Minimum/maximum stay requirements
-- [ ] Guest count selector (Adults, Children, Infants, Pets)
-- [ ] Real-time price calculation:
+- [x] Interactive date picker for check-in/check-out ✅ **COMPLETED**
+- [x] Calendar showing unavailable dates ✅ **COMPLETED** (booked dates API)
+- [x] Minimum/maximum stay requirements ✅ **COMPLETED**
+- [x] Guest count selector (Adults, Children, Infants, Pets) ✅ **COMPLETED**
+- [x] Real-time price calculation: ✅ **COMPLETED**
   - Base price × number of nights
   - Cleaning fee
   - Service fee
-  - Taxes
-  - Discounts (weekly/monthly)
-- [ ] Booking summary page
-- [ ] Payment processing
-- [ ] Booking confirmation email
+  - Taxes (12% GST)
+  - Discounts (weekly 7+ nights / monthly 28+ nights)
+- [x] Booking summary page ✅ **COMPLETED** (booking detail view)
+- [ ] Payment processing (pending - requires Razorpay/Stripe integration)
+- [ ] Booking confirmation email (pending - requires email service)
 - [ ] Calendar sync (Google Calendar, iCal)
 
 #### Booking Management:
-- [ ] View all bookings (Guest view)
-- [ ] Upcoming trips
-- [ ] Past trips
-- [ ] Cancelled bookings
-- [ ] Modify booking (if allowed)
-- [ ] Cancel booking
-- [ ] Download booking receipt/invoice
-- [ ] Booking reminders (24h before check-in)
+- [x] View all bookings (Guest view) ✅ **COMPLETED**
+- [x] Upcoming trips ✅ **COMPLETED** (filtered tab)
+- [x] Past trips ✅ **COMPLETED** (completed tab)
+- [x] Cancelled bookings ✅ **COMPLETED** (cancelled tab)
+- [x] Modify booking (if allowed) ✅ **COMPLETED** (48h before check-in)
+- [x] Cancel booking ✅ **COMPLETED**
+- [x] Download booking receipt/invoice ✅ **COMPLETED** (PDF-ready view)
+- [x] Booking reminders (24h before check-in) ✅ **COMPLETED** (automated cron job)
 
 ---
 

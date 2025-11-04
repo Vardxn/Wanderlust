@@ -1,0 +1,635 @@
+/* ===================================================================
+   WANDERLUST DARK THEME - Global Dark Blue/Black Theme
+   =================================================================== */
+
+:root {
+    /* === DARK THEME COLOR PALETTE === */
+    /* Primary - Deep Ocean Blues */
+    --dark-bg-primary: #0A0E1A;           /* Almost black with blue tint */
+    --dark-bg-secondary: #0F1419;         /* Slightly lighter black */
+    --dark-bg-tertiary: #1A1F2E;          /* Dark blue-grey */
+    --dark-bg-elevated: #1F2937;          /* Elevated surfaces */
+    --dark-bg-card: #141B2B;              /* Card backgrounds */
+    
+    /* Accent - Electric Blue */
+    --dark-accent-primary: #3B82F6;       /* Vibrant blue */
+    --dark-accent-secondary: #60A5FA;     /* Lighter blue */
+    --dark-accent-dark: #2563EB;          /* Darker blue */
+    --dark-accent-glow: rgba(59, 130, 246, 0.3);
+    
+    /* Coral accent for CTAs */
+    --dark-coral: #FF6B6B;
+    --dark-coral-hover: #FF5252;
+    
+    /* Text Colors */
+    --dark-text-primary: #F9FAFB;         /* Almost white */
+    --dark-text-secondary: #D1D5DB;       /* Light grey */
+    --dark-text-muted: #9CA3AF;           /* Medium grey */
+    --dark-text-disabled: #6B7280;        /* Dark grey */
+    
+    /* Borders & Dividers */
+    --dark-border: #1F2937;
+    --dark-border-light: #374151;
+    --dark-divider: rgba(255, 255, 255, 0.1);
+    
+    /* Glass Morphism */
+    --dark-glass-bg: rgba(20, 27, 43, 0.7);
+    --dark-glass-border: rgba(255, 255, 255, 0.1);
+    --dark-glass-strong: rgba(15, 20, 25, 0.85);
+    
+    /* Shadows */
+    --dark-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+    --dark-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
+    --dark-shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
+    --dark-shadow-glow: 0 0 20px rgba(59, 130, 246, 0.2);
+    
+    /* Gradients */
+    --dark-gradient-primary: linear-gradient(135deg, #0A0E1A 0%, #1A1F2E 100%);
+    --dark-gradient-accent: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+    --dark-gradient-overlay: linear-gradient(180deg, transparent 0%, rgba(10, 14, 26, 0.9) 100%);
+    --dark-gradient-radial: radial-gradient(circle at 50% 0%, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+}
+
+/* ===================================================================
+   GLOBAL DARK THEME APPLICATION
+   =================================================================== */
+
+body {
+    background: var(--dark-bg-primary) !important;
+    color: var(--dark-text-primary) !important;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Background texture overlay */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        var(--dark-gradient-radial),
+        repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 2px,
+            rgba(59, 130, 246, 0.03) 2px,
+            rgba(59, 130, 246, 0.03) 4px
+        );
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Ensure content is above background */
+body > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* ===================================================================
+   NAVBAR DARK THEME
+   =================================================================== */
+
+.navbar {
+    background: var(--dark-glass-strong) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+    border-bottom: 1px solid var(--dark-border-light) !important;
+    box-shadow: var(--dark-shadow-md) !important;
+}
+
+.navbar-brand,
+.nav-link {
+    color: var(--dark-text-primary) !important;
+}
+
+.nav-link:hover {
+    color: var(--dark-accent-secondary) !important;
+}
+
+.logo-text {
+    background: var(--dark-gradient-accent);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* ===================================================================
+   CARDS & CONTAINERS
+   =================================================================== */
+
+.card,
+.liquid-glass-card,
+.experience-bento-item {
+    background: var(--dark-bg-card) !important;
+    border: 1px solid var(--dark-border-light) !important;
+    color: var(--dark-text-primary) !important;
+    box-shadow: var(--dark-shadow-md) !important;
+}
+
+.card:hover,
+.liquid-glass-card:hover,
+.experience-bento-item:hover {
+    border-color: var(--dark-accent-primary) !important;
+    box-shadow: var(--dark-shadow-glow), var(--dark-shadow-lg) !important;
+}
+
+/* Glass overlays on dark theme */
+.experience-glass-overlay {
+    background: var(--dark-glass-strong) !important;
+    backdrop-filter: blur(25px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(25px) saturate(180%) !important;
+    border-top: 1px solid var(--dark-border-light) !important;
+}
+
+/* ===================================================================
+   BUTTONS
+   =================================================================== */
+
+.btn,
+.liquid-glass-btn {
+    background: var(--dark-bg-elevated) !important;
+    color: var(--dark-text-primary) !important;
+    border: 1px solid var(--dark-border-light) !important;
+    transition: all 0.3s ease !important;
+}
+
+.btn:hover,
+.liquid-glass-btn:hover {
+    background: var(--dark-bg-tertiary) !important;
+    border-color: var(--dark-accent-primary) !important;
+    box-shadow: var(--dark-shadow-glow) !important;
+}
+
+.btn-primary,
+.liquid-glass-btn-primary {
+    background: var(--dark-gradient-accent) !important;
+    color: white !important;
+    border: 1px solid var(--dark-accent-dark) !important;
+}
+
+.btn-primary:hover,
+.liquid-glass-btn-primary:hover {
+    background: var(--dark-accent-dark) !important;
+    box-shadow: 0 0 30px var(--dark-accent-glow) !important;
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background: var(--dark-coral) !important;
+    color: white !important;
+    border: none !important;
+}
+
+.btn-secondary:hover {
+    background: var(--dark-coral-hover) !important;
+    box-shadow: 0 0 20px rgba(255, 107, 107, 0.3) !important;
+}
+
+/* ===================================================================
+   FORMS & INPUTS
+   =================================================================== */
+
+.form-control,
+.form-select,
+.liquid-glass-input,
+input,
+textarea,
+select {
+    background: var(--dark-bg-elevated) !important;
+    color: var(--dark-text-primary) !important;
+    border: 1px solid var(--dark-border-light) !important;
+}
+
+.form-control:focus,
+.form-select:focus,
+.liquid-glass-input:focus,
+input:focus,
+textarea:focus,
+select:focus {
+    background: var(--dark-bg-tertiary) !important;
+    border-color: var(--dark-accent-primary) !important;
+    box-shadow: 0 0 0 3px var(--dark-accent-glow) !important;
+    color: var(--dark-text-primary) !important;
+}
+
+.form-label,
+label {
+    color: var(--dark-text-secondary) !important;
+}
+
+::placeholder {
+    color: var(--dark-text-muted) !important;
+}
+
+/* ===================================================================
+   TEXT & TYPOGRAPHY
+   =================================================================== */
+
+h1, h2, h3, h4, h5, h6,
+.heading,
+.expressive-heading,
+.brutalist-heading,
+.experience-title {
+    color: var(--dark-text-primary) !important;
+}
+
+p,
+.text-muted {
+    color: var(--dark-text-secondary) !important;
+}
+
+.subtitle,
+.experience-location {
+    color: var(--dark-text-muted) !important;
+}
+
+a {
+    color: var(--dark-accent-secondary) !important;
+}
+
+a:hover {
+    color: var(--dark-accent-primary) !important;
+}
+
+/* ===================================================================
+   MODALS & OVERLAYS
+   =================================================================== */
+
+.modal-content,
+.search-modal-panel,
+.filter-drawer-content {
+    background: var(--dark-bg-secondary) !important;
+    border: 1px solid var(--dark-border-light) !important;
+    box-shadow: var(--dark-shadow-lg) !important;
+}
+
+.modal-header,
+.filter-drawer-header {
+    border-bottom: 1px solid var(--dark-border) !important;
+}
+
+.modal-footer {
+    border-top: 1px solid var(--dark-border) !important;
+}
+
+.search-modal-overlay {
+    background: rgba(10, 14, 26, 0.9) !important;
+}
+
+.close,
+.btn-close,
+.close-modal-btn,
+.close-filter-btn {
+    color: var(--dark-text-primary) !important;
+    background: var(--dark-bg-elevated) !important;
+}
+
+/* ===================================================================
+   TABLES
+   =================================================================== */
+
+.table {
+    color: var(--dark-text-primary) !important;
+    border-color: var(--dark-border) !important;
+}
+
+.table thead th {
+    background: var(--dark-bg-elevated) !important;
+    border-color: var(--dark-border-light) !important;
+    color: var(--dark-text-primary) !important;
+}
+
+.table tbody tr {
+    background: var(--dark-bg-card) !important;
+    border-color: var(--dark-border) !important;
+}
+
+.table tbody tr:hover {
+    background: var(--dark-bg-tertiary) !important;
+}
+
+/* ===================================================================
+   BADGES & TAGS
+   =================================================================== */
+
+.badge {
+    background: var(--dark-bg-elevated) !important;
+    color: var(--dark-text-primary) !important;
+    border: 1px solid var(--dark-border-light) !important;
+}
+
+.badge-primary {
+    background: var(--dark-gradient-accent) !important;
+    color: white !important;
+}
+
+/* ===================================================================
+   RATINGS & STARS
+   =================================================================== */
+
+.experience-rating,
+.rating-display {
+    color: var(--dark-text-primary) !important;
+}
+
+.fa-star {
+    color: #FFA726 !important;
+}
+
+/* ===================================================================
+   PRICE DISPLAY
+   =================================================================== */
+
+.price-amount,
+.experience-price {
+    color: var(--dark-accent-secondary) !important;
+}
+
+.price-period {
+    color: var(--dark-text-muted) !important;
+}
+
+/* ===================================================================
+   BACKGROUNDS & SECTIONS
+   =================================================================== */
+
+.experiences-main,
+.container,
+.container-fluid,
+section {
+    background: transparent !important;
+}
+
+.hero-section {
+    background: var(--dark-gradient-primary) !important;
+    border: 1px solid var(--dark-border-light) !important;
+}
+
+/* ===================================================================
+   BORDERS & DIVIDERS
+   =================================================================== */
+
+.border,
+.border-top,
+.border-bottom,
+.filter-sort-bar {
+    border-color: var(--dark-border-light) !important;
+}
+
+hr {
+    border-color: var(--dark-divider) !important;
+    opacity: 1 !important;
+}
+
+/* ===================================================================
+   DROPDOWN MENUS
+   =================================================================== */
+
+.dropdown-menu {
+    background: var(--dark-bg-elevated) !important;
+    border: 1px solid var(--dark-border-light) !important;
+    box-shadow: var(--dark-shadow-lg) !important;
+}
+
+.dropdown-item {
+    color: var(--dark-text-primary) !important;
+}
+
+.dropdown-item:hover {
+    background: var(--dark-bg-tertiary) !important;
+    color: var(--dark-accent-secondary) !important;
+}
+
+/* ===================================================================
+   ALERTS & NOTIFICATIONS
+   =================================================================== */
+
+.alert {
+    background: var(--dark-bg-elevated) !important;
+    border: 1px solid var(--dark-border-light) !important;
+    color: var(--dark-text-primary) !important;
+}
+
+.alert-success {
+    background: rgba(34, 197, 94, 0.1) !important;
+    border-color: #22C55E !important;
+    color: #86EFAC !important;
+}
+
+.alert-danger {
+    background: rgba(239, 68, 68, 0.1) !important;
+    border-color: #EF4444 !important;
+    color: #FCA5A5 !important;
+}
+
+.alert-info {
+    background: rgba(59, 130, 246, 0.1) !important;
+    border-color: var(--dark-accent-primary) !important;
+    color: var(--dark-accent-secondary) !important;
+}
+
+/* ===================================================================
+   PAGINATION
+   =================================================================== */
+
+.pagination .page-link {
+    background: var(--dark-bg-elevated) !important;
+    border-color: var(--dark-border-light) !important;
+    color: var(--dark-text-primary) !important;
+}
+
+.pagination .page-link:hover {
+    background: var(--dark-bg-tertiary) !important;
+    border-color: var(--dark-accent-primary) !important;
+}
+
+.pagination .page-item.active .page-link {
+    background: var(--dark-gradient-accent) !important;
+    border-color: var(--dark-accent-primary) !important;
+}
+
+/* ===================================================================
+   FOOTER
+   =================================================================== */
+
+footer,
+.footer {
+    background: var(--dark-bg-secondary) !important;
+    border-top: 1px solid var(--dark-border-light) !important;
+    color: var(--dark-text-secondary) !important;
+}
+
+/* ===================================================================
+   SCROLLBAR DARK THEME
+   =================================================================== */
+
+::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--dark-bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--dark-bg-elevated);
+    border-radius: 6px;
+    border: 2px solid var(--dark-bg-primary);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--dark-accent-primary);
+}
+
+/* ===================================================================
+   IMAGE OVERLAYS
+   =================================================================== */
+
+.experience-image-wrapper::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, transparent 0%, rgba(10, 14, 26, 0.3) 100%);
+    pointer-events: none;
+}
+
+/* ===================================================================
+   RESPONSIVE DARK THEME ADJUSTMENTS
+   =================================================================== */
+
+@media (max-width: 768px) {
+    body::before {
+        background: var(--dark-gradient-radial);
+    }
+}
+
+/* ===================================================================
+   SPECIAL EFFECTS - GLOW ON HOVER
+   =================================================================== */
+
+.micro-lift:hover {
+    box-shadow: var(--dark-shadow-glow), var(--dark-shadow-lg) !important;
+}
+
+.experience-bento-item:hover .experience-image {
+    filter: brightness(1.1);
+}
+
+/* ===================================================================
+   FILTER DRAWER DARK THEME
+   =================================================================== */
+
+.filter-drawer {
+    background: rgba(10, 14, 26, 0.5) !important;
+}
+
+.rating-btn {
+    background: var(--dark-bg-elevated) !important;
+    border-color: var(--dark-border-light) !important;
+    color: var(--dark-text-primary) !important;
+}
+
+.rating-btn:hover {
+    border-color: var(--dark-accent-primary) !important;
+    background: var(--dark-bg-tertiary) !important;
+}
+
+.rating-btn.active {
+    background: var(--dark-gradient-accent) !important;
+    color: white !important;
+    border-color: var(--dark-accent-primary) !important;
+}
+
+/* ===================================================================
+   EMPTY STATES
+   =================================================================== */
+
+.empty-state {
+    background: var(--dark-bg-card) !important;
+    border: 1px solid var(--dark-border-light) !important;
+}
+
+.empty-icon {
+    color: var(--dark-accent-primary) !important;
+}
+
+/* ===================================================================
+   KINETIC TEXT EFFECTS
+   =================================================================== */
+
+.kinetic-text {
+    background: linear-gradient(135deg, var(--dark-accent-secondary), var(--dark-text-primary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* ===================================================================
+   LISTING CARDS SPECIFIC
+   =================================================================== */
+
+.listing-card {
+    background: var(--dark-bg-card) !important;
+    border: 1px solid var(--dark-border-light) !important;
+    transition: all 0.3s ease;
+}
+
+.listing-card:hover {
+    border-color: var(--dark-accent-primary) !important;
+    box-shadow: var(--dark-shadow-glow) !important;
+    transform: translateY(-4px);
+}
+
+/* ===================================================================
+   BOOKING & REVIEWS
+   =================================================================== */
+
+.review-card {
+    background: var(--dark-bg-elevated) !important;
+    border: 1px solid var(--dark-border) !important;
+}
+
+.booking-summary {
+    background: var(--dark-bg-card) !important;
+    border: 1px solid var(--dark-border-light) !important;
+}
+
+/* ===================================================================
+   MAPS & LOCATION
+   =================================================================== */
+
+.map-container {
+    border: 1px solid var(--dark-border-light) !important;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+/* ===================================================================
+   USER PROFILE & AVATARS
+   =================================================================== */
+
+.user-avatar {
+    border: 2px solid var(--dark-accent-primary) !important;
+    box-shadow: var(--dark-shadow-glow);
+}
+
+/* ===================================================================
+   SELECTION HIGHLIGHT
+   =================================================================== */
+
+::selection {
+    background: var(--dark-accent-primary);
+    color: white;
+}
+
+::-moz-selection {
+    background: var(--dark-accent-primary);
+    color: white;
+}

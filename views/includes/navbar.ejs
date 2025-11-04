@@ -1,44 +1,32 @@
-<!-- Pixel-Perfect Airbnb 2025 Navbar -->
-
-<header class="airbnb-header">
+<!-- Dynamic Liquid Glass Navbar -->
+<header class="airbnb-header liquid-glass-nav-clean" id="liquidNavbar">
     <div class="nav-container">
-        <!-- Left: Logo -->
-        <div class="nav-left">
+        <div class="nav-left nav-animate" style="animation-delay: 0.1s;">
             <a href="/" class="logo-link">
-                <i class="fas fa-mountain logo-icon"></i>
-                <span class="logo-text">Wanderlust</span>
+                <span class="logo-text-clean">WANDERLUST</span>
             </a>
         </div>
-
-        <!-- Center: Navigation Pills -->
-        <div class="nav-center">
-            <button class="nav-pill active" data-tab="homes">
+        <div class="nav-center-clean nav-animate" style="animation-delay: 0.2s;">
+            <a href="/stays" class="nav-pill-clean">
                 <span>Stays</span>
-            </button>
-            <button class="nav-pill" data-tab="experiences">
+            </a>
+            <a href="/experiences" class="nav-pill-clean">
                 <span>Experiences</span>
-            </button>
+            </a>
         </div>
-
-        <!-- Right: User Menu -->
-        <div class="nav-right">
-            <a href="/listings/new" class="host-link">Become a Host</a>
-            <button class="globe-btn">
-                <i class="fas fa-globe"></i>
-            </button>
-            <div class="user-menu-container">
-                <button class="user-menu-trigger" id="userMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+        <div class="nav-right-clean nav-animate" style="animation-delay: 0.3s;">
+            <a href="/listings/new" class="host-link-clean">Become a Host</a>
+            <div class="user-menu-container nav-animate" style="animation-delay: 0.4s;">
+                <button class="user-menu-trigger-clean" id="userMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="fas fa-bars"></i>
-                    <div class="user-avatar">
+                    <div class="user-avatar-clean">
                         <i class="fas fa-user"></i>
                     </div>
                 </button>
-                <ul class="dropdown-menu user-dropdown dropdown-menu-end" aria-labelledby="userMenuButton">
-                    <li><a class="dropdown-item fw-semibold" href="/login">Log in</a></li>
+                <ul class="dropdown-menu user-dropdown-clean dropdown-menu-end" aria-labelledby="userMenuButton">
+                    <li><a class="dropdown-item" href="/login">Log in</a></li>
                     <li><a class="dropdown-item" href="/register">Sign up</a></li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
+                    <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="/listings/new">Host your home</a></li>
                     <li><a class="dropdown-item" href="/experiences/host">Host an experience</a></li>
                     <li><a class="dropdown-item" href="/help">Help</a></li>
@@ -46,108 +34,50 @@
             </div>
         </div>
     </div>
-
-    <!-- Search Bar - Only include ONE search bar component -->
-    <div class="search-bar-expanded">
-        <div class="search-container-expanded">
-            <form class="enhanced-search-form">
-                <div class="search-field">
-                    <label class="search-label">Where</label>
-                    <input type="text" class="search-input" placeholder="Search destinations">
-                </div>
-                <div class="search-divider"></div>
-                <div class="search-field">
-                    <label class="search-label">Check in</label>
-                    <input type="text" class="search-input" placeholder="Add dates">
-                </div>
-                <div class="search-divider"></div>
-                <div class="search-field">
-                    <label class="search-label">Check out</label>
-                    <input type="text" class="search-input" placeholder="Add dates">
-                </div>
-                <div class="search-divider"></div>
-                <div class="search-field">
-                    <label class="search-label">Who</label>
-                    <input type="text" class="search-input" placeholder="Add guests">
-                </div>
-                <button type="submit" class="search-submit-btn">
-                    <i class="fas fa-search me-2"></i>
-                    <span>Search</span>
-                </button>
-            </form>
-        </div>
-    </div>
 </header>
 
-<!-- Mobile Filter Bar - Optional -->
-<div class="d-lg-none border-bottom py-3">
-    <div class="container">
-        <div class="scrolling-wrapper d-flex overflow-auto pb-2" style="scroll-snap-type: x mandatory;">
-            <div class="filter-item text-center me-3" style="scroll-snap-align: start;">
-                <div class="icon-wrapper mb-1">
-                    <img src="https://a0.muscache.com/pictures/c5a4f6fc-c92c-4ae8-87dd-57f1ff1b89a6.jpg" alt="OMG!"
-                        class="img-fluid" style="width: 24px; height: 24px;">
-                </div>
-                <span class="small">OMG!</span>
-            </div>
-            <div class="filter-item text-center me-3" style="scroll-snap-align: start;">
-                <div class="icon-wrapper mb-1">
-                    <img src="https://a0.muscache.com/pictures/3fb523a0-b622-4368-8142-b5e03df7549b.jpg" alt="Pools"
-                        class="img-fluid" style="width: 24px; height: 24px;">
-                </div>
-                <span class="small">Pools</span>
-            </div>
-            <div class="filter-item text-center me-3" style="scroll-snap-align: start;">
-                <div class="icon-wrapper mb-1">
-                    <img src="https://a0.muscache.com/pictures/8e507f16-4943-4be9-b707-59bd38d56309.jpg" alt="Islands"
-                        class="img-fluid" style="width: 24px; height: 24px;">
-                </div>
-                <span class="small">Islands</span>
-            </div>
-            <div class="filter-item text-center me-3" style="scroll-snap-align: start;">
-                <div class="icon-wrapper mb-1">
-                    <img src="https://a0.muscache.com/pictures/bcd1adc0-5cee-4d7a-85ec-f6730b0f8d0c.jpg" alt="Beach"
-                        class="img-fluid" style="width: 24px; height: 24px;">
-                </div>
-                <span class="small">Beach</span>
-            </div>
-        </div>
-    </div>
-</div>
-
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Tab switching functionality
-        const navPills = document.querySelectorAll('.nav-pill');
-        navPills.forEach(pill => {
-            pill.addEventListener('click', function () {
-                // Remove active class from all pills
-                navPills.forEach(p => {
-                    p.classList.remove('active');
-                    p.setAttribute('aria-selected', 'false');
-                });
-
-                // Add active class to clicked pill
-                this.classList.add('active');
-                this.setAttribute('aria-selected', 'true');
-
-                // Navigate based on tab
-                const tab = this.dataset.tab;
-                if (tab === 'experiences') {
-                    window.location.href = '/experiences';
-                } else {
-                    window.location.href = '/listings';
-                }
-            });
-        });
-
-        // Search functionality
-        const searchTrigger = document.querySelector('.compact-search-trigger');
-        if (searchTrigger) {
-            searchTrigger.addEventListener('click', function () {
-                // Add search expansion functionality here
-                console.log('Search clicked');
-            });
+// Dynamic Liquid Glass Navbar - Apple-Style Scroll Animations
+document.addEventListener('DOMContentLoaded', function() {
+    const navbar = document.getElementById('liquidNavbar');
+    const navPills = document.querySelectorAll('.nav-pill-clean');
+    const currentPath = window.location.pathname;
+    
+    // Set active pill based on current path
+    navPills.forEach(pill => {
+        const href = pill.getAttribute('href');
+        if ((currentPath === '/' || currentPath === '/stays' || currentPath === '/listings') && href === '/stays') {
+            pill.classList.add('active');
+        } else if (currentPath.startsWith('/experiences') && href === '/experiences') {
+            pill.classList.add('active');
         }
     });
+    
+    // Dynamic scroll effect - Apple style
+    let lastScroll = 0;
+    let ticking = false;
+    
+    function updateNavbar() {
+        const scrollPos = window.pageYOffset || document.documentElement.scrollTop;
+        
+        if (scrollPos > 0) {
+            navbar.classList.add('navbar-scrolled');
+        } else {
+            navbar.classList.remove('navbar-scrolled');
+        }
+        
+        lastScroll = scrollPos;
+        ticking = false;
+    }
+    
+    window.addEventListener('scroll', function() {
+        if (!ticking) {
+            window.requestAnimationFrame(updateNavbar);
+            ticking = true;
+        }
+    });
+    
+    // Initial check
+    updateNavbar();
+});
 </script>

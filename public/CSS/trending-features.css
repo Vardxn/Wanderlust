@@ -1,0 +1,735 @@
+/* =====================================================================
+   BENTO GRID LAYOUT SYSTEM
+   Apple-inspired asymmetric grid layout
+   ===================================================================== */
+
+.bento-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 24px;
+    padding: 60px 0;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Grid Item Sizes */
+.bento-item {
+    border-radius: 24px;
+    overflow: hidden;
+    position: relative;
+    min-height: 200px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bento-item:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.2);
+}
+
+/* Size Variants - Perfectly Aligned */
+.bento-large {
+    grid-column: span 8;
+    grid-row: span 2;
+    min-height: 520px;
+}
+
+.bento-medium {
+    grid-column: span 4;
+    grid-row: span 2;
+    min-height: 520px;
+}
+
+.bento-small {
+    grid-column: span 4;
+    grid-row: span 1;
+    min-height: 180px;
+}
+
+.bento-wide {
+    grid-column: span 8;
+    grid-row: span 1;
+    min-height: 320px;
+}
+
+.bento-tall {
+    grid-column: span 4;
+    grid-row: span 3;
+    min-height: 792px;
+}
+
+.bento-square {
+    grid-column: span 4;
+    grid-row: span 2;
+    min-height: 520px;
+}
+
+/* Bento Content Styles */
+.bento-content {
+    padding: 32px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    z-index: 2;
+}
+
+.bento-title {
+    font-size: clamp(1.5rem, 3vw, 2.5rem);
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: white;
+}
+
+.bento-description {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 24px;
+}
+
+.bento-stat {
+    font-size: 3rem;
+    font-weight: 800;
+    color: white;
+    margin-bottom: 8px;
+}
+
+.bento-label {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.8);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Bento Background Styles */
+.bento-bg-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+}
+
+.bento-bg-gradient {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.bento-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.7) 100%);
+    z-index: 1;
+}
+
+/* Specific Bento Patterns */
+.bento-search {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.bento-featured {
+    position: relative;
+}
+
+.bento-stats {
+    background: linear-gradient(135deg, #FF385C 0%, #E31C5F 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bento-category {
+    background: var(--glass-bg-light);
+    backdrop-filter: blur(25px) saturate(180%);
+    -webkit-backdrop-filter: blur(25px) saturate(180%);
+    border: 1px solid var(--glass-border-light);
+}
+
+/* Responsive Bento Grid */
+@media (max-width: 1200px) {
+    .bento-grid {
+        gap: 20px;
+        padding: 40px 0;
+    }
+}
+
+@media (max-width: 1024px) {
+    .bento-grid {
+        grid-template-columns: repeat(8, 1fr);
+        gap: 18px;
+    }
+    
+    .bento-large {
+        grid-column: span 8;
+        min-height: 480px;
+    }
+    
+    .bento-medium {
+        grid-column: span 4;
+        min-height: 480px;
+    }
+    
+    .bento-wide {
+        grid-column: span 8;
+        min-height: 300px;
+    }
+    
+    .bento-square {
+        grid-column: span 4;
+        min-height: 480px;
+    }
+    
+    .bento-small {
+        grid-column: span 4;
+        min-height: 230px;
+    }
+}
+
+@media (max-width: 768px) {
+    .bento-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        padding: 30px 0;
+    }
+    
+    .bento-large,
+    .bento-medium,
+    .bento-wide,
+    .bento-tall,
+    .bento-square {
+        grid-column: span 4;
+        grid-row: span 1;
+        min-height: 320px;
+    }
+    
+    .bento-small {
+        grid-column: span 2;
+        grid-row: span 1;
+        min-height: 200px;
+    }
+}
+
+@media (max-width: 480px) {
+    .bento-grid {
+        gap: 12px;
+    }
+    
+    .bento-large,
+    .bento-medium,
+    .bento-wide,
+    .bento-tall,
+    .bento-square,
+    .bento-small {
+        grid-column: span 4;
+        grid-row: span 1;
+        min-height: 280px;
+    }
+}
+
+/* =====================================================================
+   KINETIC & EXPRESSIVE TYPOGRAPHY
+   Animated, responsive, personality-driven text
+   ===================================================================== */
+
+/* Kinetic Text Container */
+.kinetic-text {
+    overflow: hidden;
+    display: inline-block;
+}
+
+.kinetic-word {
+    display: inline-block;
+    transform: translateY(100%);
+    opacity: 0;
+    animation: slideUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes slideUp {
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Expressive Headline Fonts */
+.expressive-heading {
+    font-size: clamp(3rem, 10vw, 8rem);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+    font-family: 'Georgia', 'Times New Roman', serif;
+}
+
+.expressive-heading-sans {
+    font-size: clamp(3rem, 10vw, 8rem);
+    font-weight: 900;
+    line-height: 0.9;
+    letter-spacing: -0.05em;
+    text-transform: uppercase;
+}
+
+/* Distorted/Warped Text Effect */
+.distorted-text {
+    display: inline-block;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.distorted-text:hover {
+    transform: scaleY(1.1) skewX(-5deg);
+}
+
+/* Parallax Text Layers */
+.text-layer-1 {
+    transform: translateZ(0);
+    will-change: transform;
+}
+
+.text-layer-2 {
+    transform: translateZ(20px);
+    will-change: transform;
+}
+
+.text-layer-3 {
+    transform: translateZ(40px);
+    will-change: transform;
+}
+
+/* Letter-by-letter Animation */
+.letter {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(20px) rotate(10deg);
+    animation: letterDrop 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes letterDrop {
+    to {
+        opacity: 1;
+        transform: translateY(0) rotate(0);
+    }
+}
+
+/* Gradient Text */
+.gradient-text-vibrant {
+    background: linear-gradient(135deg, #FF385C, #0071E3, #9650FF, #00C896);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradientShift 8s ease infinite;
+}
+
+@keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+/* Text Reveal on Scroll */
+.text-reveal {
+    position: relative;
+    display: inline-block;
+}
+
+.text-reveal::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--airbnb-red);
+    transform-origin: left;
+    animation: revealText 1.5s cubic-bezier(0.77, 0, 0.175, 1) forwards;
+}
+
+@keyframes revealText {
+    0% {
+        transform: scaleX(0);
+    }
+    50% {
+        transform: scaleX(1);
+    }
+    100% {
+        transform: scaleX(0);
+        transform-origin: right;
+    }
+}
+
+/* =====================================================================
+   GRAIN, BLUR & TACTILE SURFACES
+   Film grain and texture overlays
+   ===================================================================== */
+
+/* Film Grain Overlay */
+.grain-overlay {
+    position: relative;
+}
+
+.grain-overlay::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><filter id="noiseFilter"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noiseFilter)"/></svg>');
+    opacity: 0.15;
+    mix-blend-mode: overlay;
+    pointer-events: none;
+    z-index: 10;
+}
+
+/* Subtle Grain (for images) */
+.grain-subtle::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><filter id="noiseFilter"><feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noiseFilter)"/></svg>');
+    opacity: 0.08;
+    mix-blend-mode: overlay;
+    pointer-events: none;
+}
+
+/* Heavy Grain (for dramatic effect) */
+.grain-heavy::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><filter id="noiseFilter"><feTurbulence type="fractalNoise" baseFrequency="1.2" numOctaves="5" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noiseFilter)"/></svg>');
+    opacity: 0.25;
+    mix-blend-mode: multiply;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Frosted Glass Blur */
+.frosted-glass {
+    position: relative;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(30px) saturate(180%) brightness(110%);
+    -webkit-backdrop-filter: blur(30px) saturate(180%) brightness(110%);
+}
+
+/* Depth Blur Layers */
+.blur-layer-bg {
+    filter: blur(3px);
+    opacity: 0.8;
+}
+
+.blur-layer-mid {
+    filter: blur(1px);
+    opacity: 0.9;
+}
+
+.blur-layer-fg {
+    filter: blur(0);
+    opacity: 1;
+}
+
+/* Tactile Paper Texture */
+.paper-texture {
+    background-image: 
+        linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px),
+        linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px);
+    background-size: 20px 20px;
+}
+
+/* =====================================================================
+   SOFT BRUTALISM
+   Bold, blocky, refined brutalist design
+   ===================================================================== */
+
+.brutalist-container {
+    background: var(--airbnb-white);
+    border: 4px solid var(--airbnb-black);
+    box-shadow: 8px 8px 0 var(--airbnb-black);
+}
+
+.brutalist-heading {
+    font-family: 'Arial Black', sans-serif;
+    font-size: clamp(2rem, 5vw, 4rem);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    color: var(--airbnb-black);
+    line-height: 1;
+}
+
+.brutalist-button {
+    background: var(--airbnb-black);
+    color: white;
+    border: none;
+    padding: 20px 40px;
+    font-size: 1.2rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 4px 4px 0 var(--airbnb-red);
+}
+
+.brutalist-button:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 var(--airbnb-red);
+}
+
+.brutalist-button:active {
+    transform: translate(4px, 4px);
+    box-shadow: 0 0 0 var(--airbnb-red);
+}
+
+.brutalist-card {
+    background: white;
+    border: 3px solid var(--airbnb-black);
+    padding: 32px;
+    position: relative;
+}
+
+.brutalist-card::before {
+    content: '';
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    right: -12px;
+    bottom: -12px;
+    background: var(--airbnb-red);
+    z-index: -1;
+}
+
+.brutalist-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+}
+
+.brutalist-accent {
+    background: var(--airbnb-red);
+    color: white;
+    padding: 8px 16px;
+    display: inline-block;
+    font-weight: 900;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+}
+
+/* =====================================================================
+   PURPOSEFUL MICRO-INTERACTIONS
+   Delightful feedback animations
+   ===================================================================== */
+
+/* Button Wiggle */
+@keyframes wiggle {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-5deg); }
+    75% { transform: rotate(5deg); }
+}
+
+.micro-wiggle:active {
+    animation: wiggle 0.4s ease-in-out;
+}
+
+/* Success Checkmark */
+.micro-checkmark {
+    display: inline-block;
+    transform: scale(0) rotate(-45deg);
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.micro-checkmark.active {
+    transform: scale(1) rotate(0deg);
+}
+
+/* Heart Beat */
+@keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    10%, 30% { transform: scale(0.9); }
+    20%, 40% { transform: scale(1.1); }
+}
+
+.micro-heart:active {
+    animation: heartbeat 0.6s ease-in-out;
+    color: var(--airbnb-red);
+}
+
+/* Loading Pulse */
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.5;
+        transform: scale(0.95);
+    }
+}
+
+.micro-loading {
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* Toast Notification Slide */
+@keyframes toastSlideIn {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.micro-toast {
+    animation: toastSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Button Press Effect */
+.micro-press {
+    transition: all 0.1s ease;
+}
+
+.micro-press:active {
+    transform: scale(0.95);
+    filter: brightness(0.9);
+}
+
+/* Hover Lift */
+.micro-lift {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.micro-lift:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
+}
+
+/* Ripple Effect */
+.micro-ripple {
+    position: relative;
+    overflow: hidden;
+}
+
+.micro-ripple::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.micro-ripple:active::after {
+    width: 300px;
+    height: 300px;
+}
+
+/* Bounce In */
+@keyframes bounceIn {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.micro-bounce-in {
+    animation: bounceIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* Shake (for errors) */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+    20%, 40%, 60%, 80% { transform: translateX(10px); }
+}
+
+.micro-shake {
+    animation: shake 0.5s ease-in-out;
+}
+
+/* Custom Logo Loader */
+.micro-logo-loader {
+    display: inline-block;
+    animation: rotate 2s linear infinite;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Glow Pulse */
+@keyframes glowPulse {
+    0%, 100% {
+        box-shadow: 0 0 5px rgba(255, 56, 92, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(255, 56, 92, 0.8),
+                    0 0 30px rgba(255, 56, 92, 0.6);
+    }
+}
+
+.micro-glow {
+    animation: glowPulse 2s ease-in-out infinite;
+}
+
+/* Fade In Up */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.micro-fade-in-up {
+    animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Scale Pop */
+@keyframes scalePop {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.micro-scale-pop {
+    animation: scalePop 0.3s ease-in-out;
+}

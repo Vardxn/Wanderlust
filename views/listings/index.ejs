@@ -1,22 +1,487 @@
 <% layout('../layouts/boilerplate') %>
 
-<section class="py-4">
-    <div class="container">
-        <h1 class="fw-bold">All Listings</h1>
-        <p>Explore our curated selection of properties from around the world.</p>
+<style>
+/* Remove all animations - make everything visible immediately */
+.property-card-premium {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+}
+
+.filter-trigger-btn {
+    opacity: 1 !important;
+    transform: translateX(0) !important;
+}
+
+.listings-header {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+}
+</style>
+
+<!-- Filter Trigger Button (Fixed Position) -->
+<button class="filter-trigger-btn" id="filterTriggerBtn">
+    <i class="fas fa-sliders-h"></i>
+    <span>Filters</span>
+    <span class="filter-badge" id="filterBadge" style="display: none;">0</span>
+</button>
+
+<!-- Liquid Glass Filter Drawer -->
+<div class="filter-drawer-overlay" id="filterDrawerOverlay"></div>
+<div class="filter-drawer" id="filterDrawer">
+    <div class="filter-drawer-header">
+        <div class="filter-drawer-title">
+            <i class="fas fa-filter"></i>
+            <span>Filters</span>
+        </div>
+        <button class="filter-close-btn" id="filterCloseBtn">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <div class="filter-drawer-body">
+        <form action="/listings" method="GET" id="filterForm">
+            
+            <!-- Search -->
+            <div class="filter-section">
+                <label class="filter-section-title">
+                    <i class="fas fa-search"></i>
+                    Search Location
+                </label>
+                <div class="position-relative">
+                    <input 
+                        type="text" 
+                        class="filter-input" 
+                        id="searchInput" 
+                        name="search" 
+                        placeholder="City, country, or property..."
+                        autocomplete="off"
+                        value="<%= typeof search !== 'undefined' ? search : '' %>"
+                    >
+                    <div id="autocompleteResults" class="autocomplete-dropdown" style="display: none;"></div>
+                </div>
+            </div>
+
+            <div class="filter-divider"></div>
+
+            <!-- Price Range -->
+            <div class="filter-section">
+                <label class="filter-section-title">
+                    <i class="fas fa-rupee-sign"></i>
+                    Price Range (per night)
+                </label>
+                <div class="row g-2 mb-3">
+                    <div class="col-6">
+                        <input type="number" class="filter-input" name="minPrice" placeholder="Min ₹" value="<%= typeof minPrice !== 'undefined' ? minPrice : '' %>" min="0">
+                    </div>
+                    <div class="col-6">
+                        <input type="number" class="filter-input" name="maxPrice" placeholder="Max ₹" value="<%= typeof maxPrice !== 'undefined' ? maxPrice : '' %>" min="0">
+                    </div>
+                </div>
+                <input type="range" class="form-range" id="priceRange" min="5000" max="100000" step="5000" value="50000">
+                <small style="color: rgba(249, 250, 251, 0.5);">₹5,000 - ₹1,00,000+</small>
+            </div>
+
+            <div class="filter-divider"></div>
+
+            <!-- Property Type -->
+            <div class="filter-section">
+                <label class="filter-section-title">
+                    <i class="fas fa-home"></i>
+                    Property Type
+                </label>
+                <select class="filter-select" name="propertyType">
+                    <option value="">All Types</option>
+                    <option value="Villa" <%= typeof propertyType !== 'undefined' && propertyType === 'Villa' ? 'selected' : '' %>>🏰 Villa</option>
+                    <option value="Apartment" <%= typeof propertyType !== 'undefined' && propertyType === 'Apartment' ? 'selected' : '' %>>🏢 Apartment</option>
+                    <option value="Cabin" <%= typeof propertyType !== 'undefined' && propertyType === 'Cabin' ? 'selected' : '' %>>🏕️ Cabin</option>
+                    <option value="Penthouse" <%= typeof propertyType !== 'undefined' && propertyType === 'Penthouse' ? 'selected' : '' %>>🏙️ Penthouse</option>
+                    <option value="Cottage" <%= typeof propertyType !== 'undefined' && propertyType === 'Cottage' ? 'selected' : '' %>>🏡 Cottage</option>
+                    <option value="Mansion" <%= typeof propertyType !== 'undefined' && propertyType === 'Mansion' ? 'selected' : '' %>>🏛️ Mansion</option>
+                    <option value="Treehouse" <%= typeof propertyType !== 'undefined' && propertyType === 'Treehouse' ? 'selected' : '' %>>🌳 Treehouse</option>
+                    <option value="Houseboat" <%= typeof propertyType !== 'undefined' && propertyType === 'Houseboat' ? 'selected' : '' %>>⛵ Houseboat</option>
+                    <option value="Castle" <%= typeof propertyType !== 'undefined' && propertyType === 'Castle' ? 'selected' : '' %>>🏰 Castle</option>
+                </select>
+            </div>
+
+            <div class="filter-divider"></div>
+
+            <!-- Guests -->
+            <div class="filter-section">
+                <label class="filter-section-title">
+                    <i class="fas fa-users"></i>
+                    Number of Guests
+                </label>
+                <select class="filter-select" name="guests">
+                    <option value="">Any</option>
+                    <% for(let i = 1; i <= 16; i++) { %>
+                        <option value="<%= i %>" <%= typeof guests !== 'undefined' && guests == i ? 'selected' : '' %>><%= i %><%= i >= 16 ? '+' : '' %> Guest<%= i !== 1 ? 's' : '' %></option>
+                    <% } %>
+                </select>
+            </div>
+
+            <div class="filter-divider"></div>
+
+            <!-- Bedrooms -->
+            <div class="filter-section">
+                <label class="filter-section-title">
+                    <i class="fas fa-bed"></i>
+                    Bedrooms
+                </label>
+                <select class="filter-select" name="bedrooms">
+                    <option value="">Any</option>
+                    <% for(let i = 1; i <= 10; i++) { %>
+                        <option value="<%= i %>" <%= typeof bedrooms !== 'undefined' && bedrooms == i ? 'selected' : '' %>><%= i %><%= i >= 10 ? '+' : '' %> Bedroom<%= i !== 1 ? 's' : '' %></option>
+                    <% } %>
+                </select>
+            </div>
+
+            <div class="filter-divider"></div>
+
+            <!-- Bathrooms -->
+            <div class="filter-section">
+                <label class="filter-section-title">
+                    <i class="fas fa-bath"></i>
+                    Bathrooms
+                </label>
+                <select class="filter-select" name="bathrooms">
+                    <option value="">Any</option>
+                    <% for(let i = 1; i <= 8; i++) { %>
+                        <option value="<%= i %>" <%= typeof bathrooms !== 'undefined' && bathrooms == i ? 'selected' : '' %>><%= i %><%= i >= 8 ? '+' : '' %> Bathroom<%= i !== 1 ? 's' : '' %></option>
+                    <% } %>
+                </select>
+            </div>
+
+            <div class="filter-divider"></div>
+
+            <!-- Amenities -->
+            <div class="filter-section">
+                <label class="filter-section-title">
+                    <i class="fas fa-list-check"></i>
+                    Amenities
+                </label>
+                <div class="filter-checkbox-group">
+                    <% 
+                    const amenitiesList = ['WiFi', 'Kitchen', 'Air Conditioning', 'Heating', 'Swimming Pool', 'Hot Tub', 'Parking', 'Gym', 'Washer/Dryer', 'TV', 'Workspace', 'Pet-friendly'];
+                    const selectedAmenities = typeof amenities !== 'undefined' ? (Array.isArray(amenities) ? amenities : [amenities]) : [];
+                    %>
+                    <% amenitiesList.forEach(amenity => { %>
+                        <label class="filter-checkbox-label">
+                            <input type="checkbox" name="amenities" value="<%= amenity %>" <%= selectedAmenities.includes(amenity) ? 'checked' : '' %>>
+                            <span><%= amenity %></span>
+                        </label>
+                    <% }); %>
+                </div>
+            </div>
+
+            <div class="filter-divider"></div>
+
+            <!-- Instant Book -->
+            <div class="filter-section">
+                <label class="filter-checkbox-label">
+                    <input type="checkbox" name="instantBook" value="true" <%= typeof instantBook !== 'undefined' && instantBook === 'true' ? 'checked' : '' %>>
+                    <span>⚡ Instant Book Only</span>
+                </label>
+                <small style="color: rgba(249, 250, 251, 0.5); display: block; margin-left: 28px; margin-top: 4px;">
+                    Book without waiting for host approval
+                </small>
+            </div>
+
+        </form>
+    </div>
+
+    <div class="filter-actions">
+        <button type="button" class="filter-clear-btn" id="clearFiltersBtn">
+            <i class="fas fa-redo"></i> Clear
+        </button>
+        <button type="submit" form="filterForm" class="filter-apply-btn">
+            <i class="fas fa-check"></i> Apply Filters
+        </button>
+    </div>
+</div>
+
+<!-- Main Content -->
+<section class="listings-grid-container">
+    <div class="container-fluid px-4 px-lg-5">
+        <!-- Premium Page Title (Soft Brutalism) -->
+        <div class="text-center mb-5 pt-5 listings-header">
+            <h1 class="listings-hero-title">
+                <% if (typeof search !== 'undefined' && search) { %>
+                    Stays in <%= search %>
+                <% } else if (typeof propertyType !== 'undefined' && propertyType) { %>
+                    <%= propertyType %> Properties
+                <% } else { %>
+                    Featured Stays
+                <% } %>
+            </h1>
+            <p class="listings-subtitle">
+                <%= listings && listings.length > 0 ? listings.length : 'No' %> premium propert<%= (listings && listings.length === 1) ? 'y' : 'ies' %> • Handpicked for you
+            </p>
+        </div>
         
+        <!-- Premium Property Grid (All-Image Cards) -->
         <% if (listings && listings.length > 0) { %>
-            <div class="row">
-                <% listings.forEach(listing => { %>
-                    <%- include('../includes/listing-card', { listing: listing }) %>
+            <div class="listings-premium-grid">
+                <% listings.forEach((listing, index) => { %>
+                    <% const place = (listing.location || '') + ' ' + (listing.country || ''); %>
+                    <% 
+                        // Determine badge type based on index or listing properties
+                        const badges = [
+                            { text: 'FEATURED', icon: 'fas fa-star', color: 'rgba(255, 167, 38, 0.2)' },
+                            { text: 'POPULAR', icon: 'fas fa-fire', color: 'rgba(239, 68, 68, 0.2)' },
+                            { text: 'TRENDING', icon: 'fas fa-chart-line', color: 'rgba(67, 97, 238, 0.2)' },
+                            { text: 'HOT PICK', icon: 'fas fa-bolt', color: 'rgba(245, 158, 11, 0.2)' },
+                            { text: 'NEW', icon: 'fas fa-sparkles', color: 'rgba(139, 92, 246, 0.2)' },
+                            { text: 'LUXURY', icon: 'fas fa-gem', color: 'rgba(236, 72, 153, 0.2)' }
+                        ];
+                        const badge = badges[index % badges.length];
+                    %>
+                    <div class="listing-card-modern grain-subtle">
+                        <a href="/listings/<%= listing._id %>" style="text-decoration: none; color: inherit;">
+                            <!-- Image Container with Badge -->
+                            <div class="listing-card-image-wrapper">
+                                <img 
+                                    src="<%= listing.image && listing.image.url ? listing.image.url : unsplashForPlace(place, ['hotels','restaurants','cafes']) %>"
+                                    class="listing-card-image"
+                                    alt="<%= listing.title %>"
+                                    onerror="this.onerror=null; this.src='<%= unsplashForPlace(place, ['travel','city','landmark']) %>'"
+                                >
+                                
+                                <!-- Wishlist Heart Button -->
+                                <button class="listing-wishlist-btn">
+                                    <i class="far fa-heart"></i>
+                                </button>
+                                
+                                <!-- Featured Badge (only on first 12 items) -->
+                                <% if (index < 12) { %>
+                                <div class="listing-badge-tag" style="background: <%= badge.color %>;">
+                                    <i class="<%= badge.icon %>"></i>
+                                    <span><%= badge.text %></span>
+                                </div>
+                                <% } %>
+                            </div>
+                            
+                            <!-- White Content Box -->
+                            <div class="listing-card-content-box">
+                                <!-- Title -->
+                                <h3 class="listing-card-title"><%= listing.title %></h3>
+                                
+                                <!-- Rating and Location -->
+                                <div class="listing-card-meta">
+                                    <div class="listing-rating-badge">
+                                        <i class="fas fa-star"></i>
+                                        <span>4.8</span>
+                                    </div>
+                                    <div class="listing-location-text">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        <%= listing.location %>, <%= listing.country %>
+                                    </div>
+                                </div>
+                                
+                                <!-- Price -->
+                                <div class="listing-price-row">
+                                    <span class="listing-price-amount">₹<%= listing.price.toLocaleString() %></span>
+                                    <span class="listing-price-label">/ night</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
                 <% }) %>
             </div>
         <% } else { %>
-            <div class="text-center py-5">
-                <h4 class="text-muted">No listings available</h4>
-                <p class="text-muted">Please check your database connection and seed the data.</p>
-                <a href="/listings/new" class="btn btn-primary">Add First Listing</a>
+            <!-- No Results State -->
+            <div class="no-results-container">
+                <div class="no-results-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <h3 class="no-results-title">No properties found</h3>
+                <p class="no-results-subtitle">Try adjusting your filters or search criteria</p>
+                <a href="/stays" class="no-results-btn">
+                    <i class="fas fa-home"></i> View All Listings
+                </a>
             </div>
         <% } %>
     </div>
 </section>
+
+<!-- Filter Drawer JavaScript -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const filterTriggerBtn = document.getElementById('filterTriggerBtn');
+    const filterDrawerOverlay = document.getElementById('filterDrawerOverlay');
+    const filterDrawer = document.getElementById('filterDrawer');
+    const filterCloseBtn = document.getElementById('filterCloseBtn');
+    const clearFiltersBtn = document.getElementById('clearFiltersBtn');
+    const searchInput = document.getElementById('searchInput');
+    const autocompleteResults = document.getElementById('autocompleteResults');
+    const filterBadge = document.getElementById('filterBadge');
+    let debounceTimer;
+
+    // Open filter drawer
+    function openFilterDrawer() {
+        filterDrawerOverlay.classList.add('active');
+        filterDrawer.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    // Close filter drawer
+    function closeFilterDrawer() {
+        filterDrawerOverlay.classList.remove('active');
+        filterDrawer.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    filterTriggerBtn.addEventListener('click', openFilterDrawer);
+    filterCloseBtn.addEventListener('click', closeFilterDrawer);
+    filterDrawerOverlay.addEventListener('click', closeFilterDrawer);
+
+    // Prevent drawer from closing when clicking inside
+    filterDrawer.addEventListener('click', function(e) {
+        e.stopPropagation();
+    });
+
+    // Clear all filters
+    clearFiltersBtn.addEventListener('click', function() {
+        window.location.href = '/listings';
+    });
+
+    // Count active filters and update badge
+    function updateFilterBadge() {
+        const form = document.getElementById('filterForm');
+        const formData = new FormData(form);
+        let count = 0;
+
+        for (let [key, value] of formData.entries()) {
+            if (value && value !== '' && value !== 'Any' && value !== 'All Types') {
+                count++;
+            }
+        }
+
+        if (count > 0) {
+            filterBadge.textContent = count;
+            filterBadge.style.display = 'inline-block';
+        } else {
+            filterBadge.style.display = 'none';
+        }
+    }
+
+    // Update badge on page load
+    updateFilterBadge();
+
+    // Update badge when form changes
+    document.getElementById('filterForm').addEventListener('change', updateFilterBadge);
+
+    // Autocomplete functionality
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            clearTimeout(debounceTimer);
+            const query = this.value.trim();
+            
+            if (query.length < 2) {
+                autocompleteResults.style.display = 'none';
+                return;
+            }
+            
+            debounceTimer = setTimeout(() => {
+                fetch(`/api/autocomplete?q=${encodeURIComponent(query)}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        displayAutocomplete(data.suggestions);
+                    })
+                    .catch(err => console.error('Autocomplete error:', err));
+            }, 300);
+        });
+    }
+    
+    // Hide autocomplete when clicking outside
+    document.addEventListener('click', function(e) {
+        if (searchInput && !searchInput.contains(e.target) && !autocompleteResults.contains(e.target)) {
+            autocompleteResults.style.display = 'none';
+        }
+    });
+    
+    function displayAutocomplete(suggestions) {
+        if (!suggestions || suggestions.length === 0) {
+            autocompleteResults.style.display = 'none';
+            return;
+        }
+        
+        autocompleteResults.innerHTML = '';
+        suggestions.slice(0, 5).forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'autocomplete-item';
+            
+            let icon = '<i class="fas fa-map-marker-alt"></i>';
+            if (item.type === 'country') icon = '<i class="fas fa-globe"></i>';
+            if (item.type === 'property') icon = '<i class="fas fa-home"></i>';
+            
+            div.innerHTML = icon + '<span>' + item.value + '</span>';
+            if (item.location) {
+                div.innerHTML += ` <small style="color: rgba(249, 250, 251, 0.5);">in ${item.location}</small>`;
+            }
+            
+            div.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (item.type === 'property' && item.id) {
+                    window.location.href = `/listings/${item.id}`;
+                } else {
+                    searchInput.value = item.value;
+                    autocompleteResults.style.display = 'none';
+                }
+            });
+            
+            autocompleteResults.appendChild(div);
+        });
+        
+        autocompleteResults.style.display = 'block';
+    }
+
+    // Escape key to close drawer
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && filterDrawer.classList.contains('active')) {
+            closeFilterDrawer();
+        }
+    });
+
+    // Animate cards on scroll
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('.listing-card-modern').forEach(card => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(card);
+    });
+
+    // Wishlist button functionality
+    document.querySelectorAll('.listing-wishlist-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const icon = this.querySelector('i');
+            if (icon.classList.contains('far')) {
+                icon.classList.remove('far');
+                icon.classList.add('fas');
+                this.classList.add('active');
+            } else {
+                icon.classList.remove('fas');
+                icon.classList.add('far');
+                this.classList.remove('active');
+            }
+        });
+    });
+});
+</script>
+

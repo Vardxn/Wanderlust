@@ -1,3 +1,6 @@
+// Add this at the very top of the file, before any other requires
+require('dotenv').config();
+
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
@@ -7,11 +10,15 @@ const flash = require('connect-flash');
 const methodOverride = require('method-override');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
+const helmet = require('helmet');
+const mongoSanitize = require('express-mongo-sanitize');
+const compression = require('compression');
 
 // Models
 const Listing = require('./models/listing');
 const Review = require('./models/review');
 const User = require('./models/user');
+const Booking = require('./models/booking');
 
 // Utility functions
 // Create ExpressError class for error handling
@@ -30,45 +37,46 @@ const wrapAsync = function (fn) {
     };
 };
 
-// Validation middleware
-const validateListing = (req, res, next) => {
-    // Add validation logic here
-    next();
-};
+// Import validation schemas
+const { listingSchema, reviewSchema, bookingSchema } = require('./schemas/validationSchemas');
 
-const validateReview = (req, res, next) => {
-    // Add validation logic here
-    next();
-};
-
-// No longer needed - using actual User model
-// const User = {
-//     authenticate() {
-//         return () => true;
-//     },
-//     serializeUser() {
-//         return (user, done) => done(null, user);
-//     },
-//     deserializeUser() {
-//         return (id, done) => done(null, id);
-//     }
-// };
+// Import authentication middleware
+const { isLoggedIn, isOwner, isReviewAuthor, isBookingGuest } = require('./middleware/auth');
 
 // Initialize Express app
 const app = express();
 
-// Connect to MongoDB
-// MongoDB connection - Replace with your Atlas connection string
+// MongoDB Connection with optimized settings
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/wanderlust';
 
-mongoose.connect(MONGODB_URI)
-    .then(() => {
-        console.log("Database connected");
-    })
-    .catch(err => {
-        console.log("MongoDB connection error");
-        console.log(err);
-    });
+mongoose.connect(MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    maxPoolSize: 10, // Optimize connection pool
+    serverSelectionTimeoutMS: 5000, // Faster timeout
+    socketTimeoutMS: 45000,
+})
+.then(() => {
+    console.log('✅ MongoDB Connected Successfully!');
+    console.log('📊 Database:', MONGODB_URI);
+})
+.catch((err) => {
+    console.error('❌ MongoDB Connection Error:', err);
+    process.exit(1);
+});
+
+// MongoDB connection events
+mongoose.connection.on('connected', () => {
+    console.log('🔗 Mongoose connected to MongoDB');
+});
+
+mongoose.connection.on('error', (err) => {
+    console.error('❌ Mongoose connection error:', err);
+});
+
+mongoose.connection.on('disconnected', () => {
+    console.log('⚠️ Mongoose disconnected from MongoDB');
+});
 
 // Set up view engine - MODIFIED: Fix the layouts path issue
 app.engine('ejs', ejsMate);
@@ -91,14 +99,74 @@ app.locals.unsplashForPlace = function (place, categories) {
     }
 };
 
-// Middleware
-app.use(express.urlencoded({ extended: true }));
+// Validation middleware functions
+const validateListing = (req, res, next) => {
+    const { error } = listingSchema.validate(req.body);
+    if (error) {
+        const msg = error.details.map(el => el.message).join(',');
+        throw new ExpressError(msg, 400);
+    } else {
+        next();
+    }
+};
+
+const validateReview = (req, res, next) => {
+    const { error } = reviewSchema.validate(req.body);
+    if (error) {
+        const msg = error.details.map(el => el.message).join(',');
+        throw new ExpressError(msg, 400);
+    } else {
+        next();
+    }
+};
+
+const validateBooking = (req, res, next) => {
+    const { error } = bookingSchema.validate(req.body);
+    if (error) {
+        const msg = error.details.map(el => el.message).join(',');
+        throw new ExpressError(msg, 400);
+    } else {
+        next();
+    }
+};
+
+// Middleware - ORDER MATTERS FOR PERFORMANCE!
+
+// 1. COMPRESSION - Compress all responses (GZIP)
+app.use(compression({
+    level: 6, // Compression level (0-9)
+    threshold: 1024, // Only compress responses > 1KB
+    filter: (req, res) => {
+        if (req.headers['x-no-compression']) {
+            return false;
+        }
+        return compression.filter(req, res);
+    }
+}));
+
+// 2. Static file serving with caching
+app.use(express.static(path.join(__dirname, 'public'), {
+    maxAge: '1d', // Cache static files for 1 day
+    etag: true,
+    lastModified: true,
+    setHeaders: (res, path) => {
+        // Cache CSS/JS/Images longer
+        if (path.endsWith('.css') || path.endsWith('.js')) {
+            res.setHeader('Cache-Control', 'public, max-age=86400'); // 1 day
+        } else if (path.match(/\.(jpg|jpeg|png|gif|svg|webp|ico)$/)) {
+            res.setHeader('Cache-Control', 'public, max-age=604800'); // 7 days
+        }
+    }
+}));
+
+// 3. Body parsers with size limits
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(express.json({ limit: '10mb' }));
 app.use(methodOverride('_method'));
-app.use(express.static(path.join(__dirname, 'public')));
 
 // Session configuration
 const sessionConfig = {
-    secret: 'thisshouldbeabettersecret!',
+    secret: process.env.SESSION_SECRET || require('crypto').randomBytes(32).toString('hex'),
     resave: false,
     saveUninitialized: true,
     cookie: {
@@ -126,7 +194,18 @@ app.use((req, res, next) => {
     next();
 });
 
+// Security middleware
+app.use(helmet({
+    contentSecurityPolicy: false,
+    crossOriginEmbedderPolicy: false
+}));
+
+app.use(mongoSanitize());
+
 // Home route
+// ============================================
+// HOME PAGE ROUTE - Main landing page
+// ============================================
 app.get('/', wrapAsync(async (req, res) => {
     // Get all listings
     const allListings = await Listing.find({});
@@ -149,33 +228,345 @@ app.get('/', wrapAsync(async (req, res) => {
         .sort((a, b) => listingsByLocation[b].length - listingsByLocation[a].length)
         .slice(0, 5); // Get top 5 locations
     
-    res.render("home", { 
-        pageTitle: "Wanderlust - Find Your Adventure",
+    // Get recent bookings count
+    const totalBookings = await Booking.countDocuments();
+    
+    // Get unique locations count
+    const uniqueLocations = [...new Set(allListings.map(l => l.location))];
+    
+    res.render("home-bento", { 
+        pageTitle: "Wanderlust - Find Your Perfect Stay",
         listings: featuredListings,
         listingsByLocation: listingsByLocation,
-        topLocations: topLocations
+        topLocations: topLocations,
+        allListings: allListings,
+        featuredListings: featuredListings,
+        totalListings: allListings.length,
+        totalBookings: totalBookings,
+        totalLocations: uniqueLocations.length
     });
 }));
 
-// Listing Routes
-app.get('/listings', wrapAsync(async (req, res) => {
-    const { location, country } = req.query;
+// API Routes
+const listingsRouter = require('./routes/api/v1/listings');
+const bookingsRouter = require('./routes/api/v1/bookings');
+const profileRouter = require('./routes/api/v1/profile');
+
+app.use('/api/v1/listings', listingsRouter);
+app.use('/api/v1/bookings', bookingsRouter);
+app.use('/api/v1/profile', profileRouter);
+
+// API Routes for search features
+
+// Autocomplete API for locations
+app.get('/api/autocomplete', wrapAsync(async (req, res) => {
+    const { q } = req.query;
+    
+    if (!q || q.trim().length < 2) {
+        return res.json({ locations: [], properties: [] });
+    }
+    
+    const searchTerm = q.trim();
+    
+    // Get unique locations and countries
+    const listings = await Listing.find({
+        $or: [
+            { location: new RegExp(searchTerm, 'i') },
+            { country: new RegExp(searchTerm, 'i') },
+            { title: new RegExp(searchTerm, 'i') }
+        ]
+    }).select('location country title').limit(20);
+    
+    // Extract unique locations
+    const locationSet = new Set();
+    const countrySet = new Set();
+    const properties = [];
+    
+    listings.forEach(listing => {
+        if (listing.location && listing.location.toLowerCase().includes(searchTerm.toLowerCase())) {
+            locationSet.add(listing.location);
+        }
+        if (listing.country && listing.country.toLowerCase().includes(searchTerm.toLowerCase())) {
+            countrySet.add(listing.country);
+        }
+        if (listing.title && listing.title.toLowerCase().includes(searchTerm.toLowerCase())) {
+            properties.push({
+                id: listing._id,
+                title: listing.title,
+                location: listing.location
+            });
+        }
+    });
+    
+    const suggestions = [
+        ...Array.from(locationSet).map(loc => ({ type: 'location', value: loc })),
+        ...Array.from(countrySet).map(country => ({ type: 'country', value: country })),
+        ...properties.slice(0, 5).map(prop => ({ type: 'property', value: prop.title, id: prop.id, location: prop.location }))
+    ];
+    
+    res.json({ suggestions: suggestions.slice(0, 10) });
+}));
+
+// Get recent searches
+app.get('/api/recent-searches', (req, res) => {
+    const recentSearches = req.session.recentSearches || [];
+    res.json({ recentSearches });
+});
+
+// Clear recent searches
+app.delete('/api/recent-searches', (req, res) => {
+    req.session.recentSearches = [];
+    res.json({ message: 'Recent searches cleared' });
+});
+
+// Nearby properties (simplified - would need geolocation data in production)
+app.get('/api/nearby', wrapAsync(async (req, res) => {
+    const { location } = req.query;
+    
+    if (!location) {
+        return res.json({ nearby: [] });
+    }
+    
+    // Find properties in the same location
+    const nearbyListings = await Listing.find({
+        location: new RegExp(location, 'i')
+    }).select('title location price image').limit(10);
+    
+    res.json({ 
+        nearby: nearbyListings.map(listing => ({
+            id: listing._id,
+            title: listing.title,
+            location: listing.location,
+            price: listing.price,
+            image: listing.image.url
+        }))
+    });
+}));
+
+// Booking API Routes
+
+// Calculate price for a potential booking
+app.post('/api/calculate-price', wrapAsync(async (req, res) => {
+    const { listingId, checkIn, checkOut, adults, children, infants, pets } = req.body;
+    
+    const listing = await Listing.findById(listingId);
+    if (!listing) {
+        return res.status(404).json({ error: 'Listing not found' });
+    }
+    
+    const checkInDate = new Date(checkIn);
+    const checkOutDate = new Date(checkOut);
+    
+    // Calculate number of nights
+    const nights = Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));
+    
+    if (nights < listing.minimumStay) {
+        return res.status(400).json({ 
+            error: `Minimum stay is ${listing.minimumStay} night${listing.minimumStay > 1 ? 's' : ''}` 
+        });
+    }
+    
+    if (nights > listing.maximumStay) {
+        return res.status(400).json({ 
+            error: `Maximum stay is ${listing.maximumStay} nights` 
+        });
+    }
+    
+    // Calculate total guests
+    const totalGuests = (parseInt(adults) || 0) + (parseInt(children) || 0);
+    
+    if (totalGuests > listing.maxGuests) {
+        return res.status(400).json({ 
+            error: `This property accommodates a maximum of ${listing.maxGuests} guests` 
+        });
+    }
+    
+    // Base price calculation
+    const basePrice = listing.price * nights;
+    let discount = 0;
+    let discountType = 'none';
+    
+    // Apply discounts
+    if (nights >= 28 && listing.monthlyDiscount > 0) {
+        discount = (basePrice * listing.monthlyDiscount) / 100;
+        discountType = 'monthly';
+    } else if (nights >= 7 && listing.weeklyDiscount > 0) {
+        discount = (basePrice * listing.weeklyDiscount) / 100;
+        discountType = 'weekly';
+    }
+    
+    // Service fee (typically 10-15% of base price)
+    const serviceFee = listing.serviceFee || Math.round(basePrice * 0.12);
+    
+    // Taxes (typically 10-12%)
+    const taxes = Math.round((basePrice - discount) * 0.10);
+    
+    // Total calculation
+    const total = basePrice - discount + listing.cleaningFee + serviceFee + taxes;
+    
+    res.json({
+        nights,
+        nightlyRate: listing.price,
+        basePrice,
+        cleaningFee: listing.cleaningFee,
+        serviceFee,
+        taxes,
+        discount,
+        discountType,
+        discountPercentage: discountType === 'weekly' ? listing.weeklyDiscount : 
+                          discountType === 'monthly' ? listing.monthlyDiscount : 0,
+        total,
+        currency: '₹'
+    });
+}));
+
+// Check availability
+app.post('/api/check-availability', wrapAsync(async (req, res) => {
+    const { listingId, checkIn, checkOut } = req.body;
+    
+    const checkInDate = new Date(checkIn);
+    const checkOutDate = new Date(checkOut);
+    
+    const isAvailable = await Booking.checkAvailability(listingId, checkInDate, checkOutDate);
+    
+    res.json({ 
+        available: isAvailable,
+        message: isAvailable ? 'Dates are available' : 'Dates are not available'
+    });
+}));
+
+// Get booked dates for a listing
+app.get('/api/listings/:id/booked-dates', wrapAsync(async (req, res) => {
+    const bookings = await Booking.find({
+        listing: req.params.id,
+        status: { $in: ['confirmed', 'pending'] }
+    }).select('checkIn checkOut');
+    
+    const bookedDates = bookings.map(booking => ({
+        checkIn: booking.checkIn,
+        checkOut: booking.checkOut
+    }));
+    
+    res.json({ bookedDates });
+}));
+
+// ============================================
+// STAYS/LISTINGS ROUTES - Browse all accommodations
+// ============================================
+
+// Redirect /listings to /stays for better URL structure
+app.get('/listings', (req, res) => {
+    const queryString = new URLSearchParams(req.query).toString();
+    res.redirect(queryString ? `/stays?${queryString}` : '/stays');
+});
+
+// Main stays/listings page with filters
+app.get('/stays', wrapAsync(async (req, res) => {
+    const { 
+        location, 
+        country, 
+        search, 
+        name,
+        minPrice,
+        maxPrice,
+        propertyType,
+        guests,
+        bedrooms,
+        bathrooms,
+        amenities,
+        instantBook
+    } = req.query;
+    
     let query = {};
     
-    // Filter by location if provided
-    if (location) {
+    // Search by property name (title)
+    if (name && name.trim()) {
+        query.title = new RegExp(name.trim(), 'i');
+    }
+    
+    // General search across multiple fields
+    if (search && search.trim()) {
+        const searchTerm = search.trim();
+        query.$or = [
+            { title: new RegExp(searchTerm, 'i') },
+            { location: new RegExp(searchTerm, 'i') },
+            { country: new RegExp(searchTerm, 'i') },
+            { description: new RegExp(searchTerm, 'i') }
+        ];
+    }
+    
+    // Filter by location if provided (city)
+    if (location && !search) {
         query.location = new RegExp(location, 'i'); // Case-insensitive search
     }
     
-    // Filter by country if provided
-    if (country) {
+    // Filter by country/region if provided
+    if (country && !search) {
         query.country = new RegExp(country, 'i');
+    }
+    
+    // Price range filter
+    if (minPrice || maxPrice) {
+        query.price = {};
+        if (minPrice) query.price.$gte = Number(minPrice);
+        if (maxPrice) query.price.$lte = Number(maxPrice);
+    }
+    
+    // Property type filter
+    if (propertyType && propertyType.trim()) {
+        query.propertyType = propertyType.trim();
+    }
+    
+    // Number of guests filter
+    if (guests) {
+        query.maxGuests = { $gte: Number(guests) };
+    }
+    
+    // Number of bedrooms filter
+    if (bedrooms) {
+        query.bedrooms = { $gte: Number(bedrooms) };
+    }
+    
+    // Number of bathrooms filter
+    if (bathrooms) {
+        query.bathrooms = { $gte: Number(bathrooms) };
+    }
+    
+    // Amenities filter (must have all selected amenities)
+    if (amenities) {
+        const amenitiesList = Array.isArray(amenities) ? amenities : [amenities];
+        if (amenitiesList.length > 0) {
+            query.amenities = { $all: amenitiesList };
+        }
+    }
+    
+    // Instant book filter
+    if (instantBook === 'true') {
+        query.instantBook = true;
     }
     
     const listings = await Listing.find(query);
     
+    // Store recent search in session
+    if (search || location || country || name) {
+        if (!req.session.recentSearches) {
+            req.session.recentSearches = [];
+        }
+        
+        const searchQuery = search || location || country || name;
+        // Avoid duplicates and limit to 5 recent searches
+        req.session.recentSearches = [
+            searchQuery,
+            ...req.session.recentSearches.filter(s => s !== searchQuery)
+        ].slice(0, 5);
+    }
+    
     let pageTitle = 'All Listings';
-    if (location) {
+    if (search) {
+        pageTitle = `Search results for "${search}"`;
+    } else if (name) {
+        pageTitle = `Properties matching "${name}"`;
+    } else if (location) {
         pageTitle = `Listings in ${location}`;
     } else if (country) {
         pageTitle = `Listings in ${country}`;
@@ -187,28 +578,20 @@ app.get('/listings', wrapAsync(async (req, res) => {
     });
 }));
 
-app.get('/listings/new', (req, res) => {
+// Protect listing routes
+app.get('/listings/new', isLoggedIn, (req, res) => {
     res.render('listings/new', { pageTitle: 'Add New Listing' });
 });
 
-app.post('/listings', validateListing, wrapAsync(async (req, res) => {
+app.post('/listings', isLoggedIn, validateListing, wrapAsync(async (req, res) => {
     const listing = new Listing(req.body);
+    listing.owner = req.user._id;
     await listing.save();
+    req.flash('success', 'Successfully created a new listing!');
     res.redirect(`/listings/${listing._id}`);
 }));
 
-app.get('/listings/:id', wrapAsync(async (req, res) => {
-    const listing = await Listing.findById(req.params.id).populate('reviews');
-    if (!listing) {
-        throw new ExpressError('Listing not found', 404);
-    }
-    res.render('listings/show', {
-        listing,
-        pageTitle: listing.title
-    });
-}));
-
-app.get('/listings/:id/edit', wrapAsync(async (req, res) => {
+app.get('/listings/:id/edit', isLoggedIn, isOwner, wrapAsync(async (req, res) => {
     const listing = await Listing.findById(req.params.id);
     if (!listing) {
         throw new ExpressError('Listing not found', 404);
@@ -219,37 +602,41 @@ app.get('/listings/:id/edit', wrapAsync(async (req, res) => {
     });
 }));
 
-app.put('/listings/:id', validateListing, wrapAsync(async (req, res) => {
+app.put('/listings/:id', isLoggedIn, isOwner, validateListing, wrapAsync(async (req, res) => {
     const { id } = req.params;
     await Listing.findByIdAndUpdate(id, req.body, {
         runValidators: true,
         new: true
     });
+    req.flash('success', 'Successfully updated listing!');
     res.redirect(`/listings/${id}`);
 }));
 
-app.delete('/listings/:id', wrapAsync(async (req, res) => {
+app.delete('/listings/:id', isLoggedIn, isOwner, wrapAsync(async (req, res) => {
     await Listing.findByIdAndDelete(req.params.id);
+    req.flash('success', 'Successfully deleted listing');
     res.redirect('/listings');
 }));
 
-// Review Routes
-app.post('/listings/:id/reviews', validateReview, wrapAsync(async (req, res) => {
+// Protect review routes
+app.post('/listings/:id/reviews', isLoggedIn, validateReview, wrapAsync(async (req, res) => {
     const listing = await Listing.findById(req.params.id);
     if (!listing) {
         throw new ExpressError('Listing not found', 404);
     }
 
     const review = new Review(req.body);
+    review.author = req.user._id;
     listing.reviews.push(review);
 
     await review.save();
     await listing.save();
 
+    req.flash('success', 'Successfully created review!');
     res.redirect(`/listings/${listing._id}`);
 }));
 
-app.delete('/listings/:id/reviews/:reviewId', wrapAsync(async (req, res) => {
+app.delete('/listings/:id/reviews/:reviewId', isLoggedIn, isReviewAuthor, wrapAsync(async (req, res) => {
     const { id, reviewId } = req.params;
 
     await Listing.findByIdAndUpdate(id, {
@@ -257,19 +644,361 @@ app.delete('/listings/:id/reviews/:reviewId', wrapAsync(async (req, res) => {
     });
     await Review.findByIdAndDelete(reviewId);
 
+    req.flash('success', 'Successfully deleted review');
     res.redirect(`/listings/${id}`);
 }));
 
-// Experiences Route
+// Protect booking routes
+app.post('/listings/:id/book', isLoggedIn, validateBooking, wrapAsync(async (req, res) => {
+    const { checkIn, checkOut, adults, children, infants, pets, specialRequests } = req.body;
+    
+    const listing = await Listing.findById(req.params.id);
+    if (!listing) {
+        req.flash('error', 'Listing not found');
+        return res.redirect('/listings');
+    }
+    
+    const checkInDate = new Date(checkIn);
+    const checkOutDate = new Date(checkOut);
+    
+    // Check availability
+    const isAvailable = await Booking.checkAvailability(req.params.id, checkInDate, checkOutDate);
+    if (!isAvailable) {
+        req.flash('error', 'These dates are not available');
+        return res.redirect(`/listings/${req.params.id}`);
+    }
+    
+    // Calculate nights
+    const nights = Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));
+    
+    // Validate minimum/maximum stay
+    if (nights < listing.minimumStay) {
+        req.flash('error', `Minimum stay is ${listing.minimumStay} night${listing.minimumStay > 1 ? 's' : ''}`);
+        return res.redirect(`/listings/${req.params.id}`);
+    }
+    
+    if (nights > listing.maximumStay) {
+        req.flash('error', `Maximum stay is ${listing.maximumStay} nights`);
+        return res.redirect(`/listings/${req.params.id}`);
+    }
+    
+    // Validate guest count
+    const totalGuests = (parseInt(adults) || 1) + (parseInt(children) || 0);
+    if (totalGuests > listing.maxGuests) {
+        req.flash('error', `This property accommodates a maximum of ${listing.maxGuests} guests`);
+        return res.redirect(`/listings/${req.params.id}`);
+    }
+    
+    // Calculate pricing
+    const basePrice = listing.price * nights;
+    let discount = 0;
+    let discountType = 'none';
+    
+    if (nights >= 28 && listing.monthlyDiscount > 0) {
+        discount = (basePrice * listing.monthlyDiscount) / 100;
+        discountType = 'monthly';
+    } else if (nights >= 7 && listing.weeklyDiscount > 0) {
+        discount = (basePrice * listing.weeklyDiscount) / 100;
+        discountType = 'weekly';
+    }
+    
+    const serviceFee = listing.serviceFee || Math.round(basePrice * 0.12);
+    const taxes = Math.round((basePrice - discount) * 0.10);
+    const total = basePrice - discount + listing.cleaningFee + serviceFee + taxes;
+    
+    // Create booking
+    const booking = new Booking({
+        listing: listing._id,
+        guest: req.user._id, // Assumes user is logged in
+        host: listing.owner || req.user._id, // Add owner field to listings later
+        checkIn: checkInDate,
+        checkOut: checkOutDate,
+        guests: {
+            adults: parseInt(adults) || 1,
+            children: parseInt(children) || 0,
+            infants: parseInt(infants) || 0,
+            pets: parseInt(pets) || 0
+        },
+        nights,
+        pricing: {
+            basePrice,
+            nightlyRate: listing.price,
+            cleaningFee: listing.cleaningFee,
+            serviceFee,
+            taxes,
+            discount,
+            discountType,
+            total
+        },
+        specialRequests,
+        status: listing.instantBook ? 'confirmed' : 'pending'
+    });
+    
+    await booking.save();
+    
+    req.flash('success', listing.instantBook ? 'Booking confirmed!' : 'Booking request sent!');
+    res.redirect(`/bookings/${booking._id}`);
+}));
+
+// View single booking
+app.get('/bookings/:id', wrapAsync(async (req, res) => {
+    const booking = await Booking.findById(req.params.id)
+        .populate('listing')
+        .populate('guest')
+        .populate('host');
+    
+    if (!booking) {
+        req.flash('error', 'Booking not found');
+        return res.redirect('/bookings');
+    }
+    
+    res.render('bookings/show', { 
+        pageTitle: 'Booking Details',
+        booking 
+    });
+}));
+
+// View all bookings (for logged-in user)
+app.get('/bookings', wrapAsync(async (req, res) => {
+    if (!req.user) {
+        req.flash('error', 'Please log in to view your bookings');
+        return res.redirect('/login');
+    }
+    
+    const { filter = 'upcoming' } = req.query;
+    const now = new Date();
+    
+    let query = {
+        $or: [
+            { guest: req.user._id },
+            { host: req.user._id }
+        ]
+    };
+    
+    // Apply filters
+    if (filter === 'upcoming') {
+        query.checkIn = { $gte: now };
+        query.status = { $in: ['confirmed', 'pending'] };
+    } else if (filter === 'past') {
+        query.checkOut = { $lt: now };
+    } else if (filter === 'cancelled') {
+        query.status = 'cancelled';
+    }
+    
+    const bookings = await Booking.find(query)
+        .populate('listing')
+        .populate('guest')
+        .populate('host')
+        .sort({ checkIn: -1 });
+    
+    res.render('bookings/index', { 
+        pageTitle: 'My Bookings',
+        bookings,
+        filter
+    });
+}));
+
+// Cancel booking
+app.post('/bookings/:id/cancel', isLoggedIn, isBookingGuest, wrapAsync(async (req, res) => {
+    const { reason } = req.body;
+    const booking = await Booking.findById(req.params.id);
+    
+    if (!booking) {
+        req.flash('error', 'Booking not found');
+        return res.redirect('/bookings');
+    }
+    
+    if (!booking.canBeCancelled()) {
+        req.flash('error', 'This booking cannot be cancelled (less than 24 hours until check-in)');
+        return res.redirect(`/bookings/${booking._id}`);
+    }
+    
+    booking.status = 'cancelled';
+    booking.cancellationReason = reason;
+    await booking.save();
+    
+    req.flash('success', 'Booking cancelled successfully');
+    res.redirect(`/bookings/${booking._id}`);
+}));
+
+// Modify booking - Show modification form
+app.get('/bookings/:id/modify', isLoggedIn, isBookingGuest, wrapAsync(async (req, res) => {
+    const booking = await Booking.findById(req.params.id).populate('listing');
+    
+    if (!booking) {
+        req.flash('error', 'Booking not found');
+        return res.redirect('/bookings');
+    }
+    
+    // Check if booking can be modified (at least 48 hours before check-in)
+    const now = new Date();
+    const checkIn = new Date(booking.checkIn);
+    const hoursUntilCheckIn = (checkIn - now) / (1000 * 60 * 60);
+    
+    if (hoursUntilCheckIn < 48) {
+        req.flash('error', 'Bookings cannot be modified within 48 hours of check-in');
+        return res.redirect(`/bookings/${booking._id}`);
+    }
+    
+    if (booking.status !== 'confirmed' && booking.status !== 'pending') {
+        req.flash('error', 'Only confirmed or pending bookings can be modified');
+        return res.redirect(`/bookings/${booking._id}`);
+    }
+    
+    res.render('bookings/modify', { booking });
+}));
+
+// Modify booking - Process modification
+app.post('/bookings/:id/modify', isLoggedIn, isBookingGuest, validateBooking, wrapAsync(async (req, res) => {
+    const { checkIn, checkOut, adults, children, infants, pets } = req.body;
+    const booking = await Booking.findById(req.params.id).populate('listing');
+    
+    if (!booking) {
+        req.flash('error', 'Booking not found');
+        return res.redirect('/bookings');
+    }
+    
+    // Validate modification is allowed
+    const now = new Date();
+    const currentCheckIn = new Date(booking.checkIn);
+    const hoursUntilCheckIn = (currentCheckIn - now) / (1000 * 60 * 60);
+    
+    if (hoursUntilCheckIn < 48) {
+        req.flash('error', 'Bookings cannot be modified within 48 hours of check-in');
+        return res.redirect(`/bookings/${booking._id}`);
+    }
+    
+    const newCheckIn = new Date(checkIn);
+    const newCheckOut = new Date(checkOut);
+    
+    // Validate dates
+    if (newCheckIn <= new Date()) {
+        req.flash('error', 'Check-in date must be in the future');
+        return res.redirect(`/bookings/${booking._id}/modify`);
+    }
+    
+    if (newCheckOut <= newCheckIn) {
+        req.flash('error', 'Check-out must be after check-in');
+        return res.redirect(`/bookings/${booking._id}/modify`);
+    }
+    
+    // Check availability for new dates (excluding current booking)
+    const isAvailable = await Booking.checkAvailability(
+        booking.listing._id,
+        newCheckIn,
+        newCheckOut,
+        booking._id
+    );
+    
+    if (!isAvailable) {
+        req.flash('error', 'Property is not available for the selected dates');
+        return res.redirect(`/bookings/${booking._id}/modify`);
+    }
+    
+    // Validate guest count
+    const totalGuests = parseInt(adults) + parseInt(children);
+    if (totalGuests > booking.listing.maxGuests) {
+        req.flash('error', `Maximum ${booking.listing.maxGuests} guests allowed`);
+        return res.redirect(`/bookings/${booking._id}/modify`);
+    }
+    
+    // Calculate nights
+    const nights = Math.ceil((newCheckOut - newCheckIn) / (1000 * 60 * 60 * 24));
+    
+    // Validate minimum/maximum stay
+    if (nights < (booking.listing.minimumStay || 1)) {
+        req.flash('error', `Minimum stay is ${booking.listing.minimumStay} night(s)`);
+        return res.redirect(`/bookings/${booking._id}/modify`);
+    }
+    
+    if (nights > (booking.listing.maximumStay || 365)) {
+        req.flash('error', `Maximum stay is ${booking.listing.maximumStay} days`);
+        return res.redirect(`/bookings/${booking._id}/modify`);
+    }
+    
+    // Recalculate pricing
+    const basePrice = booking.listing.price * nights;
+    const cleaningFee = booking.listing.cleaningFee || 0;
+    const serviceFee = booking.listing.serviceFee || Math.round(booking.listing.price * 0.12);
+    
+    // Calculate discount
+    let discount = 0;
+    let discountType = 'none';
+    
+    if (nights >= 28 && booking.listing.monthlyDiscount > 0) {
+        discount = Math.round(basePrice * (booking.listing.monthlyDiscount / 100));
+        discountType = 'monthly';
+    } else if (nights >= 7 && booking.listing.weeklyDiscount > 0) {
+        discount = Math.round(basePrice * (booking.listing.weeklyDiscount / 100));
+        discountType = 'weekly';
+    }
+    
+    const subtotal = basePrice + cleaningFee + serviceFee - discount;
+    const taxes = Math.round(subtotal * 0.12);
+    const total = subtotal + taxes;
+    
+    // Update booking
+    booking.checkIn = newCheckIn;
+    booking.checkOut = newCheckOut;
+    booking.guests = {
+        adults: parseInt(adults),
+        children: parseInt(children),
+        infants: parseInt(infants),
+        pets: parseInt(pets || 0)
+    };
+    booking.pricing = {
+        basePrice,
+        nightlyRate: booking.listing.price,
+        cleaningFee,
+        serviceFee,
+        taxes,
+        discount,
+        discountType,
+        total
+    };
+    
+    await booking.save();
+    
+    req.flash('success', 'Booking modified successfully! Check your email for updated confirmation.');
+    res.redirect(`/bookings/${booking._id}`);
+}));
+
+// Download booking invoice
+app.get('/bookings/:id/invoice', wrapAsync(async (req, res) => {
+    const booking = await Booking.findById(req.params.id)
+        .populate('listing')
+        .populate('user');
+    
+    if (!booking) {
+        req.flash('error', 'Booking not found');
+        return res.redirect('/bookings');
+    }
+    
+    res.render('bookings/invoice', { booking, layout: false });
+}));
+
+// ============================================
+// EXPERIENCES ROUTE - Unique travel experiences
+// ============================================
 app.get('/experiences', wrapAsync(async (req, res) => {
-    const { sort = 'popular', minPrice, maxPrice, minRating } = req.query;
+    const { sort = 'popular', minPrice, maxPrice, minRating, location, category } = req.query;
 
     // Build filter object
     let filter = {};
+    
+    // Price range filter
     if (minPrice || maxPrice) {
         filter.price = {};
         if (minPrice) filter.price.$gte = Number(minPrice);
         if (maxPrice) filter.price.$lte = Number(maxPrice);
+    }
+    
+    // Location filter
+    if (location && location.trim()) {
+        filter.$or = [
+            { location: new RegExp(location, 'i') },
+            { country: new RegExp(location, 'i') }
+        ];
     }
 
     // Build sort object
@@ -282,63 +1011,62 @@ app.get('/experiences', wrapAsync(async (req, res) => {
             sortObj = { price: -1 };
             break;
         case 'rating':
-            sortObj = { averageRating: -1 };
+            sortObj = { rating: -1 };
             break;
         case 'newest':
             sortObj = { createdAt: -1 };
             break;
         default: // popular
-            sortObj = { reviewCount: -1, averageRating: -1 };
+            sortObj = { reviewCount: -1, rating: -1 };
     }
 
-    // Aggregate pipeline for experiences
-    const experiences = await Listing.aggregate([
-        { $match: filter },
-        {
-            $lookup: {
-                from: 'reviews',
-                localField: 'reviews',
-                foreignField: '_id',
-                as: 'reviewDetails'
-            }
-        },
-        {
-            $addFields: {
-                reviewCount: { $size: '$reviewDetails' },
-                averageRating: {
-                    $cond: {
-                        if: { $gt: [{ $size: '$reviewDetails' }, 0] },
-                        then: { $avg: '$reviewDetails.rating' },
-                        else: 0
-                    }
-                }
-            }
-        },
-        {
-            $match: minRating ? { averageRating: { $gte: Number(minRating) } } : {}
-        },
-        { $sort: sortObj },
-        {
-            $project: {
-                title: 1,
-                description: 1,
-                image: 1,
-                price: 1,
-                location: 1,
-                country: 1,
-                reviewCount: 1,
-                averageRating: 1,
-                reviews: 1
-            }
-        }
-    ]);
+    try {
+        // Get all listings and populate reviews
+        const listings = await Listing.find(filter)
+            .populate('reviews')
+            .sort(sortObj);
 
-    res.render('experiences/index', {
-        experiences,
-        currentSort: sort,
-        filters: { minPrice, maxPrice, minRating },
-        pageTitle: 'Experiences'
-    });
+        // Calculate review statistics for each listing
+        const experiences = listings.map(listing => {
+            const reviewCount = listing.reviews ? listing.reviews.length : 0;               
+            const averageRating = reviewCount > 0
+                ? listing.reviews.reduce((sum, review) => sum + (review.rating || 0), 0) / reviewCount
+                : 0;
+            return {
+                _id: listing._id,
+                title: listing.title,
+                description: listing.description,
+                location: listing.location,
+                image: listing.image,
+                price: listing.price,
+                country: listing.country,
+                reviewCount,
+                averageRating: Math.round(averageRating * 10) / 10,
+                reviews: listing.reviews
+            };
+        });
+
+        // Filter by minimum rating if specified
+        const filteredExperiences = minRating
+            ? experiences.filter(exp => exp.averageRating >= Number(minRating))
+            : experiences;
+        
+        // Get unique locations for filter dropdown
+        const uniqueLocations = [...new Set(listings.map(l => l.location))].sort();
+
+        res.render('experiences/index', {
+            experiences: filteredExperiences,
+            currentSort: sort,
+            filters: { minPrice, maxPrice, minRating, location, category },
+            pageTitle: 'Experiences - Discover Unique Adventures',
+            uniqueLocations: uniqueLocations,
+            totalExperiences: filteredExperiences.length
+        });
+    } catch (error) {
+        console.error('Error loading experiences:', error);
+        req.flash('error', 'Error loading experiences');
+        res.redirect('/');
+    }
 }));
 
 // 404 route - must come after all defined routes
@@ -363,5 +1091,7 @@ app.use((err, req, res, next) => {
 const port = process.env.PORT || 8080;
 app.listen(port, () => {
     console.log(`🚀 Server running on port ${port}`);
-    console.log(`📱 Visit http://localhost:${port}/listings`);
+    console.log(`🏠 Home Page: http://localhost:${port}/`);
+    console.log(`🏨 Browse Stays: http://localhost:${port}/stays`);
+    console.log(`✨ Experiences: http://localhost:${port}/experiences`);
 });

@@ -1,0 +1,552 @@
+<% layout('../layouts/boilerplate') %>
+
+<style>
+/* Modern Typography - Inter Font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+/* === HERO SECTION TYPOGRAPHY === */
+.hero-search-title {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+    font-size: clamp(2.5rem, 5vw, 4rem) !important;
+    font-weight: 900 !important;
+    letter-spacing: -0.02em !important;
+    color: #ffffff !important;
+    margin-bottom: 12px !important;
+    line-height: 1.1 !important;
+    opacity: 1 !important;
+    display: block !important;
+    visibility: visible !important;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.hero-search-subtitle {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+    font-size: 1.2rem !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+    margin-bottom: 40px !important;
+    font-weight: 500 !important;
+    opacity: 1 !important;
+    display: block !important;
+    visibility: visible !important;
+}
+
+/* === INTERACTIVE FEATURE CARDS WITH SMOOTH LIFT EFFECT === */
+.bento-small.bento-featured-premium {
+    transition: all 0.3s ease-in-out !important;
+}
+
+.bento-small.bento-featured-premium:hover {
+    transform: translateY(-5px) !important;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* === MODERN SEARCH INPUTS WITH SUNKEN EFFECT === */
+.liquid-glass-input-hero {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 12px;
+    padding: 14px 16px;
+    color: #ffffff !important;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+    font-size: 0.95rem;
+    transition: all 0.3s ease-in-out;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.liquid-glass-input-hero:focus {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: rgba(233, 30, 99, 0.5) !important;
+    box-shadow: 
+        inset 0 2px 4px rgba(0, 0, 0, 0.15),
+        0 0 0 3px rgba(233, 30, 99, 0.15) !important;
+    outline: none;
+}
+
+.liquid-glass-input-hero::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.search-label-hero {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* === VIBRANT GRADIENT SEARCH BUTTON === */
+.hero-search-btn {
+    background: linear-gradient(135deg, #E91E63, #9C27B0) !important;
+    color: white !important;
+    border: none !important;
+    padding: 16px 32px !important;
+    border-radius: 12px !important;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease-in-out !important;
+    box-shadow: 0 4px 16px rgba(233, 30, 99, 0.4) !important;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.hero-search-btn:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 24px rgba(233, 30, 99, 0.6) !important;
+    background: linear-gradient(135deg, #D81B60, #8E24AA) !important;
+}
+
+.hero-search-btn i {
+    margin-right: 8px;
+}
+
+/* === ENHANCED OVERLAY FOR DESTINATION CARDS === */
+.premium-gradient-overlay {
+    background: linear-gradient(
+        to top,
+        rgba(0, 0, 0, 0.75) 0%,
+        rgba(0, 0, 0, 0.4) 50%,
+        transparent 100%
+    ) !important;
+}
+
+/* Top Feature Cards - Elegant Hover Effects */
+.feature-card-top {
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.feature-card-top:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35) !important;
+}
+
+.feature-card-top::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+    transition: left 0.5s ease;
+}
+
+.feature-card-top:hover::before {
+    left: 100%;
+}
+
+/* Hero Title Animation Styles */
+.hero-search-title {
+    font-size: clamp(2.5rem, 6vw, 4.5rem) !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.02em !important;
+    color: #ffffff !important; /* Solid white color */
+    margin-bottom: 16px !important;
+    line-height: 1.1 !important;
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+    display: block !important; /* Force display */
+    visibility: visible !important; /* Force visibility */
+}
+
+.hero-search-subtitle {
+    font-size: clamp(1rem, 2vw, 1.25rem) !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+    margin-bottom: 32px !important;
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+    display: block !important;
+    visibility: visible !important;
+}
+
+/* Remove all animations temporarily for debugging */
+/* Remove all animations - make everything visible immediately */
+.micro-lift {
+    opacity: 1 !important; /* Always visible */
+    transform: translateY(0) !important;
+}
+
+.search-field-hero,
+.search-action-hero {
+    opacity: 1 !important; /* Always visible */
+    transform: translateX(0) !important;
+}
+
+.expressive-heading-sans {
+    opacity: 1 !important; /* Always visible */
+    transform: translateY(0) !important;
+}
+
+
+/* Brutalist heading */
+.brutalist-heading {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    color: white;
+    opacity: 0;
+    animation: brutalistSlide 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes brutalistSlide {
+    0% {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+</style>
+
+<!-- Bento Grid Section with Grain Texture Background -->
+<section class="bento-section" style="padding: 120px 0 80px; background: var(--dark-bg-primary); position: relative; min-height: 100vh;">
+    <!-- Subtle Grain Texture Overlay -->
+    <div class="grain-texture-overlay"></div>
+    
+    <div class="container-fluid" style="max-width: 1400px; position: relative; z-index: 2;">
+        <div class="bento-grid">
+            
+            <!-- ROW 1: KEY FEATURES AT THE TOP (3 columns of 4 each = 12) -->
+            
+            <!-- STAT: 100+ Properties - PREMIUM STYLE -->
+            <div class="bento-item bento-small bento-featured-premium grain-subtle micro-lift">
+                <div class="premium-gradient-overlay" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
+                
+                <!-- Badge Tag -->
+                <div class="featured-tag-glass">
+                    <i class="fas fa-home"></i>
+                    <span>100+ PROPERTIES</span>
+                </div>
+                
+                <div class="bento-content-bottom" style="text-align: center;">
+                    <div style="font-size: 3rem; font-weight: 900; color: white; margin-bottom: 8px; text-shadow: 0 2px 20px rgba(0,0,0,0.3);"><%= typeof allListings !== 'undefined' ? allListings.length : '100' %>+</div>
+                    <p style="font-size: 1rem; color: rgba(255,255,255,0.95); font-weight: 600;">Available Now</p>
+                </div>
+            </div>
+
+            <!-- BADGE: Instant Booking - PREMIUM STYLE -->
+            <div class="bento-item bento-small bento-featured-premium grain-subtle micro-lift">
+                <div class="premium-gradient-overlay" style="background: linear-gradient(135deg, #FF385C 0%, #E31C5F 100%);"></div>
+                
+                <!-- Badge Tag -->
+                <div class="featured-tag-glass" style="background: rgba(255, 255, 255, 0.2);">
+                    <i class="fas fa-bolt"></i>
+                    <span>INSTANT BOOKING</span>
+                </div>
+                
+                <div class="bento-content-bottom" style="text-align: center;">
+                    <h4 style="font-size: 1.75rem; font-weight: 900; color: white; margin-bottom: 8px; text-shadow: 0 2px 20px rgba(0,0,0,0.3);">Lightning Fast</h4>
+                    <p style="font-size: 1rem; color: rgba(255,255,255,0.95); font-weight: 600;">Book in Seconds</p>
+                </div>
+            </div>
+
+            <!-- BADGE: 100% Verified - PREMIUM STYLE -->
+            <div class="bento-item bento-small bento-featured-premium grain-subtle micro-lift">
+                <div class="premium-gradient-overlay" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);"></div>
+                
+                <!-- Badge Tag -->
+                <div class="featured-tag-glass" style="background: rgba(255, 255, 255, 0.2);">
+                    <i class="fas fa-shield-check"></i>
+                    <span>100% VERIFIED</span>
+                </div>
+                
+                <div class="bento-content-bottom" style="text-align: center;">
+                    <h4 style="font-size: 1.75rem; font-weight: 900; color: white; margin-bottom: 8px; text-shadow: 0 2px 20px rgba(0,0,0,0.3);">Trusted Quality</h4>
+                    <p style="font-size: 1rem; color: rgba(255,255,255,0.95); font-weight: 600;">All Inspected</p>
+                </div>
+            </div>
+            
+            <!-- ROW 2: Hero Search (8) + Paris Featured (4) -->
+            
+            <!-- HERO: Main Search Module - TRUE LIQUID GLASS -->
+            <div class="bento-item bento-large bento-hero-search">
+                <div class="bento-content" style="padding: 48px;">
+                    <h1 class="hero-search-title">
+                        FIND YOUR PERFECT STAY
+                    </h1>
+                    <p class="hero-search-subtitle">Discover extraordinary destinations worldwide</p>
+                    
+                    <div class="hero-search-grid">
+                        <div class="search-field-hero">
+                            <label class="search-label-hero">Where?</label>
+                            <input type="text" class="liquid-glass-input-hero" placeholder="Search destinations" id="hero-location">
+                        </div>
+                        <div class="search-field-hero">
+                            <label class="search-label-hero">Check in</label>
+                            <input type="date" class="liquid-glass-input-hero" id="hero-checkin">
+                        </div>
+                        <div class="search-field-hero">
+                            <label class="search-label-hero">Check out</label>
+                            <input type="date" class="liquid-glass-input-hero" id="hero-checkout">
+                        </div>
+                        <div class="search-field-hero">
+                            <label class="search-label-hero">Who?</label>
+                            <select class="liquid-glass-input-hero" id="hero-guests">
+                                <option>1 guest</option>
+                                <option>2 guests</option>
+                                <option>3 guests</option>
+                                <option>4+ guests</option>
+                            </select>
+                        </div>
+                        <div class="search-action-hero">
+                            <button class="hero-search-btn micro-press">
+                                <i class="fas fa-search"></i>
+                                <span>Search</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FEATURED: Paris - Premium Liquid Glass Card -->
+            <div class="bento-item bento-medium bento-featured-premium grain-subtle micro-lift">
+                <img src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800&h=1000&fit=crop" 
+                     alt="Paris" 
+                     class="bento-bg-image">
+                <div class="premium-gradient-overlay"></div>
+                
+                <!-- Liquid Glass Featured Tag -->
+                <div class="featured-tag-glass">
+                    <i class="fas fa-star"></i>
+                    <span>FEATURED</span>
+                </div>
+                
+                <div class="bento-content-bottom">
+                    <h3 class="destination-title">Paris</h3>
+                    <p class="destination-count">1,234 unique properties</p>
+                    <a href="/listings?location=Paris" class="explore-btn-glass micro-ripple">
+                        Explore
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- ROW 3: Luxury Villas (4) + London Wide (8) -->
+            
+            <!-- SQUARE: Luxury Villas - Featured Category -->
+            <div class="bento-item bento-square bento-featured-premium grain-subtle micro-lift">
+                <img src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800&h=800&fit=crop" 
+                     alt="Villas" 
+                     class="bento-bg-image">
+                <div class="premium-gradient-overlay"></div>
+                
+                <!-- Popular Tag -->
+                <div class="featured-tag-glass" style="background: rgba(255, 167, 38, 0.2);">
+                    <i class="fas fa-fire"></i>
+                    <span>POPULAR</span>
+                </div>
+                
+                <div class="bento-content-bottom">
+                    <h3 class="destination-title">Luxury Villas</h3>
+                    <p class="destination-count">Private pools & ocean views</p>
+                    <a href="/listings?category=villa" class="explore-btn-glass micro-ripple">
+                        View All
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- WIDE: London - Premium Card -->
+            <div class="bento-item bento-wide bento-featured-premium grain-subtle micro-lift">
+                <img src="https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=1200&h=600&fit=crop" 
+                     alt="London" 
+                     class="bento-bg-image">
+                <div class="premium-gradient-overlay"></div>
+                
+                <div class="bento-content-bottom">
+                    <h3 class="destination-title">London</h3>
+                    <p class="destination-count">Iconic stays in the heart of the city</p>
+                    <a href="/listings?location=London" class="explore-btn-glass micro-ripple">
+                        Discover
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- ROW 4: New York (4) + Beach Houses (4) + Tokyo (4) -->
+
+            <!-- Square: New York -->
+            <div class="bento-item bento-square bento-featured-premium grain-subtle micro-lift">
+                <img src="https://images.unsplash.com/photo-1534351590666-13e3e96b5017?w=800&h=1000&fit=crop" 
+                     alt="New York" 
+                     class="bento-bg-image">
+                <div class="premium-gradient-overlay"></div>
+                
+                <div class="featured-tag-glass" style="background: rgba(67, 97, 238, 0.2);">
+                    <i class="fas fa-city"></i>
+                    <span>TRENDING</span>
+                </div>
+                
+                <div class="bento-content-bottom">
+                    <h3 class="destination-title">New York</h3>
+                    <p class="destination-count">1,543 apartments & lofts</p>
+                    <a href="/listings?location=New+York" class="explore-btn-glass micro-ripple">
+                        Explore
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Square: Beach Houses -->
+            <div class="bento-item bento-square bento-featured-premium grain-subtle micro-lift">
+                <img src="https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?w=800&h=800&fit=crop" 
+                     alt="Beach Houses" 
+                     class="bento-bg-image">
+                <div class="premium-gradient-overlay"></div>
+                
+                <div class="featured-tag-glass" style="background: rgba(255, 167, 38, 0.2);">
+                    <i class="fas fa-umbrella-beach"></i>
+                    <span>HOT PICK</span>
+                </div>
+                
+                <div class="bento-content-bottom">
+                    <h3 class="destination-title">Beach Houses</h3>
+                    <p class="destination-count">Wake up to ocean views</p>
+                    <a href="/listings?category=beach" class="explore-btn-glass micro-ripple">
+                        Browse
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- ROW 5: 24/7 Support (4) + Best Price (4) + Free Cancellation (4) - PREMIUM STYLE -->
+
+            <!-- 24/7 Support - Premium Card -->
+            <div class="bento-item bento-small bento-featured-premium grain-subtle micro-lift">
+                <div class="premium-gradient-overlay" style="background: linear-gradient(135deg, #434343 0%, #000000 100%);"></div>
+                
+                <div class="featured-tag-glass" style="background: rgba(255, 255, 255, 0.15);">
+                    <i class="fas fa-headset"></i>
+                    <span>24/7 SUPPORT</span>
+                </div>
+                
+                <div class="bento-content-bottom" style="text-align: center;">
+                    <h4 style="font-size: 1.75rem; font-weight: 900; color: white; margin-bottom: 8px; text-shadow: 0 2px 20px rgba(0,0,0,0.3);">Always Here</h4>
+                    <p style="font-size: 1rem; color: rgba(255,255,255,0.9); font-weight: 600;">Round the Clock</p>
+                </div>
+            </div>
+
+            <!-- Best Price - Premium Card -->
+            <div class="bento-item bento-small bento-featured-premium grain-subtle micro-lift">
+                <div class="premium-gradient-overlay" style="background: linear-gradient(135deg, #FA8BFF 0%, #2BD2FF 100%);"></div>
+                
+                <div class="featured-tag-glass" style="background: rgba(255, 255, 255, 0.2);">
+                    <i class="fas fa-tags"></i>
+                    <span>BEST PRICE</span>
+                </div>
+                
+                <div class="bento-content-bottom" style="text-align: center;">
+                    <h4 style="font-size: 1.75rem; font-weight: 900; color: white; margin-bottom: 8px; text-shadow: 0 2px 20px rgba(0,0,0,0.3);">Guaranteed</h4>
+                    <p style="font-size: 1rem; color: rgba(255,255,255,0.95); font-weight: 600;">Lowest Rates</p>
+                </div>
+            </div>
+
+            <!-- Free Cancellation - Premium Card -->
+            <div class="bento-item bento-small bento-featured-premium grain-subtle micro-lift">
+                <div class="premium-gradient-overlay" style="background: linear-gradient(135deg, #F857A6 0%, #FF5858 100%);"></div>
+                
+                <div class="featured-tag-glass" style="background: rgba(255, 255, 255, 0.2);">
+                    <i class="fas fa-calendar-times"></i>
+                    <span>FLEXIBLE</span>
+                </div>
+                
+                <div class="bento-content-bottom" style="text-align: center;">
+                    <h4 style="font-size: 1.75rem; font-weight: 900; color: white; margin-bottom: 8px; text-shadow: 0 2px 20px rgba(0,0,0,0.3);">Free Cancel</h4>
+                    <p style="font-size: 1rem; color: rgba(255,255,255,0.95); font-weight: 600;">No Worries</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<script>
+// Fast Page Load Animations
+document.addEventListener('DOMContentLoaded', function() {
+    // Trigger animations immediately on load
+    setTimeout(() => {
+        document.body.classList.add('loaded');
+    }, 100);
+    
+    // Intersection Observer for scroll animations
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -100px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.animation = entry.target.style.animation || 
+                    'cardSlideUp 0.4s ease-out forwards';
+                observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+    
+    // Observe all sections that should animate on scroll
+    document.querySelectorAll('.brutalist-section, .expressive-heading-sans').forEach(el => {
+        observer.observe(el);
+    });
+    
+    // Faster hover effects for cards
+    document.querySelectorAll('.bento-item, .listing-card').forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-8px) scale(1.02)';
+            this.style.transition = 'all 0.3s cubic-bezier(0.22, 1, 0.36, 1)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) scale(1)';
+        });
+    });
+    
+    // Search button animation
+    const searchBtn = document.querySelector('.hero-search-btn');
+    if (searchBtn) {
+        searchBtn.addEventListener('click', function(e) {
+            const ripple = document.createElement('span');
+            ripple.style.cssText = `
+                position: absolute;
+                border-radius: 50%;
+                background: rgba(255,255,255,0.6);
+                width: 100px;
+                height: 100px;
+                animation: rippleEffect 0.6s ease-out;
+                pointer-events: none;
+            `;
+            
+            const rect = this.getBoundingClientRect();
+            ripple.style.left = (e.clientX - rect.left - 50) + 'px';
+            ripple.style.top = (e.clientY - rect.top - 50) + 'px';
+            
+            this.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 600);
+        });
+    }
+});
+
+// Add ripple effect keyframes
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes rippleEffect {
+        0% {
+            transform: scale(0);
+            opacity: 1;
+        }
+        100% {
+            transform: scale(2);
+            opacity: 0;
+        }
+    }
+`;
+document.head.appendChild(style);
+</script>

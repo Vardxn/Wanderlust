@@ -1,0 +1,116 @@
+-- ============================================================================
+-- Seed Data: Amenities
+-- ============================================================================
+-- Common amenities available in vacation rentals
+-- ============================================================================
+
+INSERT INTO amenities (name, category) VALUES
+    -- Basic Amenities
+    ('WiFi', 'Basic'),
+    ('Air conditioning', 'Basic'),
+    ('Heating', 'Basic'),
+    ('TV', 'Basic'),
+    ('Cable TV', 'Basic'),
+    ('Streaming services', 'Basic'),
+    ('Hair dryer', 'Basic'),
+    ('Iron', 'Basic'),
+    ('Hangers', 'Basic'),
+    ('Bed linens', 'Basic'),
+    ('Extra pillows and blankets', 'Basic'),
+    ('Essentials', 'Basic'),
+    ('Shampoo', 'Basic'),
+    ('Hot water', 'Basic'),
+    ('Workspace', 'Basic'),
+    
+    -- Kitchen Amenities
+    ('Kitchen', 'Kitchen'),
+    ('Kitchenette', 'Kitchen'),
+    ('Refrigerator', 'Kitchen'),
+    ('Microwave', 'Kitchen'),
+    ('Oven', 'Kitchen'),
+    ('Stove', 'Kitchen'),
+    ('Coffee maker', 'Kitchen'),
+    ('Electric kettle', 'Kitchen'),
+    ('Dishwasher', 'Kitchen'),
+    ('Dishes and silverware', 'Kitchen'),
+    ('Cooking basics', 'Kitchen'),
+    ('Wine glasses', 'Kitchen'),
+    ('Toaster', 'Kitchen'),
+    ('Blender', 'Kitchen'),
+    
+    -- Safety Amenities
+    ('Smoke detector', 'Safety'),
+    ('Carbon monoxide detector', 'Safety'),
+    ('Fire extinguisher', 'Safety'),
+    ('First aid kit', 'Safety'),
+    ('Lock on bedroom door', 'Safety'),
+    ('Security cameras on property', 'Safety'),
+    ('Safe', 'Safety'),
+    
+    -- Outdoor Amenities
+    ('Free parking on premises', 'Outdoor'),
+    ('Paid parking on premises', 'Outdoor'),
+    ('Street parking', 'Outdoor'),
+    ('Private pool', 'Outdoor'),
+    ('Shared pool', 'Outdoor'),
+    ('Hot tub', 'Outdoor'),
+    ('BBQ grill', 'Outdoor'),
+    ('Patio or balcony', 'Outdoor'),
+    ('Garden or backyard', 'Outdoor'),
+    ('Beach access', 'Outdoor'),
+    ('Waterfront', 'Outdoor'),
+    ('Fire pit', 'Outdoor'),
+    ('Outdoor furniture', 'Outdoor'),
+    ('Outdoor dining area', 'Outdoor'),
+    
+    -- Entertainment Amenities
+    ('Game console', 'Entertainment'),
+    ('Pool table', 'Entertainment'),
+    ('Ping pong table', 'Entertainment'),
+    ('Board games', 'Entertainment'),
+    ('Books and reading material', 'Entertainment'),
+    ('Piano', 'Entertainment'),
+    ('Exercise equipment', 'Entertainment'),
+    ('Gym', 'Entertainment'),
+    ('Sound system', 'Entertainment'),
+    ('Record player', 'Entertainment'),
+    
+    -- Accessibility Amenities
+    ('Step-free access', 'Accessibility'),
+    ('Wide doorway', 'Accessibility'),
+    ('Accessible-height bed', 'Accessibility'),
+    ('Accessible-height toilet', 'Accessibility'),
+    ('Grab-rails for shower', 'Accessibility'),
+    ('Grab-rails for toilet', 'Accessibility'),
+    ('Wide clearance to bed', 'Accessibility'),
+    ('Elevator', 'Accessibility'),
+    ('Roll-in shower', 'Accessibility'),
+    
+    -- Other Amenities
+    ('Washer', 'Other'),
+    ('Dryer', 'Other'),
+    ('Cleaning products', 'Other'),
+    ('Long term stays allowed', 'Other'),
+    ('Pets allowed', 'Other'),
+    ('Smoking allowed', 'Other'),
+    ('Events allowed', 'Other'),
+    ('Self check-in', 'Other'),
+    ('Lockbox', 'Other'),
+    ('Keypad', 'Other'),
+    ('Smart lock', 'Other'),
+    ('Luggage dropoff allowed', 'Other'),
+    ('Baby bath', 'Other'),
+    ('Baby monitor', 'Other'),
+    ('Babysitter recommendations', 'Other'),
+    ('Bathtub', 'Other'),
+    ('Changing table', 'Other'),
+    ('Children's books and toys', 'Other'),
+    ('Children's dinnerware', 'Other'),
+    ('Crib', 'Other'),
+    ('High chair', 'Other'),
+    ('Outlet covers', 'Other'),
+    ('Pack 'n Play/travel crib', 'Other'),
+    ('Room-darkening shades', 'Other'),
+    ('Table corner guards', 'Other'),
+    ('Window guards', 'Other')
+ON CONFLICT (name) DO NOTHING;

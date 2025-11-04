@@ -17,6 +17,18 @@
     --airbnb-white: #FFFFFF;
     --airbnb-border: #DDDDDD;
 
+    /* Premium Accent Colors (Apple-inspired) */
+    --accent: #0071E3;
+    --accent-hover: #0077ED;
+    --accent-light: #E8F4FF;
+
+    /* Glassmorphism Variables */
+    --glass-bg: rgba(255, 255, 255, 0.15);
+    --glass-bg-strong: rgba(255, 255, 255, 0.25);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+    --glass-shadow-lg: 0 12px 48px 0 rgba(0, 0, 0, 0.15);
+
     /* Spacing & Layout */
     --max-width: 1760px;
     --container-padding: 24px;
@@ -26,16 +38,19 @@
     --radius-sm: 8px;
     --radius-md: 12px;
     --radius-lg: 16px;
+    --radius-xl: 20px;
     --radius-pill: 40px;
 
     /* Shadows */
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, .08), 0 4px 12px rgba(0, 0, 0, .05);
     --shadow-md: 0 4px 16px rgba(0, 0, 0, .12);
     --shadow-lg: 0 8px 24px rgba(0, 0, 0, .18);
+    --shadow-glow: 0 0 20px rgba(0, 113, 227, 0.3);
 
     /* Transitions */
     --transition-fast: .15s cubic-bezier(.4, 0, .2, 1);
     --transition: .25s cubic-bezier(.4, 0, .2, 1);
+    --transition-slow: .6s cubic-bezier(.4, 0, .2, 1);
 }
 
 /* 2. BASE STYLES */
