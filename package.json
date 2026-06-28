@@ -6,6 +6,8 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
+    "create:demo-user": "node scripts/createDemoUser.js",
+    "seed:hosts": "node scripts/seedHostData.js",
     "test": "jest --watchAll --verbose",
     "test:coverage": "jest --coverage",
     "seed": "node seeds/index.js",

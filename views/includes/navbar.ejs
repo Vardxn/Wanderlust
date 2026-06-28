@@ -1,83 +1,247 @@
-<!-- Dynamic Liquid Glass Navbar -->
-<header class="airbnb-header liquid-glass-nav-clean" id="liquidNavbar">
-    <div class="nav-container">
-        <div class="nav-left nav-animate" style="animation-delay: 0.1s;">
-            <a href="/" class="logo-link">
-                <span class="logo-text-clean">WANDERLUST</span>
-            </a>
-        </div>
-        <div class="nav-center-clean nav-animate" style="animation-delay: 0.2s;">
-            <a href="/stays" class="nav-pill-clean">
-                <span>Stays</span>
-            </a>
-            <a href="/experiences" class="nav-pill-clean">
-                <span>Experiences</span>
-            </a>
-        </div>
-        <div class="nav-right-clean nav-animate" style="animation-delay: 0.3s;">
-            <a href="/listings/new" class="host-link-clean">Become a Host</a>
-            <div class="user-menu-container nav-animate" style="animation-delay: 0.4s;">
-                <button class="user-menu-trigger-clean" id="userMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+<!-- ====================================================
+     WANDERLUST NAVBAR  (Flowbite layout · Dark Glass theme)
+     ==================================================== -->
+<nav class="liquid-glass-nav-clean" id="liquidNavbar">
+    <div class="nav-fb-container">
+
+        <!-- ① LEFT: Logo -->
+        <a href="/" class="logo-link nav-animate" style="animation-delay:0.1s;">
+            <span class="logo-text-clean">WANDERLUST</span>
+        </a>
+
+        <!-- ② RIGHT CLUSTER: Host CTA + user menu + mobile toggle (md:order-2) -->
+        <div class="nav-fb-right nav-animate" style="animation-delay:0.3s;">
+
+            <!-- Search icon button -->
+            <button class="nav-search-btn" type="button" aria-label="Search">
+                <i class="fas fa-search nav-search-icon"></i>
+            </button>
+
+            <!-- Become a Host (hidden on xs, visible md+) -->
+            <a href="<%= currentUser ? '/listings/new' : '/login?redirect=/listings/new' %>" class="host-link-clean nav-fb-host-hide">Become a Host</a>
+
+            <!-- User avatar / dropdown -->
+            <div class="user-menu-container nav-animate" style="animation-delay:0.4s; position:relative;">
+                <button
+                    class="user-menu-trigger-clean"
+                    id="userMenuButton"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                    aria-haspopup="true">
                     <i class="fas fa-bars"></i>
                     <div class="user-avatar-clean">
-                        <i class="fas fa-user"></i>
+                        <% if (typeof currentUser !== 'undefined' && currentUser) { %>
+                            <span style="font-size:0.7rem;font-weight:800;color:#fff;line-height:1;">
+                                <%= currentUser.username ? currentUser.username.charAt(0).toUpperCase() : 'U' %>
+                            </span>
+                        <% } else { %>
+                            <i class="fas fa-user"></i>
+                        <% } %>
                     </div>
                 </button>
+
                 <ul class="dropdown-menu user-dropdown-clean dropdown-menu-end" aria-labelledby="userMenuButton">
-                    <li><a class="dropdown-item" href="/login">Log in</a></li>
-                    <li><a class="dropdown-item" href="/register">Sign up</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="/listings/new">Host your home</a></li>
-                    <li><a class="dropdown-item" href="/experiences/host">Host an experience</a></li>
-                    <li><a class="dropdown-item" href="/help">Help</a></li>
+                    <% if (typeof currentUser !== 'undefined' && currentUser) { %>
+                        <!-- Logged-in header -->
+                        <li>
+                            <div style="padding:12px 16px; border-bottom:1px solid rgba(255,255,255,0.08);">
+                                <span style="display:block; color:#fff; font-weight:600; font-size:0.9rem;">
+                                    <%= currentUser.username %>
+                                </span>
+                                <span style="display:block; color:rgba(255,255,255,0.5); font-size:0.8rem; margin-top:2px;">
+                                    <%= currentUser.email || '' %>
+                                </span>
+                            </div>
+                        </li>
+                        <li><a class="dropdown-item" href="/bookings">My Bookings</a></li>
+                        <li><a class="dropdown-item" href="/listings/new">Host your home</a></li>
+                        <li><a class="dropdown-item" href="/experiences/host">Host an experience</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form action="/logout" method="POST" style="margin:0;">
+                                <button type="submit" class="dropdown-item" style="width:100%;text-align:left;background:none;border:none;cursor:pointer;">
+                                    Sign out
+                                </button>
+                            </form>
+                        </li>
+                    <% } else { %>
+                        <li><a class="dropdown-item" href="/login">Log in</a></li>
+                        <li><a class="dropdown-item" href="/register">Sign up</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="/login?redirect=/listings/new">Host your home</a></li>
+                        <li><a class="dropdown-item" href="/login?redirect=/experiences">Host an experience</a></li>
+                        <li><a class="dropdown-item" href="/help">Help</a></li>
+                    <% } %>
                 </ul>
             </div>
+
+            <!-- Mobile hamburger (visible only < md) -->
+            <button
+                class="nav-fb-mobile-toggle"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarMobileMenu"
+                aria-controls="navbarMobileMenu"
+                aria-expanded="false"
+                aria-label="Toggle navigation">
+                <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24">
+                    <path d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+            </button>
+        </div>
+
+        <!-- ③ CENTER PILLS (md:order-1, hidden on mobile — shown in collapse below) -->
+        <div class="nav-center-clean nav-animate nav-fb-center-desktop" style="animation-delay:0.2s;" id="navCenterDesktop">
+            <a href="/stays" class="nav-pill-clean"><span>Stays</span></a>
+            <a href="/experiences" class="nav-pill-clean"><span>Experiences</span></a>
+        </div>
+
+    </div><!-- /nav-fb-container -->
+
+    <!-- Mobile collapse menu -->
+    <div class="collapse nav-fb-mobile-collapse" id="navbarMobileMenu">
+        <div class="nav-fb-mobile-inner">
+            <a href="/stays"       class="nav-fb-mobile-link nav-pill-clean-mobile">Stays</a>
+            <a href="/experiences" class="nav-fb-mobile-link nav-pill-clean-mobile">Experiences</a>
+            <hr style="border-color:rgba(255,255,255,0.08); margin:8px 0;">
+            <a href="<%= currentUser ? '/listings/new' : '/login?redirect=/listings/new' %>" class="nav-fb-mobile-link" style="color:#FFD700; font-weight:700;">Become a Host</a>
         </div>
     </div>
-</header>
+</nav>
+
+<style>
+/* ============================================================
+   NAV — Flowbite Layout Overrides (theme colours unchanged)
+   ============================================================ */
+
+/* Outer wrapper already styled by liquid-glass-nav-clean */
+#liquidNavbar { padding: 0; }
+
+/* Inner container — full-width flex row */
+.nav-fb-container {
+    max-width: 1920px;
+    margin: 0 auto;
+    padding: 14px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+/* ── Center pills: pushed to middle on desktop only ── */
+.nav-fb-center-desktop {
+    /* Flex-grow pushes it to the middle when combined with the
+       logo (flex-start) and right cluster (flex-end)             */
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* ── Right cluster ── */
+.nav-fb-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Hide "Become a Host" on small screens */
+@media (max-width: 767px) {
+    .nav-fb-host-hide { display: none; }
+    .nav-fb-center-desktop { display: none !important; }
+}
+
+/* ── Mobile hamburger button ── */
+.nav-fb-mobile-toggle {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.07);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.85);
+    cursor: pointer;
+    transition: background 0.2s ease;
+    flex-shrink: 0;
+}
+
+.nav-fb-mobile-toggle:hover {
+    background: rgba(255,255,255,0.13);
+    color: #fff;
+}
+
+@media (max-width: 767px) {
+    .nav-fb-mobile-toggle { display: flex; }
+}
+
+/* ── Mobile dropdown panel ── */
+.nav-fb-mobile-collapse {
+    background: rgba(12, 16, 28, 0.97);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-top: 1px solid rgba(255,255,255,0.07);
+}
+
+.nav-fb-mobile-inner {
+    display: flex;
+    flex-direction: column;
+    padding: 12px 24px 20px;
+    gap: 4px;
+}
+
+.nav-fb-mobile-link {
+    display: block;
+    padding: 11px 14px;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: rgba(255,255,255,0.75);
+    text-decoration: none;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.nav-fb-mobile-link:hover,
+.nav-fb-mobile-link.active {
+    background: rgba(96,165,250,0.1);
+    color: #ff2a7f;
+}
+
+/* ── Adjust container padding on mobile ── */
+@media (max-width: 767px) {
+    .nav-fb-container { padding: 12px 20px; }
+}
+</style>
 
 <script>
-// Dynamic Liquid Glass Navbar - Apple-Style Scroll Animations
-document.addEventListener('DOMContentLoaded', function() {
-    const navbar = document.getElementById('liquidNavbar');
-    const navPills = document.querySelectorAll('.nav-pill-clean');
-    const currentPath = window.location.pathname;
-    
-    // Set active pill based on current path
-    navPills.forEach(pill => {
+// Wanderlust Navbar — active pill + scroll glass effect
+document.addEventListener('DOMContentLoaded', function () {
+    const navbar   = document.getElementById('liquidNavbar');
+    const allPills = document.querySelectorAll('.nav-pill-clean, .nav-fb-mobile-link');
+    const path     = window.location.pathname;
+
+    // Mark active pill (desktop + mobile)
+    allPills.forEach(function (pill) {
         const href = pill.getAttribute('href');
-        if ((currentPath === '/' || currentPath === '/stays' || currentPath === '/listings') && href === '/stays') {
+        if (!href) return;
+        if ((path === '/stays' || path === '/listings') && href === '/stays') {
             pill.classList.add('active');
-        } else if (currentPath.startsWith('/experiences') && href === '/experiences') {
+        } else if (path.startsWith('/experiences') && href === '/experiences') {
             pill.classList.add('active');
         }
     });
-    
-    // Dynamic scroll effect - Apple style
-    let lastScroll = 0;
+
+    // Scroll-glass effect
     let ticking = false;
-    
     function updateNavbar() {
-        const scrollPos = window.pageYOffset || document.documentElement.scrollTop;
-        
-        if (scrollPos > 0) {
-            navbar.classList.add('navbar-scrolled');
-        } else {
-            navbar.classList.remove('navbar-scrolled');
-        }
-        
-        lastScroll = scrollPos;
+        const y = window.pageYOffset || document.documentElement.scrollTop;
+        navbar.classList.toggle('navbar-scrolled', y > 0);
         ticking = false;
     }
-    
-    window.addEventListener('scroll', function() {
-        if (!ticking) {
-            window.requestAnimationFrame(updateNavbar);
-            ticking = true;
-        }
+    window.addEventListener('scroll', function () {
+        if (!ticking) { requestAnimationFrame(updateNavbar); ticking = true; }
     });
-    
-    // Initial check
     updateNavbar();
 });
 </script>

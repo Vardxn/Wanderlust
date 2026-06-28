@@ -1,0 +1,231 @@
+<% layout('../layouts/boilerplate') %>
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <!-- Host Information Header -->
+            <div class="card border-0 shadow-sm mb-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="card-body p-4 text-white">
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            <div class="bg-white rounded-circle p-3" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-user-circle" style="font-size: 3rem; color: #667eea;"></i>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <h2 class="mb-0 fw-bold"><%= listing.ownerName %></h2>
+                            <p class="mb-2 text-white-50">
+                                <i class="fas fa-trophy me-1"></i>
+                                <%= listing.yearsOfExperience %> <% if (listing.yearsOfExperience === 1) { %>year<% } else { %>years<% } %> of hosting experience
+                            </p>
+                            
+                            <!-- Host Rating Summary -->
+                            <% if (listing.hostAverageRating && listing.hostReviews && listing.hostReviews.length > 0) { %>
+                                <div class="d-flex align-items-center mt-3">
+                                    <div class="me-3">
+                                        <% for (let i = 0; i < 5; i++) { %>
+                                            <% if (i < Math.floor(listing.hostAverageRating)) { %>
+                                                <i class="fas fa-star" style="color: #FFD700;"></i>
+                                            <% } else if (i < listing.hostAverageRating) { %>
+                                                <i class="fas fa-star-half-alt" style="color: #FFD700;"></i>
+                                            <% } else { %>
+                                                <i class="far fa-star" style="color: rgba(255,255,255,0.4);"></i>
+                                            <% } %>
+                                        <% } %>
+                                    </div>
+                                    <span class="fw-bold fs-5"><%= listing.hostAverageRating %>/5.0</span>
+                                    <span class="ms-2 text-white-50">(<%=listing.hostReviewCount%> reviews)</span>
+                                </div>
+                            <% } else { %>
+                                <small class="text-white-50">No reviews yet</small>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Back to Listing -->
+            <div class="mb-4">
+                <a href="/listings/<%= listing._id %>" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Listing
+                </a>
+            </div>
+
+            <!-- Host Reviews Section -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h4 class="fw-semibold mb-4">
+                        <i class="fas fa-comments"></i> Guest Reviews for <%= listing.ownerName %>
+                    </h4>
+
+                    <!-- Add Host Review Form -->
+                    <% if (currentUser) { %>
+                        <div class="mb-5 p-4 bg-light rounded-3">
+                            <h5 class="fw-semibold mb-3">Share Your Experience with <%= listing.ownerName %></h5>
+                            <form action="/listings/<%= listing._id %>/host-reviews" method="POST">
+                                <div class="mb-3">
+                                    <label for="hostRating" class="form-label fw-semibold">Rate your host</label>
+                                    <select class="form-select" id="hostRating" name="hostReview[rating]" required>
+                                        <option value="">Select rating...</option>
+                                        <option value="5">⭐⭐⭐⭐⭐ Exceptional</option>
+                                        <option value="4">⭐⭐⭐⭐ Very Good</option>
+                                        <option value="3">⭐⭐⭐ Good</option>
+                                        <option value="2">⭐⭐ Fair</option>
+                                        <option value="1">⭐ Poor</option>
+                                    </select>
+                                </div>
+
+                                <!-- Detailed Ratings -->
+                                <div class="row g-3 mb-3">
+                                    <div class="col-md-6">
+                                        <label for="cleanliness" class="form-label">Cleanliness</label>
+                                        <select class="form-select" id="cleanliness" name="hostReview[cleanliness]">
+                                            <option value="">Not specified</option>
+                                            <option value="5">Excellent</option>
+                                            <option value="4">Very Good</option>
+                                            <option value="3">Good</option>
+                                            <option value="2">Fair</option>
+                                            <option value="1">Poor</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="communication" class="form-label">Communication</label>
+                                        <select class="form-select" id="communication" name="hostReview[communication]">
+                                            <option value="">Not specified</option>
+                                            <option value="5">Excellent</option>
+                                            <option value="4">Very Good</option>
+                                            <option value="3">Good</option>
+                                            <option value="2">Fair</option>
+                                            <option value="1">Poor</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="accuracy" class="form-label">Accuracy of Listing</label>
+                                        <select class="form-select" id="accuracy" name="hostReview[accuracy]">
+                                            <option value="">Not specified</option>
+                                            <option value="5">Excellent Match</option>
+                                            <option value="4">Very Good</option>
+                                            <option value="3">Good</option>
+                                            <option value="2">Fair</option>
+                                            <option value="1">Not Accurate</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="hostBody" class="form-label fw-semibold">Your Review</label>
+                                    <textarea class="form-control" id="hostBody" name="hostReview[body]" rows="4" placeholder="Tell us about your experience with this host..." minlength="10" maxlength="500" required></textarea>
+                                    <small class="text-muted">• Be respectful and honest • Share specific details • Help future guests</small>
+                                </div>
+
+                                <div class="mb-3 form-check">
+                                    <input class="form-check-input" type="checkbox" id="recommend" name="hostReview[wouldRecommend]" value="true" checked>
+                                    <label class="form-check-label" for="recommend">
+                                        I would recommend this host to other guests
+                                    </label>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary fw-semibold">
+                                    <i class="fas fa-paper-plane me-2"></i>Submit Review
+                                </button>
+                            </form>
+                        </div>
+                    <% } else { %>
+                        <div class="alert alert-info mb-4">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <a href="/login?redirect=/listings/<%= listing._id %>/host-reviews">Sign in</a> to leave a review for <%= listing.ownerName %>
+                        </div>
+                    <% } %>
+
+                    <!-- Existing Host Reviews -->
+                    <% if (listing.hostReviews && listing.hostReviews.length > 0) { %>
+                        <div class="mt-5 pt-4 border-top">
+                            <h5 class="fw-semibold mb-4">Reviews from Guests</h5>
+                            <% listing.hostReviews.forEach((hostReview, index) => { %>
+                                <div class="mb-4 pb-4 <% if (index < listing.hostReviews.length - 1) { %>border-bottom<% } %>">
+                                    <!-- Review Header -->
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div>
+                                            <h6 class="fw-semibold mb-1">
+                                                <i class="fas fa-user-circle me-2"></i>
+                                                <% if (hostReview.author) { %>
+                                                    <%= hostReview.author.username || 'Anonymous Guest' %>
+                                                <% } else { %>
+                                                    Anonymous Guest
+                                                <% } %>
+                                            </h6>
+                                            <small class="text-muted">
+                                                <span class="me-3"><i class="fas fa-calendar me-1"></i><%= new Date(hostReview.createdAt).toLocaleDateString() %></span>
+                                                <% if (hostReview.wouldRecommend) { %>
+                                                    <span class="badge bg-success">
+                                                        <i class="fas fa-check-circle me-1"></i> Recommends
+                                                    </span>
+                                                <% } %>
+                                            </small>
+                                        </div>
+                                        <% if (currentUser && hostReview.author && String(hostReview.author._id) === String(currentUser._id)) { %>
+                                            <form action="/listings/<%= listing._id %>/host-reviews/<%= hostReview._id %>?_method=DELETE" method="POST" class="d-inline">
+                                                <button class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this review?')">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        <% } %>
+                                    </div>
+
+                                    <!-- Rating Stars -->
+                                    <div class="mb-3">
+                                        <% for (let i = 0; i < 5; i++) { %>
+                                            <% if (i < Math.floor(hostReview.rating)) { %>
+                                                <i class="fas fa-star text-warning"></i>
+                                            <% } else if (i < hostReview.rating) { %>
+                                                <i class="fas fa-star-half-alt text-warning"></i>
+                                            <% } else { %>
+                                                <i class="far fa-star text-muted"></i>
+                                            <% } %>
+                                        <% } %>
+                                        <strong class="ms-2"><%= hostReview.rating %>/5</strong>
+                                    </div>
+
+                                    <!-- Review Text -->
+                                    <p class="text-secondary mb-3"><%= hostReview.body %></p>
+
+                                    <!-- Detailed Ratings -->
+                                    <% if (hostReview.cleanliness || hostReview.communication || hostReview.accuracy) { %>
+                                        <div class="bg-light p-3 rounded mb-3">
+                                            <small class="d-block fw-semibold mb-2">Detailed Ratings:</small>
+                                            <div class="row g-2 text-center">
+                                                <% if (hostReview.cleanliness) { %>
+                                                    <div class="col-6 col-md-4">
+                                                        <small class="d-block text-muted">Cleanliness</small>
+                                                        <strong><%= hostReview.cleanliness %>/5</strong>
+                                                    </div>
+                                                <% } %>
+                                                <% if (hostReview.communication) { %>
+                                                    <div class="col-6 col-md-4">
+                                                        <small class="d-block text-muted">Communication</small>
+                                                        <strong><%= hostReview.communication %>/5</strong>
+                                                    </div>
+                                                <% } %>
+                                                <% if (hostReview.accuracy) { %>
+                                                    <div class="col-6 col-md-4">
+                                                        <small class="d-block text-muted">Accuracy</small>
+                                                        <strong><%= hostReview.accuracy %>/5</strong>
+                                                    </div>
+                                                <% } %>
+                                            </div>
+                                        </div>
+                                    <% } %>
+                                </div>
+                            <% }) %>
+                        </div>
+                    <% } else { %>
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            No reviews yet for <%= listing.ownerName %>. Be the first to review!
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

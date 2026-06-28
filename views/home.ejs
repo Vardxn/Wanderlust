@@ -63,7 +63,7 @@
             <div class="text-center py-5">
                 <h4 class="text-muted">No listings available</h4>
                 <p class="text-muted">Please check your database connection and seed the data.</p>
-                <a href="/listings/new" class="btn btn-outline-primary">Add First Listing</a>
+                <a href="<%= currentUser ? '/listings/new' : '/login?redirect=/listings/new' %>" class="btn btn-outline-primary">Add First Listing</a>
             </div>
         <% } %>
     </section>

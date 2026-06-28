@@ -1,5 +1,6 @@
 const Listing = require('../models/listing');
 const Review = require('../models/review');
+const HostReview = require('../models/hostReview');
 const Booking = require('../models/booking');
 
 /**
@@ -46,6 +47,25 @@ module.exports.isReviewAuthor = async (req, res, next) => {
     }
     
     if (!review.author || !review.author.equals(req.user._id)) {
+        req.flash('error', 'You do not have permission to do that!');
+        return res.redirect(`/listings/${id}`);
+    }
+    next();
+};
+
+/**
+ * Middleware to check if user is the author of a host review
+ */
+module.exports.isHostReviewAuthor = async (req, res, next) => {
+    const { id, reviewId } = req.params;
+    const hostReview = await HostReview.findById(reviewId);
+    
+    if (!hostReview) {
+        req.flash('error', 'Review not found');
+        return res.redirect(`/listings/${id}`);
+    }
+    
+    if (!hostReview.author || !hostReview.author.equals(req.user._id)) {
         req.flash('error', 'You do not have permission to do that!');
         return res.redirect(`/listings/${id}`);
     }

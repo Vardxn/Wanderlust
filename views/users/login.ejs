@@ -1,0 +1,42 @@
+<section class="container py-5" style="max-width: 560px; margin-top: 120px; min-height: calc(100vh - 220px);">
+    <div class="card bg-dark text-white border-secondary shadow-lg">
+        <div class="card-body p-4 p-md-5">
+            <h1 class="h3 mb-3 fw-bold">Welcome back</h1>
+            <p class="text-secondary mb-4">Log in to manage bookings, host listings, and save favorites.</p>
+
+            <% if (error && error.length) { %>
+                <div class="alert alert-danger" role="alert"><%= error[0] %></div>
+            <% } %>
+            <% if (success && success.length) { %>
+                <div class="alert alert-success" role="alert"><%= success[0] %></div>
+            <% } %>
+
+            <form action="/login" method="POST" class="d-grid gap-3">
+                <input type="hidden" name="redirect" value="<%= redirect || '' %>">
+
+                <div>
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="username" name="username" required autocomplete="username">
+                </div>
+
+                <div>
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" required autocomplete="current-password">
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">Log in</button>
+            </form>
+
+            <a href="<%= redirect || '/stays' %>" class="btn btn-outline-light w-100 mt-3">Continue as Guest</a>
+
+            <div class="mt-4 pt-3 border-top border-secondary-subtle">
+                <p class="mb-1 text-secondary">Demo account</p>
+                <p class="mb-0 small">Username: <strong>demo_user</strong> • Password: <strong>Demo@12345</strong></p>
+            </div>
+
+            <p class="mt-4 mb-0 text-secondary">New to Wanderlust?
+                <a href="/register<%= redirect ? '?redirect=' + encodeURIComponent(redirect) : '' %>" class="text-info text-decoration-none">Create an account</a>
+            </p>
+        </div>
+    </div>
+</section>

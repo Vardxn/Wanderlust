@@ -282,10 +282,30 @@ const listingSchema = new Schema({
         min: 0,
         max: 100 // Percentage
     },
+    owner: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    },
+    ownerName: {
+        type: String,
+        default: 'Anonymous Host'
+    },
+    yearsOfExperience: {
+        type: Number,
+        default: 0,
+        min: 0,
+        max: 60
+    },
     reviews: [
         {
             type: Schema.Types.ObjectId,
             ref: 'Review'
+        }
+    ],
+    hostReviews: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'HostReview'
         }
     ],
     createdAt: {
@@ -306,10 +326,23 @@ listingSchema.virtual('averageRating').get(function() {
     return Math.round((sum / this.reviews.length) * 10) / 10;
 });
 
+// Virtual for host review count
+listingSchema.virtual('hostReviewCount').get(function() {
+    return this.hostReviews ? this.hostReviews.length : 0;
+});
+
+// Virtual for host average rating
+listingSchema.virtual('hostAverageRating').get(function() {
+    if (!this.hostReviews || this.hostReviews.length === 0) return 0;
+    const sum = this.hostReviews.reduce((acc, review) => acc + review.rating, 0);
+    return Math.round((sum / this.hostReviews.length) * 10) / 10;
+});
+
 // Index for geospatial queries
 listingSchema.index({ coordinates: '2dsphere' });
 listingSchema.index({ location: 1, price: 1 });
 listingSchema.index({ country: 1 });
+listingSchema.index({ owner: 1 });
 listingSchema.index({ createdAt: -1 });
 
 // Text index for search

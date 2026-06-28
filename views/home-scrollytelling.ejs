@@ -238,7 +238,7 @@
                 </div>
                 <h3>No listings available</h3>
                 <p>Start exploring by adding your first property</p>
-                <a href="/listings/new" class="liquid-glass-btn liquid-glass-btn-primary">
+                <a href="<%= currentUser ? '/listings/new' : '/login?redirect=/listings/new' %>" class="liquid-glass-btn liquid-glass-btn-primary">
                     Add Listing
                 </a>
             </div>
@@ -262,7 +262,7 @@
                 <a href="/listings" class="liquid-glass-btn liquid-glass-btn-primary liquid-refraction">
                     Explore Listings
                 </a>
-                <a href="/users/register" class="liquid-glass-btn">
+                <a href="<%= currentUser ? '/listings/new' : '/register?redirect=/listings/new' %>" class="liquid-glass-btn">
                     Become a Host
                 </a>
             </div>

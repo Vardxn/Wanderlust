@@ -17,6 +17,7 @@ const compression = require('compression');
 // Models
 const Listing = require('./models/listing');
 const Review = require('./models/review');
+const HostReview = require('./models/hostReview');
 const User = require('./models/user');
 const Booking = require('./models/booking');
 
@@ -37,11 +38,19 @@ const wrapAsync = function (fn) {
     };
 };
 
+const normalizeRedirect = (value, fallback = '/') => {
+    if (typeof value !== 'string') return fallback;
+    const trimmed = value.trim();
+    if (!trimmed.startsWith('/')) return fallback;
+    if (trimmed.startsWith('//')) return fallback;
+    return trimmed;
+};
+
 // Import validation schemas
-const { listingSchema, reviewSchema, bookingSchema } = require('./schemas/validationSchemas');
+const { listingSchema, reviewSchema, hostReviewSchema, bookingSchema } = require('./schemas/validationSchemas');
 
 // Import authentication middleware
-const { isLoggedIn, isOwner, isReviewAuthor, isBookingGuest } = require('./middleware/auth');
+const { isLoggedIn, isOwner, isReviewAuthor, isBookingGuest, storeReturnTo } = require('./middleware/auth');
 
 // Initialize Express app
 const app = express();
@@ -120,6 +129,16 @@ const validateReview = (req, res, next) => {
     }
 };
 
+const validateHostReview = (req, res, next) => {
+    const { error } = hostReviewSchema.validate(req.body);
+    if (error) {
+        const msg = error.details.map(el => el.message).join(',');
+        throw new ExpressError(msg, 400);
+    } else {
+        next();
+    }
+};
+
 const validateBooking = (req, res, next) => {
     const { error } = bookingSchema.validate(req.body);
     if (error) {
@@ -158,6 +177,15 @@ app.use(express.static(path.join(__dirname, 'public'), {
         }
     }
 }));
+
+app.use((req, res, next) => {
+    if (req.method === 'GET') {
+        res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+        res.set('Pragma', 'no-cache');
+        res.set('Expires', '0');
+    }
+    next();
+});
 
 // 3. Body parsers with size limits
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
@@ -246,6 +274,75 @@ app.get('/', wrapAsync(async (req, res) => {
         totalLocations: uniqueLocations.length
     });
 }));
+
+// ============================================
+// AUTH ROUTES - Register / Login / Logout
+// ============================================
+
+app.get('/register', (req, res) => {
+    const safeRedirect = normalizeRedirect(req.query.redirect, '/');
+    res.render('users/register', {
+        pageTitle: 'Create your account',
+        redirect: safeRedirect
+    });
+});
+
+app.post('/register', wrapAsync(async (req, res, next) => {
+    try {
+        const { username, email, password, redirect } = req.body;
+        const user = new User({ username, email });
+        const registeredUser = await User.register(user, password);
+
+        req.login(registeredUser, (err) => {
+            if (err) {
+                return next(err);
+            }
+            req.flash('success', `Welcome to Wanderlust, ${registeredUser.username}!`);
+            const redirectUrl = normalizeRedirect(redirect, '/');
+            res.redirect(redirectUrl);
+        });
+    } catch (error) {
+        req.flash('error', error.message || 'Could not create account. Please try again.');
+        res.redirect('/register');
+    }
+}));
+
+app.get('/login', (req, res) => {
+    const safeRedirect = normalizeRedirect(req.query.redirect, '/');
+    if (req.query.redirect) {
+        req.session.returnTo = safeRedirect;
+    }
+
+    res.render('users/login', {
+        pageTitle: 'Log in to Wanderlust',
+        redirect: safeRedirect
+    });
+});
+
+app.post('/login', (req, res, next) => {
+    if (req.body.redirect && req.body.redirect.trim()) {
+        req.session.returnTo = normalizeRedirect(req.body.redirect, '/');
+    }
+    next();
+}, storeReturnTo, passport.authenticate('local', {
+    failureFlash: true,
+    failureRedirect: '/login'
+}), (req, res) => {
+    req.flash('success', `Welcome back, ${req.user.username}!`);
+    const redirectUrl = normalizeRedirect(res.locals.returnTo, '/');
+    delete req.session.returnTo;
+    res.redirect(redirectUrl);
+});
+
+app.post('/logout', (req, res, next) => {
+    req.logout((err) => {
+        if (err) {
+            return next(err);
+        }
+        req.flash('success', 'You have been logged out successfully.');
+        res.redirect('/');
+    });
+});
 
 // API Routes
 const listingsRouter = require('./routes/api/v1/listings');
@@ -648,6 +745,58 @@ app.delete('/listings/:id/reviews/:reviewId', isLoggedIn, isReviewAuthor, wrapAs
     res.redirect(`/listings/${id}`);
 }));
 
+// Host Review Routes
+// Create host review (guests review the host after stay)
+app.post('/listings/:id/host-reviews', isLoggedIn, validateHostReview, wrapAsync(async (req, res) => {
+    const listing = await Listing.findById(req.params.id);
+    if (!listing) {
+        throw new ExpressError('Listing not found', 404);
+    }
+
+    const hostReview = new HostReview(req.body);
+    hostReview.author = req.user._id;
+    hostReview.listing = listing._id;
+    
+    listing.hostReviews.push(hostReview);
+
+    await hostReview.save();
+    await listing.save();
+
+    req.flash('success', 'Thank you for reviewing your host!');
+    res.redirect(`/listings/${listing._id}`);
+}));
+
+// Get all host reviews for a listing
+app.get('/listings/:id/host-reviews', wrapAsync(async (req, res) => {
+    const listing = await Listing.findById(req.params.id)
+        .populate({
+            path: 'hostReviews',
+            populate: { path: 'author' }
+        });
+    
+    if (!listing) {
+        throw new ExpressError('Listing not found', 404);
+    }
+
+    res.render('listings/hostReviews', {
+        listing,
+        pageTitle: `Reviews for ${listing.ownerName}`
+    });
+}));
+
+// Delete host review
+app.delete('/listings/:id/host-reviews/:reviewId', isLoggedIn, isHostReviewAuthor, wrapAsync(async (req, res) => {
+    const { id, reviewId } = req.params;
+
+    await Listing.findByIdAndUpdate(id, {
+        $pull: { hostReviews: reviewId }
+    });
+    await HostReview.findByIdAndDelete(reviewId);
+
+    req.flash('success', 'Host review deleted');
+    res.redirect(`/listings/${id}`);
+}));
+
 // Protect booking routes
 app.post('/listings/:id/book', isLoggedIn, validateBooking, wrapAsync(async (req, res) => {
     const { checkIn, checkOut, adults, children, infants, pets, specialRequests } = req.body;
@@ -741,7 +890,7 @@ app.post('/listings/:id/book', isLoggedIn, validateBooking, wrapAsync(async (req
 }));
 
 // View single booking
-app.get('/bookings/:id', wrapAsync(async (req, res) => {
+app.get('/bookings/:id', isLoggedIn, isBookingGuest, wrapAsync(async (req, res) => {
     const booking = await Booking.findById(req.params.id)
         .populate('listing')
         .populate('guest')
@@ -759,12 +908,7 @@ app.get('/bookings/:id', wrapAsync(async (req, res) => {
 }));
 
 // View all bookings (for logged-in user)
-app.get('/bookings', wrapAsync(async (req, res) => {
-    if (!req.user) {
-        req.flash('error', 'Please log in to view your bookings');
-        return res.redirect('/login');
-    }
-    
+app.get('/bookings', isLoggedIn, wrapAsync(async (req, res) => {
     const { filter = 'upcoming' } = req.query;
     const now = new Date();
     
@@ -964,10 +1108,11 @@ app.post('/bookings/:id/modify', isLoggedIn, isBookingGuest, validateBooking, wr
 }));
 
 // Download booking invoice
-app.get('/bookings/:id/invoice', wrapAsync(async (req, res) => {
+app.get('/bookings/:id/invoice', isLoggedIn, isBookingGuest, wrapAsync(async (req, res) => {
     const booking = await Booking.findById(req.params.id)
         .populate('listing')
-        .populate('user');
+        .populate('guest')
+        .populate('host');
     
     if (!booking) {
         req.flash('error', 'Booking not found');
@@ -1067,6 +1212,53 @@ app.get('/experiences', wrapAsync(async (req, res) => {
         req.flash('error', 'Error loading experiences');
         res.redirect('/');
     }
+}));
+
+// ============================================
+// EXPERIENCE DETAIL ROUTE
+// ============================================
+app.get('/experiences/:id', wrapAsync(async (req, res) => {
+    const listing = await Listing.findById(req.params.id).populate({ path: 'reviews', populate: { path: 'author' } });
+    if (!listing) {
+        req.flash('error', 'Experience not found');
+        return res.redirect('/experiences');
+    }
+
+    const CATEGORIES = ['Adventure', 'Culture', 'Food & Drink', 'Nature', 'Wellness', 'Art', 'Sports', 'City Tour'];
+    const CATEGORY_ICONS = {
+        'Adventure': 'mountain', 'Culture': 'landmark', 'Food & Drink': 'utensils',
+        'Nature': 'leaf', 'Wellness': 'spa', 'Art': 'palette', 'Sports': 'running', 'City Tour': 'city'
+    };
+    const DURATIONS = ['2–3 hours', '3–4 hours', '4–5 hours', 'Half day', 'Full day'];
+    const HOST_NAMES = ['Arjun S.', 'Priya K.', 'Rahul M.', 'Ananya R.', 'Vikram P.', 'Deepa L.'];
+
+    // Derive deterministic extras from the listing id
+    const idNum = parseInt(listing._id.toString().slice(-4), 16);
+    const category = CATEGORIES[idNum % CATEGORIES.length];
+    const categoryIcon = CATEGORY_ICONS[category] || 'compass';
+    const duration = DURATIONS[idNum % DURATIONS.length];
+    const hostName = HOST_NAMES[idNum % HOST_NAMES.length];
+
+    const reviewCount = listing.reviews ? listing.reviews.length : 0;
+    const averageRating = reviewCount > 0
+        ? listing.reviews.reduce((sum, r) => sum + (r.rating || 0), 0) / reviewCount
+        : 0;
+
+    const experience = {
+        ...listing.toObject(),
+        category,
+        categoryIcon,
+        duration,
+        hostName,
+        reviewCount,
+        averageRating: Math.round(averageRating * 10) / 10,
+        reviews: listing.reviews
+    };
+
+    res.render('experiences/show', {
+        experience,
+        pageTitle: listing.title + ' - Experience'
+    });
 }));
 
 // 404 route - must come after all defined routes

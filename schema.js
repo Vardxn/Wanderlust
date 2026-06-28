@@ -14,3 +14,12 @@ module.exports.reviewSchema = Joi.object({
     rating: Joi.number().required().min(1).max(5),
     author: Joi.string().optional().min(2).max(50).default("Anonymous") // Made optional with default
 });
+
+module.exports.hostReviewSchema = Joi.object({
+    body: Joi.string().required().min(10).max(500),
+    rating: Joi.number().required().min(1).max(5),
+    wouldRecommend: Joi.boolean().optional().default(true),
+    cleanliness: Joi.number().min(1).max(5).optional(),
+    communication: Joi.number().min(1).max(5).optional(),
+    accuracy: Joi.number().min(1).max(5).optional()
+});

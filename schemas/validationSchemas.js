@@ -143,6 +143,51 @@ module.exports.reviewSchema = Joi.object({
 }).required();
 
 /**
+ * Validation schema for host review creation
+ */
+module.exports.hostReviewSchema = Joi.object({
+    rating: Joi.number()
+        .required()
+        .min(1)
+        .max(5)
+        .messages({
+            'number.base': 'Rating must be a number',
+            'number.min': 'Rating must be at least 1',
+            'number.max': 'Rating cannot exceed 5',
+            'any.required': 'Rating is required'
+        }),
+    
+    body: Joi.string()
+        .required()
+        .min(10)
+        .max(500)
+        .messages({
+            'string.empty': 'Review is required',
+            'string.min': 'Review must be at least 10 characters long',
+            'string.max': 'Review cannot exceed 500 characters'
+        }),
+
+    wouldRecommend: Joi.boolean()
+        .optional()
+        .default(true),
+
+    cleanliness: Joi.number()
+        .min(1)
+        .max(5)
+        .optional(),
+
+    communication: Joi.number()
+        .min(1)
+        .max(5)
+        .optional(),
+
+    accuracy: Joi.number()
+        .min(1)
+        .max(5)
+        .optional()
+}).required();
+
+/**
  * Validation schema for booking creation
  */
 module.exports.bookingSchema = Joi.object({

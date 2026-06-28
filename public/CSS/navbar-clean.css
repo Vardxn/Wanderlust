@@ -8,19 +8,23 @@
 /* === 1. GLASSMORPHISM FOUNDATION === */
 .liquid-glass-nav-clean {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    margin: 20px auto;
     z-index: 9999;
+    isolation: isolate;
     
     /* Glassmorphism Effect */
-    background: rgba(18, 18, 18, 0.8);
+    background: rgba(18, 18, 18, 0.58);
     backdrop-filter: blur(10px) saturate(180%);
     -webkit-backdrop-filter: blur(10px) saturate(180%);
     
     /* Depth Shadow */
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
     
     /* Smooth Transitions */
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -28,11 +32,25 @@
 
 /* === 2. ENHANCED ON-SCROLL EFFECT === */
 .liquid-glass-nav-clean.navbar-scrolled {
-    background: rgba(18, 18, 18, 0.95);
+    background: rgba(18, 18, 18, 0.82);
     backdrop-filter: blur(16px) saturate(200%);
     -webkit-backdrop-filter: blur(16px) saturate(200%);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
     border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* Fallback when backdrop-filter is unavailable */
+@supports not ((backdrop-filter: blur(2px)) or (-webkit-backdrop-filter: blur(2px))) {
+    .liquid-glass-nav-clean {
+        background: rgba(18, 18, 18, 0.92);
+    }
+}
+
+/* Firefox fallback: keep translucency but improve readability */
+@-moz-document url-prefix() {
+    .liquid-glass-nav-clean {
+        background: rgba(18, 18, 18, 0.9);
+    }
 }
 
 /* === 3. PAGE LOAD ANIMATION === */
@@ -74,15 +92,16 @@
     font-size: 1.5rem;
     font-weight: 800;
     letter-spacing: -0.03em;
-    background: linear-gradient(135deg, #60A5FA 0%, #F9FAFB 100%);
+    background: linear-gradient(90deg, #6EA8FE 0%, #A855F7 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    color: transparent;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .logo-link:hover .logo-text-clean {
-    background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%);
+    background: linear-gradient(90deg, #87BAFF 0%, #C26CFF 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -135,7 +154,7 @@
 
 /* === 6. MICRO-INTERACTION: PILL HOVER === */
 .nav-pill-clean:not(.active):hover {
-    color: rgba(255, 255, 255, 0.95);
+    color: #ff2a7f;
     background: rgba(255, 255, 255, 0.08);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
@@ -144,6 +163,40 @@
 
 .nav-pill-clean:not(.active):hover::after {
     transform: translateX(-50%) scaleX(1);
+    background: #ff2a7f;
+}
+
+.nav-fb-mobile-link:hover,
+.nav-fb-mobile-link.active {
+    color: #ff2a7f;
+}
+
+/* Search button and icon animation */
+.nav-search-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.88);
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.nav-search-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.nav-search-icon {
+    transition: 0.3s;
+}
+
+.nav-search-btn:hover .nav-search-icon {
+    transform: scale(1.05);
+    color: #ff2a7f;
 }
 
 /* Active Pill - Persistent Underline */
@@ -249,6 +302,11 @@
     transition: all 0.2s ease;
 }
 
+.user-menu-container {
+    position: relative;
+    z-index: 10010;
+}
+
 .user-avatar-clean {
     width: 32px;
     height: 32px;
@@ -265,10 +323,18 @@
 
 /* === 11. DROPDOWN MENU - Premium Glass === */
 .user-dropdown-clean {
-    background: rgba(15, 20, 25, 0.95) !important;
-    backdrop-filter: blur(30px) saturate(180%) !important;
-    -webkit-backdrop-filter: blur(30px) saturate(180%) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    --bs-dropdown-bg: #0A0E1A;
+    --bs-dropdown-color: rgba(255, 255, 255, 0.92);
+    --bs-dropdown-link-color: rgba(255, 255, 255, 0.92);
+    --bs-dropdown-link-hover-color: #60A5FA;
+    --bs-dropdown-link-hover-bg: rgba(59, 130, 246, 0.15);
+    --bs-dropdown-link-active-color: #60A5FA;
+    --bs-dropdown-link-active-bg: rgba(59, 130, 246, 0.18);
+    --bs-dropdown-divider-bg: rgba(255, 255, 255, 0.12);
+    background: #0A0E1A !important;
+    backdrop-filter: blur(18px) saturate(140%) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(140%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
     border-radius: 16px !important;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
     padding: 8px !important;
@@ -294,12 +360,20 @@
     border-radius: 8px;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     font-size: 0.95rem;
+    opacity: 1 !important;
+    text-shadow: none;
 }
 
 .user-dropdown-clean .dropdown-item:hover {
     background: rgba(59, 130, 246, 0.15) !important;
     color: #60A5FA !important;
     transform: translateX(4px);
+}
+
+.user-dropdown-clean .dropdown-item:focus,
+.user-dropdown-clean .dropdown-item:active {
+    background: rgba(59, 130, 246, 0.2) !important;
+    color: #93C5FD !important;
 }
 
 .user-dropdown-clean .dropdown-divider {
@@ -312,6 +386,12 @@
 @media (max-width: 1024px) {
     .nav-container {
         padding: 12px 24px;
+    }
+
+    .liquid-glass-nav-clean {
+        width: 94%;
+        top: 12px;
+        margin: 12px auto;
     }
     
     .host-link-clean {
@@ -332,6 +412,13 @@
 @media (max-width: 640px) {
     .nav-container {
         padding: 12px 16px;
+    }
+
+    .liquid-glass-nav-clean {
+        width: 96%;
+        top: 10px;
+        margin: 10px auto;
+        border-radius: 16px;
     }
     
     .logo-text-clean {

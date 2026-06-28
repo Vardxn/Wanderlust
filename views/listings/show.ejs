@@ -254,15 +254,63 @@
                             <span class="text-muted">Price per night</span>
                             <h3 class="fw-bold mb-0">₹<%= listing.price.toLocaleString() %></h3>
                         </div>
-                        <div>
-                            <a href="/listings/<%= listing._id %>/edit" class="btn btn-outline-primary me-2">
-                                <i class="bi bi-pencil-fill"></i> Edit
+                        <% if (currentUser && listing.owner && String(listing.owner._id || listing.owner) === String(currentUser._id)) { %>
+                            <div>
+                                <a href="/listings/<%= listing._id %>/edit" class="btn btn-outline-primary me-2">
+                                    <i class="bi bi-pencil-fill"></i> Edit
+                                </a>
+                                <form action="/listings/<%= listing._id %>?_method=DELETE" method="POST" class="d-inline">
+                                    <button class="btn btn-outline-danger" onclick="return confirm('Are you sure you want to delete this listing?')">
+                                        <i class="bi bi-trash-fill"></i> Delete
+                                    </button>
+                                </form>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Host Information Card -->
+            <div class="card border-0 shadow-sm mb-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="card-body p-4 text-white">
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            <div class="bg-white rounded-circle p-3" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-user-circle" style="font-size: 3rem; color: #667eea;"></i>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <h4 class="mb-0 fw-bold"><%= listing.ownerName %></h4>
+                            <p class="mb-2 text-white-50">
+                                <i class="fas fa-trophy me-1"></i>
+                                <%= listing.yearsOfExperience %> <% if (listing.yearsOfExperience === 1) { %>year<% } else { %>years<% } %> of hosting experience
+                            </p>
+                            
+                            <!-- Host Rating -->
+                            <% if (listing.hostAverageRating && listing.hostReviews && listing.hostReviews.length > 0) { %>
+                                <div class="d-flex align-items-center">
+                                    <div class="me-2">
+                                        <% for (let i = 0; i < 5; i++) { %>
+                                            <% if (i < Math.floor(listing.hostAverageRating)) { %>
+                                                <i class="fas fa-star" style="color: #FFD700;"></i>
+                                            <% } else if (i < listing.hostAverageRating) { %>
+                                                <i class="fas fa-star-half-alt" style="color: #FFD700;"></i>
+                                            <% } else { %>
+                                                <i class="far fa-star" style="color: rgba(255,255,255,0.4);"></i>
+                                            <% } %>
+                                        <% } %>
+                                    </div>
+                                    <span class="me-2"><strong><%= listing.hostAverageRating %></strong></span>
+                                    <small>(<%=listing.hostReviewCount%> <% if (listing.hostReviewCount === 1) { %>review<% } else { %>reviews<% } %>)</small>
+                                </div>
+                            <% } else { %>
+                                <small>No reviews yet</small>
+                            <% } %>
+                        </div>
+                        <div class="col-auto">
+                            <a href="/listings/<%= listing._id %>/host-reviews" class="btn btn-light btn-sm text-dark fw-semibold">
+                                View Host Reviews <i class="fas fa-arrow-right ms-1"></i>
                             </a>
-                            <form action="/listings/<%= listing._id %>?_method=DELETE" method="POST" class="d-inline">
-                                <button class="btn btn-outline-danger" onclick="return confirm('Are you sure you want to delete this listing?')">
-                                    <i class="bi bi-trash-fill"></i> Delete
-                                </button>
-                            </form>
                         </div>
                     </div>
                 </div>
@@ -281,31 +329,39 @@
                     <!-- Add Review Form -->
                     <div class="mb-4 p-4 bg-light rounded-3">
                         <h5 class="fw-semibold mb-3">Leave a Review</h5>
-                        <form action="/listings/<%= listing._id %>/reviews" method="POST">
-                            <div class="mb-3">
-                                <label for="rating" class="form-label">Rating</label>
-                                <select class="form-select" id="rating" name="review[rating]" required>
-                                    <option value="">Select rating...</option>
-                                    <option value="5">⭐⭐⭐⭐⭐ Excellent</option>
-                                    <option value="4">⭐⭐⭐⭐ Very Good</option>
-                                    <option value="3">⭐⭐⭐ Good</option>
-                                    <option value="2">⭐⭐ Fair</option>
-                                    <option value="1">⭐ Poor</option>
-                                </select>
+                        <% if (currentUser) { %>
+                            <form action="/listings/<%= listing._id %>/reviews" method="POST">
+                                <div class="mb-3">
+                                    <label for="rating" class="form-label">Rating</label>
+                                    <select class="form-select" id="rating" name="review[rating]" required>
+                                        <option value="">Select rating...</option>
+                                        <option value="5">⭐⭐⭐⭐⭐ Excellent</option>
+                                        <option value="4">⭐⭐⭐⭐ Very Good</option>
+                                        <option value="3">⭐⭐⭐ Good</option>
+                                        <option value="2">⭐⭐ Fair</option>
+                                        <option value="1">⭐ Poor</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="comment" class="form-label">Comment</label>
+                                    <textarea class="form-control" 
+                                              id="comment" 
+                                              name="review[comment]" 
+                                              rows="3" 
+                                              placeholder="Share your experience..." 
+                                              required></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-send-fill"></i> Submit Review
+                                </button>
+                            </form>
+                        <% } else { %>
+                            <p class="text-muted mb-3">You can browse freely as a guest, but you need an account to write reviews or manage listings.</p>
+                            <div class="d-flex gap-2 flex-wrap">
+                                <a href="/login?redirect=/listings/<%= listing._id %>" class="btn btn-primary">Log in to review</a>
+                                <a href="/register?redirect=/listings/<%= listing._id %>" class="btn btn-outline-secondary">Sign up</a>
                             </div>
-                            <div class="mb-3">
-                                <label for="comment" class="form-label">Comment</label>
-                                <textarea class="form-control" 
-                                          id="comment" 
-                                          name="review[comment]" 
-                                          rows="3" 
-                                          placeholder="Share your experience..." 
-                                          required></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-send-fill"></i> Submit Review
-                            </button>
-                        </form>
+                        <% } %>
                     </div>
 
                     <!-- Display Reviews -->

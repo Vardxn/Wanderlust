@@ -1,0 +1,40 @@
+<section class="container py-5" style="max-width: 620px; margin-top: 120px; min-height: calc(100vh - 220px);">
+    <div class="card bg-dark text-white border-secondary shadow-lg">
+        <div class="card-body p-4 p-md-5">
+            <h1 class="h3 mb-3 fw-bold">Create your account</h1>
+            <p class="text-secondary mb-4">Sign up to book stays, join experiences, and host with confidence.</p>
+
+            <% if (error && error.length) { %>
+                <div class="alert alert-danger" role="alert"><%= error[0] %></div>
+            <% } %>
+
+            <form action="/register" method="POST" class="d-grid gap-3">
+                <input type="hidden" name="redirect" value="<%= redirect || '' %>">
+
+                <div>
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="username" name="username" required minlength="3" autocomplete="username">
+                </div>
+
+                <div>
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" required autocomplete="email">
+                </div>
+
+                <div>
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" required minlength="8" autocomplete="new-password">
+                    <small class="text-secondary">Use at least 8 characters.</small>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">Create account</button>
+            </form>
+
+            <a href="<%= redirect || '/stays' %>" class="btn btn-outline-light w-100 mt-3">Continue as Guest</a>
+
+            <p class="mt-4 mb-0 text-secondary">Already have an account?
+                <a href="/login<%= redirect ? '?redirect=' + encodeURIComponent(redirect) : '' %>" class="text-info text-decoration-none">Log in</a>
+            </p>
+        </div>
+    </div>
+</section>

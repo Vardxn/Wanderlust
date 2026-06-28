@@ -1,0 +1,896 @@
+<% layout('../layouts/boilerplate') %>
+
+<style>
+/* ===================================================================
+   EXPERIENCE DETAIL PAGE - LIQUID GLASS DARK THEME
+   =================================================================== */
+.experience-detail {
+    padding-top: 80px;
+    min-height: 100vh;
+    background: #0A0E1A;
+    color: white;
+}
+
+/* Hero Section */
+.exp-hero {
+    position: relative;
+    height: 70vh;
+    min-height: 480px;
+    overflow: hidden;
+}
+
+.exp-hero-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.65);
+    transition: transform 8s ease;
+}
+
+.exp-hero:hover .exp-hero-image {
+    transform: scale(1.04);
+}
+
+.exp-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent 40%, rgba(10, 14, 26, 0.97) 100%);
+    display: flex;
+    align-items: flex-end;
+    padding: 60px;
+}
+
+.exp-hero-content {
+    max-width: 800px;
+}
+
+.exp-category-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 16px;
+    border-radius: 50px;
+    background: rgba(96, 165, 250, 0.2);
+    border: 1px solid rgba(96, 165, 250, 0.4);
+    color: #60A5FA;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 16px;
+}
+
+.exp-hero-title {
+    font-size: clamp(2rem, 5vw, 4rem);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 16px;
+    color: white;
+}
+
+.exp-hero-meta {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.exp-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: rgba(255,255,255,0.8);
+    font-size: 0.95rem;
+}
+
+.exp-meta-item i {
+    color: #60A5FA;
+}
+
+.exp-rating-stars {
+    color: #FFC107;
+    font-size: 1rem;
+}
+
+/* Back button */
+.back-btn {
+    position: absolute;
+    top: 100px;
+    left: 40px;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 50px;
+    color: white;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+    background: rgba(255,255,255,0.2);
+    color: white;
+    transform: translateX(-4px);
+}
+
+/* Wishlist heart */
+.exp-wishlist-btn {
+    position: absolute;
+    top: 100px;
+    right: 40px;
+    z-index: 10;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.exp-wishlist-btn:hover {
+    background: rgba(239,68,68,0.2);
+    border-color: rgba(239,68,68,0.5);
+    color: #EF4444;
+    transform: scale(1.1);
+}
+
+/* Main Body */
+.exp-body {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 60px 40px;
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 60px;
+    align-items: start;
+}
+
+/* Left: Content */
+.exp-content {}
+
+.section-divider {
+    height: 1px;
+    background: rgba(255,255,255,0.08);
+    margin: 40px 0;
+}
+
+/* Host Info */
+.exp-host-section {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 32px;
+}
+
+.host-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #60A5FA, #3B82F6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    border: 2px solid rgba(96,165,250,0.3);
+}
+
+.host-info h4 {
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0 0 4px 0;
+}
+
+.host-info p {
+    color: rgba(255,255,255,0.6);
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+/* Description */
+.exp-description {
+    color: rgba(255,255,255,0.8);
+    font-size: 1.05rem;
+    line-height: 1.8;
+    margin-bottom: 40px;
+}
+
+/* What's included grid */
+.exp-includes-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: white;
+    margin-bottom: 24px;
+}
+
+.exp-includes-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 40px;
+}
+
+.include-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 20px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    transition: all 0.3s ease;
+}
+
+.include-item:hover {
+    background: rgba(96,165,250,0.08);
+    border-color: rgba(96,165,250,0.2);
+}
+
+.include-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: rgba(96,165,250,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #60A5FA;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.include-text {
+    color: rgba(255,255,255,0.85);
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+/* Itinerary / What to expect */
+.exp-itinerary {
+    margin-bottom: 40px;
+}
+
+.itinerary-item {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 24px;
+    position: relative;
+}
+
+.itinerary-item::before {
+    content: '';
+    position: absolute;
+    left: 19px;
+    top: 40px;
+    width: 2px;
+    height: calc(100% + 4px);
+    background: rgba(96,165,250,0.2);
+}
+
+.itinerary-item:last-child::before {
+    display: none;
+}
+
+.itinerary-step {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(96,165,250,0.15);
+    border: 2px solid rgba(96,165,250,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #60A5FA;
+    font-weight: 800;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+}
+
+.itinerary-content h5 {
+    color: white;
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 6px 0 6px 0;
+}
+
+.itinerary-content p {
+    color: rgba(255,255,255,0.65);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Location Map Card */
+.exp-location-card {
+    padding: 24px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 24px;
+    margin-bottom: 40px;
+}
+
+.exp-location-card h4 {
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.exp-location-card p {
+    color: rgba(255,255,255,0.65);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.exp-location-card p i {
+    color: #60A5FA;
+}
+
+/* Reviews */
+.reviews-section {
+    margin-top: 20px;
+}
+
+.reviews-summary {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 32px;
+    padding: 28px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px;
+}
+
+.reviews-big-score {
+    font-size: 4rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, #FFC107, #FF9800);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+}
+
+.reviews-meta small {
+    color: rgba(255,255,255,0.6);
+    font-size: 0.85rem;
+}
+
+.review-card {
+    padding: 24px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 16px;
+    margin-bottom: 16px;
+    transition: all 0.3s ease;
+}
+
+.review-card:hover {
+    background: rgba(255,255,255,0.05);
+    border-color: rgba(255,255,255,0.12);
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.reviewer-name {
+    color: white;
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+.review-rating {
+    color: #FFC107;
+    font-size: 0.85rem;
+}
+
+.review-text {
+    color: rgba(255,255,255,0.7);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* RIGHT: Booking Card */
+.exp-booking-card {
+    position: sticky;
+    top: 100px;
+    background: rgba(255,255,255,0.04);
+    backdrop-filter: blur(40px) saturate(180%);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 24px;
+    overflow: hidden;
+}
+
+.booking-card-header {
+    padding: 32px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(135deg, rgba(96,165,250,0.1), rgba(59,130,246,0.05));
+}
+
+.booking-price-display {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.booking-price-amount {
+    font-size: 2.2rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, #60A5FA, #3B82F6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.booking-price-period {
+    color: rgba(255,255,255,0.6);
+    font-size: 0.95rem;
+}
+
+.booking-rating-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9rem;
+}
+
+.booking-rating-row .stars {
+    color: #FFC107;
+}
+
+.booking-rating-row span {
+    color: rgba(255,255,255,0.7);
+}
+
+.booking-card-body {
+    padding: 24px 32px;
+}
+
+.booking-field {
+    margin-bottom: 20px;
+}
+
+.booking-field label {
+    display: block;
+    color: rgba(255,255,255,0.7);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+}
+
+.booking-input {
+    width: 100%;
+    padding: 14px 16px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    color: white;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.booking-input:focus {
+    outline: none;
+    border-color: rgba(96,165,250,0.5);
+    background: rgba(96,165,250,0.08);
+    box-shadow: 0 0 0 3px rgba(96,165,250,0.1);
+}
+
+.booking-input option {
+    background: #0F1419;
+    color: white;
+}
+
+.booking-btn-primary {
+    width: 100%;
+    padding: 18px;
+    background: linear-gradient(135deg, #60A5FA, #3B82F6);
+    border: none;
+    border-radius: 16px;
+    color: white;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    letter-spacing: 0.02em;
+    margin-bottom: 16px;
+}
+
+.booking-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(96,165,250,0.35);
+    background: linear-gradient(135deg, #7CC1FB, #60A5FA);
+}
+
+.booking-btn-secondary {
+    width: 100%;
+    padding: 14px;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 16px;
+    color: rgba(255,255,255,0.8);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 20px;
+}
+
+.booking-btn-secondary:hover {
+    background: rgba(255,255,255,0.07);
+    border-color: rgba(255,255,255,0.3);
+}
+
+.booking-breakdown {
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding-top: 20px;
+}
+
+.breakdown-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+}
+
+.breakdown-label {
+    color: rgba(255,255,255,0.6);
+}
+
+.breakdown-value {
+    color: rgba(255,255,255,0.9);
+    font-weight: 600;
+}
+
+.breakdown-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid rgba(255,255,255,0.12);
+    padding-top: 12px;
+    margin-top: 8px;
+    font-size: 1rem;
+    font-weight: 800;
+    color: white;
+}
+
+.booking-trust {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    color: rgba(255,255,255,0.5);
+    font-size: 0.82rem;
+    text-align: center;
+}
+
+.booking-trust i {
+    color: #60A5FA;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .exp-body {
+        grid-template-columns: 1fr;
+        padding: 40px 24px;
+    }
+    .exp-booking-card {
+        position: static;
+    }
+    .exp-body > div:nth-child(2) {
+        order: -1;
+    }
+    .back-btn, .exp-wishlist-btn {
+        top: 90px;
+    }
+}
+
+@media (max-width: 600px) {
+    .exp-hero-overlay {
+        padding: 30px 20px;
+    }
+    .exp-includes-grid {
+        grid-template-columns: 1fr;
+    }
+    .back-btn, .exp-wishlist-btn {
+        left: 16px;
+        right: 16px;
+    }
+}
+</style>
+
+<!-- Back button -->
+<a href="/experiences" class="back-btn">
+    <i class="fas fa-arrow-left"></i> All Experiences
+</a>
+
+<!-- Wishlist button -->
+<button class="exp-wishlist-btn" onclick="this.innerHTML=this.querySelector('i.far') ? '<i class=\'fas fa-heart\'></i>' : '<i class=\'far fa-heart\'></i>'; this.style.color=this.querySelector('i.fas') ? '#EF4444' : 'white';" title="Save to Wishlist">
+    <i class="far fa-heart"></i>
+</button>
+
+<!-- Hero Image -->
+<div class="exp-hero">
+    <img 
+        src="<%= experience.image && experience.image.url ? experience.image.url : 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=1600' %>" 
+        alt="<%= experience.title %>" 
+        class="exp-hero-image"
+    >
+    <div class="exp-hero-overlay">
+        <div class="exp-hero-content">
+            <div class="exp-category-badge">
+                <i class="fas fa-<%= experience.categoryIcon || 'compass' %>"></i>
+                <%= experience.category || 'Adventure' %>
+            </div>
+            <h1 class="exp-hero-title"><%= experience.title %></h1>
+            <div class="exp-hero-meta">
+                <span class="exp-meta-item">
+                    <span class="exp-rating-stars">★★★★★</span>
+                    <strong><%= experience.averageRating > 0 ? experience.averageRating.toFixed(1) : '4.9' %></strong>
+                    (<%= experience.reviewCount %> reviews)
+                </span>
+                <span class="exp-meta-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <%= experience.location %>, <%= experience.country %>
+                </span>
+                <span class="exp-meta-item">
+                    <i class="fas fa-clock"></i>
+                    <%= experience.duration || '3–4 hours' %>
+                </span>
+                <span class="exp-meta-item">
+                    <i class="fas fa-users"></i>
+                    Up to <%= experience.maxGuests || 10 %> guests
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Body -->
+<div class="experience-detail">
+    <div class="exp-body">
+        <!-- Left Column -->
+        <div class="exp-content">
+            <!-- Host Info -->
+            <div class="exp-host-section">
+                <div class="host-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="host-info">
+                    <h4>Hosted by <%= experience.hostName || 'Local Expert' %></h4>
+                    <p><i class="fas fa-certificate" style="color:#60A5FA; margin-right:5px;"></i> Verified host &nbsp;·&nbsp; <%= Math.floor(Math.random()*200+50) %> experiences hosted</p>
+                </div>
+            </div>
+            <div class="section-divider"></div>
+
+            <!-- Description -->
+            <p class="exp-description"><%= experience.description %></p>
+            <div class="section-divider"></div>
+
+            <!-- What's Included -->
+            <h3 class="exp-includes-title">What's included</h3>
+            <div class="exp-includes-grid">
+                <div class="include-item">
+                    <div class="include-icon"><i class="fas fa-user-tie"></i></div>
+                    <span class="include-text">Professional guide</span>
+                </div>
+                <div class="include-item">
+                    <div class="include-icon"><i class="fas fa-camera"></i></div>
+                    <span class="include-text">Photo opportunities</span>
+                </div>
+                <div class="include-item">
+                    <div class="include-icon"><i class="fas fa-water-bottle"></i></div>
+                    <span class="include-text">Refreshments provided</span>
+                </div>
+                <div class="include-item">
+                    <div class="include-icon"><i class="fas fa-shield-alt"></i></div>
+                    <span class="include-text">Safety equipment</span>
+                </div>
+                <div class="include-item">
+                    <div class="include-icon"><i class="fas fa-map"></i></div>
+                    <span class="include-text">Detailed itinerary</span>
+                </div>
+                <div class="include-item">
+                    <div class="include-icon"><i class="fas fa-language"></i></div>
+                    <span class="include-text">English &amp; Hindi spoken</span>
+                </div>
+            </div>
+            <div class="section-divider"></div>
+
+            <!-- Itinerary -->
+            <h3 class="exp-includes-title">What to expect</h3>
+            <div class="exp-itinerary">
+                <div class="itinerary-item">
+                    <div class="itinerary-step">1</div>
+                    <div class="itinerary-content">
+                        <h5>Welcome &amp; Introduction</h5>
+                        <p>Meet your host at the designated meeting point. Get a quick briefing on the day's activities and safety guidelines.</p>
+                    </div>
+                </div>
+                <div class="itinerary-item">
+                    <div class="itinerary-step">2</div>
+                    <div class="itinerary-content">
+                        <h5>Guided Exploration</h5>
+                        <p>Dive into the heart of the experience — explore hidden gems, local stories, and immersive cultural moments in <%= experience.location %>.</p>
+                    </div>
+                </div>
+                <div class="itinerary-item">
+                    <div class="itinerary-step">3</div>
+                    <div class="itinerary-content">
+                        <h5>Hands-on Activity</h5>
+                        <p>Participate in an interactive session tailored to the experience theme. Take home new skills, memories, or souvenirs.</p>
+                    </div>
+                </div>
+                <div class="itinerary-item">
+                    <div class="itinerary-step">4</div>
+                    <div class="itinerary-content">
+                        <h5>Wrap Up &amp; Q&amp;A</h5>
+                        <p>Reflect on the experience, ask your host questions, and get personalised recommendations for the rest of your trip.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="section-divider"></div>
+
+            <!-- Location -->
+            <h3 class="exp-includes-title">Location</h3>
+            <div class="exp-location-card">
+                <h4><%= experience.location %>, <%= experience.country %></h4>
+                <p><i class="fas fa-map-marker-alt"></i> Exact meeting point sent after booking confirmation</p>
+            </div>
+            <div class="section-divider"></div>
+
+            <!-- Reviews -->
+            <div class="reviews-section">
+                <h3 class="exp-includes-title">
+                    <i class="fas fa-star" style="color:#FFC107; margin-right:8px;"></i>
+                    <%= experience.averageRating > 0 ? experience.averageRating.toFixed(1) : '4.9' %> · <%= experience.reviewCount %> review<%= experience.reviewCount !== 1 ? 's' : '' %>
+                </h3>
+
+                <% if (experience.reviews && experience.reviews.length > 0) { %>
+                    <% experience.reviews.slice(0, 6).forEach(review => { %>
+                        <div class="review-card">
+                            <div class="review-header">
+                                <span class="reviewer-name"><%= review.author ? (review.author.username || 'Guest') : 'Guest' %></span>
+                                <span class="review-rating">
+                                    <% for(let i = 0; i < (review.rating || 5); i++) { %>★<% } %>
+                                </span>
+                            </div>
+                            <p class="review-text"><%= review.comment || review.body || '' %></p>
+                        </div>
+                    <% }) %>
+                <% } else { %>
+                    <% const sampleReviews = [
+                        { name: 'Priya M.', rating: 5, text: 'Absolutely magical! One of the best experiences I\'ve had while travelling. The host was incredibly knowledgeable and made everyone feel welcome.' },
+                        { name: 'Rahul K.', rating: 5, text: 'Worth every rupee. The hidden spots we visited were breathtaking and something you would never find on your own. Highly recommend!' },
+                        { name: 'Sarah W.', rating: 4, text: 'A truly authentic and immersive experience. Loved the personal touch of a small group setting. Will definitely book again.' },
+                    ]; %>
+                    <% sampleReviews.forEach(r => { %>
+                        <div class="review-card">
+                            <div class="review-header">
+                                <span class="reviewer-name"><%= r.name %></span>
+                                <span class="review-rating"><% for(let i=0;i<r.rating;i++){%>★<%}%></span>
+                            </div>
+                            <p class="review-text"><%= r.text %></p>
+                        </div>
+                    <% }) %>
+                <% } %>
+            </div>
+        </div>
+
+        <!-- Right Column: Booking Card -->
+        <div>
+            <div class="exp-booking-card">
+                <div class="booking-card-header">
+                    <div class="booking-price-display">
+                        <span class="booking-price-amount">₹<%= experience.price.toLocaleString() %></span>
+                        <span class="booking-price-period">/ person</span>
+                    </div>
+                    <div class="booking-rating-row">
+                        <span class="stars">★★★★★</span>
+                        <span><%= experience.averageRating > 0 ? experience.averageRating.toFixed(1) : '4.9' %> · <%= experience.reviewCount %> reviews</span>
+                    </div>
+                </div>
+                <div class="booking-card-body">
+                    <div class="booking-field">
+                        <label>Date</label>
+                        <input type="date" class="booking-input" id="expDate" min="<%= new Date().toISOString().split('T')[0] %>">
+                    </div>
+                    <div class="booking-field">
+                        <label>Guests</label>
+                        <select class="booking-input" id="expGuests">
+                            <% for(let i=1; i<=(experience.maxGuests||10); i++) { %>
+                                <option value="<%= i %>"><%= i %> guest<%= i>1?'s':'' %></option>
+                            <% } %>
+                        </select>
+                    </div>
+
+                    <button class="booking-btn-primary" onclick="handleBooking()">
+                        <i class="fas fa-bolt" style="margin-right:8px;"></i>
+                        Reserve Now
+                    </button>
+                    <button class="booking-btn-secondary" onclick="handleContact()">
+                        <i class="fas fa-comment" style="margin-right:8px;"></i>
+                        Message Host
+                    </button>
+
+                    <div class="booking-breakdown" id="bookingBreakdown">
+                        <div class="breakdown-row">
+                            <span class="breakdown-label">₹<%= experience.price.toLocaleString() %> × <span id="guestCount">1</span> guest</span>
+                            <span class="breakdown-value" id="baseTotal">₹<%= experience.price.toLocaleString() %></span>
+                        </div>
+                        <div class="breakdown-row">
+                            <span class="breakdown-label">Service fee</span>
+                            <span class="breakdown-value" id="serviceFee">₹<%= Math.round(experience.price * 0.12).toLocaleString() %></span>
+                        </div>
+                        <div class="breakdown-total">
+                            <span>Total</span>
+                            <span id="grandTotal">₹<%= Math.round(experience.price * 1.12).toLocaleString() %></span>
+                        </div>
+                    </div>
+
+                    <p class="booking-trust" style="margin-top:16px;">
+                        <i class="fas fa-lock"></i>
+                        Secure payment · Free cancellation 24h before
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const pricePerPerson = <%= experience.price %>;
+
+document.getElementById('expGuests').addEventListener('change', function() {
+    const guests = parseInt(this.value);
+    const base = pricePerPerson * guests;
+    const service = Math.round(base * 0.12);
+    const total = base + service;
+    document.getElementById('guestCount').textContent = guests;
+    document.getElementById('baseTotal').textContent = '₹' + base.toLocaleString('en-IN');
+    document.getElementById('serviceFee').textContent = '₹' + service.toLocaleString('en-IN');
+    document.getElementById('grandTotal').textContent = '₹' + total.toLocaleString('en-IN');
+});
+
+function handleBooking() {
+    const date = document.getElementById('expDate').value;
+    const guests = document.getElementById('expGuests').value;
+    if (!date) {
+        alert('Please select a date to continue.');
+        document.getElementById('expDate').focus();
+        return;
+    }
+    // Redirect to login or booking page - placeholder
+    window.location.href = '/login?redirect=/experiences/<%= experience._id %>';
+}
+
+function handleContact() {
+    window.location.href = '/login?redirect=/experiences/<%= experience._id %>';
+}
+</script>
