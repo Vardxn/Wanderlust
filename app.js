@@ -50,7 +50,7 @@ const normalizeRedirect = (value, fallback = '/') => {
 const { listingSchema, reviewSchema, hostReviewSchema, bookingSchema } = require('./schemas/validationSchemas');
 
 // Import authentication middleware
-const { isLoggedIn, isOwner, isReviewAuthor, isBookingGuest, storeReturnTo } = require('./middleware/auth');
+const { isLoggedIn, isOwner, isReviewAuthor, isHostReviewAuthor, isBookingGuest, storeReturnTo } = require('./middleware/auth');
 
 // Initialize Express app
 const app = express();
